@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lynx Bus UK Routes</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f4f6f8;
+    }
+
+    header {
+        background: #e60000;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+
+    #search {
+        width: 90%;
+        max-width: 600px;
+        padding: 10px;
+        margin: 20px auto;
+        display: block;
+        font-size: 16px;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 10px;
+    }
+
+    .route {
+        background: white;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .route:hover {
+        background: #fff3f3;
+    }
+
+    .details {
+        display: none;
+        margin-top: 10px;
+        color: #333;
+    }
+
+    .via {
+        color: #666;
+        font-size: 14px;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Lynx Bus UK Routes</h1>
+    <p>All routes + where they go via</p>
+</header>
+
+<input type="text" id="search" placeholder="Search route number or place...">
+
+<div class="container" id="routes"></div>
+
+<script>
+const routes = [
+    {
+        number: "33 / 33A",
+        from: "King's Lynn",
+        to: "Hunstanton / Docking",
+        via: "QE Hospital, Hillington, The Birchams, Sedgeford"
+    },
+    {
+        number: "34 / 35 / Coastliner 36",
+        from: "King's Lynn",
+        to: "Hunstanton → Wells-next-the-Sea → Fakenham",
+        via: "QE Hospital (34), Sandringham (35), Dersingham, Snettisham, Heacham"
+    },
+    {
+        number: "37",
+        from: "King's Lynn",
+        to: "Downham Market",
+        via: "West Winch, Hardwick Retail Park, Hilgay, Southery, Ten Mile Bank"
+    },
+    {
+        number: "38",
+        from: "King's Lynn",
+        to: "Fair Green",
+        via: "West Winch, Hardwick Retail Park"
+    },
+    {
+        number: "39",
+        from: "King's Lynn",
+        to: "Marham",
+        via: "West Winch, Hardwick Retail Park, Shouldham"
+    },
+    {
+        number: "41",
+        from: "King's Lynn",
+        to: "King's Reach",
+        via: "Fairstead, Gaywood, QE Hospital"
+    },
+    {
+        number: "42",
+        from: "King's Lynn",
+        to: "Fairstead",
+        via: "Gaywood"
+    },
+    {
+        number: "46 / X46",
+        from: "King's Lynn",
+        to: "Wisbech",
+        via: "Saddlebow, Islington, Terrington St John, Tilney St Lawrence, West Walton"
+    },
+    {
+        number: "48 / 49 / 49A",
+        from: "King's Lynn",
+        to: "Fakenham",
+        via: "Grimston, Gayton, Great Massingham, The Rudhams"
+    },
+    {
+        number: "54",
+        from: "King's Lynn",
+        to: "The Walpoles",
+        via: "South Lynn, Clenchwarton, Tilney All Saints"
+    },
+    {
+        number: "60",
+        from: "Wisbech",
+        to: "Downham Market",
+        via: "Emneth, Outwell, Upwell, Three Holes"
+    }
+];
+
+const container = document.getElementById("routes");
+const search = document.getElementById("search");
+
+function displayRoutes(filter = "") {
+    container.innerHTML = "";
+
+    routes
+        .filter(r =>
+            r.number.toLowerCase().includes(filter) ||
+            r.from.toLowerCase().includes(filter) ||
+            r.to.toLowerCase().includes(filter) ||
+            r.via.toLowerCase().includes(filter)
+        )
+        .forEach(route => {
+            const div = document.createElement("div");
+            div.className = "route";
+
+            div.innerHTML = `
+                <strong>Route ${route.number}</strong><br>
+                ${route.from} → ${route.to}
+                <div class="details">
+                    <p class="via"><b>Via:</b> ${route.via}</p>
+                </div>
+            `;
+
+            div.addEventListener("click", () => {
+                const details = div.querySelector(".details");
+                details.style.display =
+                    details.style.display === "block" ? "none" : "block";
+            });
+
+            container.appendChild(div);
+        });
+}
+
+search.addEventListener("input", e => {
+    displayRoutes(e.target.value.toLowerCase());
+});
+
+displayRoutes();
+</script>
+
+</body>
+</html>
+
+<a href="fleet.html" class="btn-back">← Back to Fleet List</a>
+
+<style>
+.btn-back {
+    display: inline-block;
+    padding: 12px 18px;
+    background: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    margin: 10px;
+}
+
+.btn-back:hover {
+    background: #111;
+}
+</style>
