@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Lynx Bus Routes</title>
+<title>Lynx Bus Routes - Full Network</title>
 
 <style>
 body {
@@ -23,7 +23,7 @@ h1 {
   font-size: 16px;
 }
 
-/* ROUTE CARD */
+/* CARD */
 .route {
   background: white;
   margin-bottom: 10px;
@@ -59,6 +59,7 @@ h1 {
   display: block;
 }
 
+/* TAG */
 .tag {
   display: inline-block;
   padding: 3px 8px;
@@ -95,209 +96,245 @@ h1 {
 
 <body>
 
-<h1>Lynx Bus Routes</h1>
+<h1>Lynx Bus Routes (Full Network)</h1>
 
 <input class="search" id="search" placeholder="Search routes...">
 
 <div id="routes"></div>
 
-<!-- 🔴 BACK BUTTON -->
 <a class="back-btn" href="https://frankieandbenny120956-source.github.io/BusBase-Bus-List/index.html">
-  Back to Fleet List
+Back to Fleet List
 </a>
 
 <script>
 
 const routes = [
 
-  // ===== 33 FAMILY =====
-  {
-    number: "33",
-    from: "King's Lynn",
-    to: "Hunstanton",
-    via: "QE Hospital • Hillington • Sedgeford",
-    frequency: "Every 30–60 mins",
-    tag: "Main",
-    extra: "Main coastal trunk route between King's Lynn and Hunstanton."
-  },
+/* ===== 33 FAMILY ===== */
+{
+number:"33",
+from:"King's Lynn",
+to:"Hunstanton",
+via:"QE Hospital • Hillington • Bircham • Sedgeford",
+frequency:"Every 30–60 mins",
+tag:"Main",
+extra:"Main corridor route to Hunstanton."
+},
+{
+number:"33A",
+from:"Bircham",
+to:"Docking",
+via:"Village service",
+frequency:"Schooldays",
+tag:"School",
+extra:"Short rural connector."
+},
+{
+number:"33B",
+from:"Hunstanton",
+to:"Ringstead Loop",
+via:"Ringstead • Docking area",
+frequency:"Hourly (from 1 June)",
+tag:"NEW LOOP",
+extra:"Ringstead circular service."
+},
+{
+number:"33C",
+from:"King's Lynn",
+to:"Hunstanton (Loop)",
+via:"QE Hospital • Bircham • Sedgeford circular",
+frequency:"Hourly (from 1 June)",
+tag:"NEW LOOP",
+extra:"New loop variant replacing part of 33 flow."
+},
 
-  {
-    number: "33B",
-    from: "Hunstanton",
-    to: "Ringstead Loop",
-    via: "Ringstead • Docking area villages",
-    frequency: "Hourly (from 1 June)",
-    tag: "NEW LOOP",
-    extra: "Rural loop serving Ringstead and surrounding villages."
-  },
+/* ===== COASTAL ===== */
+{
+number:"34",
+from:"King's Lynn",
+to:"Hunstanton",
+via:"Snettisham • Dersingham • Heacham",
+frequency:"Hourly",
+tag:"Coastal",
+extra:"Serves Snettisham & Dersingham corridor."
+},
+{
+number:"35",
+from:"King's Lynn",
+to:"Hunstanton",
+via:"Sandringham • Heacham",
+frequency:"Hourly",
+tag:"Coastal",
+extra:"Sandringham estate route."
+},
+{
+number:"36 Coastliner",
+from:"King's Lynn",
+to:"Fakenham",
+via:"Hunstanton • Wells-next-the-Sea",
+frequency:"Hourly",
+tag:"Express",
+extra:"Coastal express route."
+},
 
-  {
-    number: "33C",
-    from: "King's Lynn",
-    to: "Hunstanton (Loop Service)",
-    via: "QE Hospital • Bircham • Sedgeford circular",
-    frequency: "Hourly (from 1 June)",
-    tag: "NEW LOOP",
-    extra: "New circular loop variant introduced 1st June."
-  },
+/* ===== TOWN ===== */
+{
+number:"41",
+from:"King's Lynn",
+to:"King's Reach",
+via:"Fairstead • QE Hospital",
+frequency:"Every 30–60 mins",
+tag:"Town",
+extra:"Urban estate link."
+},
+{
+number:"42",
+from:"King's Lynn",
+to:"Fairstead",
+via:"Gaywood",
+frequency:"Every 30–60 mins",
+tag:"Town",
+extra:"Local loop service."
+},
+{
+number:"43",
+from:"King's Lynn",
+to:"North Wootton",
+via:"Estates",
+frequency:"School / peak",
+tag:"School",
+extra:"School-focused service."
+},
+{
+number:"44",
+from:"King's Lynn",
+to:"King's Lynn Loop",
+via:"Gaywood • Fairstead • Hardwick • Town Centre",
+frequency:"Every 30 mins (from 1 June)",
+tag:"NEW LOOP",
+extra:"New circular town loop."
+},
 
-  // ===== COASTAL =====
-  {
-    number: "34",
-    from: "King's Lynn",
-    to: "Hunstanton",
-    via: "Snettisham • Dersingham • Heacham",
-    frequency: "Hourly",
-    tag: "Coastal",
-    extra: "Serves Snettisham and Dersingham villages."
-  },
+/* ===== RURAL / INTERURBAN ===== */
+{
+number:"37",
+from:"King's Lynn",
+to:"Downham Market",
+via:"West Winch • Southery",
+frequency:"Hourly–2 hourly",
+tag:"Rural",
+extra:"Rural town link."
+},
+{
+number:"38",
+from:"King's Lynn",
+to:"Fair Green",
+via:"Hardwick • West Winch",
+frequency:"Hourly",
+tag:"Local",
+extra:"Short estate link."
+},
+{
+number:"39",
+from:"King's Lynn",
+to:"Marham",
+via:"Shouldham • RAF Marham",
+frequency:"Hourly–2 hourly",
+tag:"Rural",
+extra:"RAF access route."
+},
+{
+number:"46 / X46",
+from:"King's Lynn",
+to:"Wisbech",
+via:"Terrington • Walpole • St Germans",
+frequency:"Hourly",
+tag:"Interurban",
+extra:"Fenland cross-county route."
+},
 
-  {
-    number: "35",
-    from: "King's Lynn",
-    to: "Hunstanton",
-    via: "Sandringham • Heacham",
-    frequency: "Hourly",
-    tag: "Coastal",
-    extra: "Main Sandringham corridor route."
-  },
+/* ===== FAKENHAM CORRIDOR ===== */
+{
+number:"48 / 49 / 49A",
+from:"King's Lynn",
+to:"Fakenham",
+via:"Gayton • Grimston • Great Massingham",
+frequency:"Hourly combined",
+tag:"Rural",
+extra:"Grouped rural corridor."
+},
 
-  {
-    number: "36 Coastliner",
-    from: "King's Lynn",
-    to: "Fakenham",
-    via: "Hunstanton • Wells-next-the-Sea",
-    frequency: "Hourly",
-    tag: "Express",
-    extra: "Coastliner coastal express service."
-  },
-
-  // ===== TOWN =====
-  {
-    number: "41",
-    from: "King's Lynn",
-    to: "King's Reach",
-    via: "Fairstead • QE Hospital",
-    frequency: "Every 30–60 mins",
-    tag: "Town",
-    extra: "Urban estate service."
-  },
-
-  {
-    number: "42",
-    from: "King's Lynn",
-    to: "Fairstead",
-    via: "Gaywood",
-    frequency: "Every 30–60 mins",
-    tag: "Town",
-    extra: "Local estate circular."
-  },
-
-  {
-    number: "44",
-    from: "King's Lynn",
-    to: "King's Lynn Loop",
-    via: "Gaywood • Fairstead • Hardwick • Town Centre",
-    frequency: "Every 30 mins (from 1 June)",
-    tag: "NEW LOOP",
-    extra: "New circular town loop introduced 1st June."
-  },
-
-  // ===== RURAL / INTERURBAN =====
-  {
-    number: "37",
-    from: "King's Lynn",
-    to: "Downham Market",
-    via: "West Winch • Southery",
-    frequency: "Hourly–2 hourly",
-    tag: "Rural",
-    extra: "Key rural link service."
-  },
-
-  {
-    number: "38",
-    from: "King's Lynn",
-    to: "Fair Green",
-    via: "Hardwick • West Winch",
-    frequency: "Hourly",
-    tag: "Local",
-    extra: "Short local connector."
-  },
-
-  {
-    number: "39",
-    from: "King's Lynn",
-    to: "Marham",
-    via: "Shouldham • RAF Marham",
-    frequency: "Hourly–2 hourly",
-    tag: "Rural",
-    extra: "RAF Marham service."
-  },
-
-  {
-    number: "46 / X46",
-    from: "King's Lynn",
-    to: "Wisbech",
-    via: "Terrington • Walpole • St Germans",
-    frequency: "Hourly",
-    tag: "Interurban",
-    extra: "Cross-county Fenland link."
-  },
-
-  {
-    number: "48 / 49 / 49A",
-    from: "King's Lynn",
-    to: "Fakenham",
-    via: "Gayton • Grimston • Great Massingham",
-    frequency: "Hourly combined",
-    tag: "Rural",
-    extra: "Grouped rural corridor services."
-  },
-
-  {
-    number: "60",
-    from: "Wisbech",
-    to: "Downham Market",
-    via: "Outwell • Upwell • Three Holes",
-    frequency: "Hourly–2 hourly",
-    tag: "Cross-county",
-    extra: "Fenland cross-county route."
-  }
+/* ===== SPECIAL ===== */
+{
+number:"54",
+from:"King's Lynn",
+to:"Walpoles",
+via:"Tilney • Clenchwarton",
+frequency:"1–2 hourly",
+tag:"Rural",
+extra:"Western villages link."
+},
+{
+number:"54A",
+from:"King's Lynn",
+to:"Terrington Schools",
+via:"School link",
+frequency:"Schooldays",
+tag:"School",
+extra:"School-only variant."
+},
+{
+number:"60",
+from:"Wisbech",
+to:"Downham Market",
+via:"Outwell • Upwell • Three Holes",
+frequency:"Hourly–2 hourly",
+tag:"Cross-county",
+extra:"Fenland route."
+},
+{
+number:"414 / 415",
+from:"Dersingham",
+to:"Alderman Peel High School",
+via:"Docking",
+frequency:"Schooldays",
+tag:"School",
+extra:"School services."
+}
 
 ];
 
-function render(list) {
-  const container = document.getElementById("routes");
-  container.innerHTML = "";
+function render(list){
+const container=document.getElementById("routes");
+container.innerHTML="";
 
-  list.forEach(r => {
-    container.innerHTML += `
-      <div class="route" onclick="this.classList.toggle('open')">
-        <div class="route-header">
-          <h2>Route ${r.number}</h2>
-          <div class="meta"><b>${r.from}</b> → <b>${r.to}</b></div>
-          <div class="tag ${r.tag.includes("NEW") ? "new" : ""}">
-            ${r.tag}
-          </div>
-        </div>
+list.forEach(r=>{
+container.innerHTML+=`
+<div class="route" onclick="this.classList.toggle('open')">
+<div class="route-header">
+<h2>Route ${r.number}</h2>
+<div class="meta"><b>${r.from}</b> → <b>${r.to}</b></div>
+<div class="tag ${r.tag.includes('NEW')?'new':''}">
+${r.tag}
+</div>
+</div>
 
-        <div class="details">
-          <div class="meta"><b>Via:</b> ${r.via}</div>
-          <div class="meta"><b>Frequency:</b> ${r.frequency}</div>
-          <div class="meta" style="margin-top:8px;">${r.extra}</div>
-        </div>
-      </div>
-    `;
-  });
+<div class="details">
+<div class="meta"><b>Via:</b> ${r.via}</div>
+<div class="meta"><b>Frequency:</b> ${r.frequency}</div>
+<div class="meta" style="margin-top:8px;">${r.extra}</div>
+</div>
+</div>`;
+});
 }
 
-document.getElementById("search").addEventListener("input", e => {
-  const q = e.target.value.toLowerCase();
-  render(routes.filter(r =>
-    r.number.toLowerCase().includes(q) ||
-    r.from.toLowerCase().includes(q) ||
-    r.to.toLowerCase().includes(q)
-  ));
+document.getElementById("search").addEventListener("input",e=>{
+const q=e.target.value.toLowerCase();
+render(routes.filter(r=>
+r.number.toLowerCase().includes(q)||
+r.from.toLowerCase().includes(q)||
+r.to.toLowerCase().includes(q)
+));
 });
 
 render(routes);
