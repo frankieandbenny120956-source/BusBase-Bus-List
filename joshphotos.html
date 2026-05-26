@@ -1,117 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Photo Gallery with Upload</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Photo Gallery with Upload</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f0f0f0;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #f0f0f0;
+}
 
-    h1 {
-      margin-top: 20px;
-    }
+h1 {
+  margin-top: 20px;
+}
 
-    #uploadForm {
-      margin: 20px;
-    }
+#uploadForm {
+  margin: 20px;
+}
 
-    button {
-      padding: 10px 15px;
-      cursor: pointer;
-    }
+button {
+  padding: 10px 15px;
+  cursor: pointer;
+}
 
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin: 20px;
-      gap: 15px;
-    }
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px;
+}
 
-    .gallery img {
-      max-width: 300px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-  </style>
+.card {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card img {
+  width: 300px;
+  border-radius: 8px;
+}
+
+.delete {
+  margin-top: 8px;
+  background: red;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+}
+</style>
 </head>
 
 <body>
 
-  <h1>Josh Hambling's Photography</h1>
+<h1>Josh Hambling's Photography</h1>
 
-  <!-- Upload form -->
-  <form id="uploadForm">
-    <input type="file" id="imageUpload" accept="image/*" />
-    <button type="button" onclick="uploadImage()">Upload Image</button>
-  </form>
+<input type="file" id="imageUpload" accept="image/*">
+<button onclick="uploadImage()">Upload Image</button>
 
-  <!-- Gallery -->
-  <div class="gallery" id="gallery"></div>
+<div class="gallery" id="gallery"></div>
 
-  <script>
-    const cloudName = "dlquvrodn";
-    const uploadPreset = "BusBase Photos";
+<script>
+const cloudName = "dlquvrodn";
+const uploadPreset = "BusBase Photos";
 
-    // Load saved images from localStorage
-    loadImages();
+let images = JSON.parse(localStorage.getItem("gallery")) || [];
 
-    function uploadImage() {
-      const file = document.getElementById("imageUpload").files[0];
+renderGallery();
 
-      if (!file) {
-        alert("Please select an image first.");
-        return;
-      }
+async function uploadImage() {
+  const file = document.getElementById("imageUpload").files[0];
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", uploadPreset);
+  if (!file) {
+    alert("Please choose an image.");
+    return;
+  }
 
-      fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.secure_url) {
-          displayImage(data.secure_url);
-          saveImage(data.secure_url);
-          document.getElementById("imageUpload").value = "";
-        } else {
-          alert("Upload failed.");
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Upload error.");
-      });
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    {
+      method: "POST",
+      body: formData
     }
+  );
 
-    function displayImage(url) {
-      const img = document.createElement("img");
-      img.src = url;
-      document.getElementById("gallery").appendChild(img);
-    }
+  const data = await res.json();
 
-    function saveImage(url) {
-      let images = JSON.parse(localStorage.getItem("gallery")) || [];
-      images.push(url);
-      localStorage.setItem("gallery", JSON.stringify(images));
-    }
+  if (data.secure_url) {
+    images.push(data.secure_url);
+    localStorage.setItem("gallery", JSON.stringify(images));
 
-    function loadImages() {
-      let images = JSON.parse(localStorage.getItem("gallery")) || [];
-      images.forEach(displayImage);
-    }
-  </script>
+    addCard(data.secure_url);
+    document.getElementById("imageUpload").value = "";
+  } else {
+    alert("Upload failed.");
+  }
+}
+
+function renderGallery() {
+  document.getElementById("gallery").innerHTML = "";
+  images.forEach(url => addCard(url));
+}
+
+function addCard(url) {
+  const card = document.createElement("div");
+  card.className = "card";
+
+  const img = document.createElement("img");
+  img.src = url;
+
+  const btn = document.createElement("button");
+  btn.className = "delete";
+  btn.textContent = "Delete";
+
+  btn.onclick = () => {
+    images = images.filter(i => i !== url);
+    localStorage.setItem("gallery", JSON.stringify(images));
+    renderGallery();
+  };
+
+  card.appendChild(img);
+  card.appendChild(btn);
+
+  document.getElementById("gallery").appendChild(card);
+}
+</script>
 
 </body>
 </html>
