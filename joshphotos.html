@@ -50,9 +50,10 @@ button {
 import { createClient }
 from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// ✅ YOUR CORRECT VALUES
 const supabaseUrl = "https://bhswvbdarzerwlfoykqh.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJoc3d2YmRhcnplcndsZm95a3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDQyMDAsImV4cCI6MjA5NTM4MDIwMH0.tu0DiUIYCZovBRhGSW1Wsu9FKl2m3BXck0_W343q5Pk";
+
+const supabaseKey =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJoc3d2YmRhcnplcndsZm95a3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDQyMDAsImV4cCI6MjA5NTM4MDIwMH0.tu0DiUIYCZovBRhGSW1Wsu9FKl2m3BXck0_W343q5Pk";
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -61,29 +62,38 @@ const bucket = "photos";
 async function upload() {
   const file = document.getElementById("file").files[0];
 
-  if (!file) return alert("Select a file");
+  if (!file) {
+    alert("Select a file");
+    return;
+  }
 
   const fileName = Date.now() + "-" + file.name;
 
   const { error } = await supabase.storage
     .from(bucket)
-    .upload(fileName, file);
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false
+    });
 
   if (error) {
     alert("Upload failed: " + error.message);
     return;
   }
 
-  loadImages();
+  await loadImages();
 }
 
 async function loadImages() {
   const { data, error } = await supabase.storage
     .from(bucket)
-    .list();
+    .list("", {
+      limit: 100,
+      sortBy: { column: "name", order: "desc" }
+    });
 
   if (error) {
-    alert(error.message);
+    alert("Load failed: " + error.message);
     return;
   }
 
@@ -91,6 +101,7 @@ async function loadImages() {
   gallery.innerHTML = "";
 
   for (const file of data) {
+
     const { data: urlData } = supabase.storage
       .from(bucket)
       .getPublicUrl(file.name);
@@ -102,7 +113,7 @@ async function loadImages() {
     img.src = urlData.publicUrl;
 
     const btn = document.createElement("button");
-    btn.textContent = "Delete (local only)";
+    btn.textContent = "Remove (local only)";
     btn.onclick = () => card.remove();
 
     card.appendChild(img);
