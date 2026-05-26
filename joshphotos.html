@@ -1,28 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Photo Gallery with Upload</title>
+<meta charset="UTF-8">
+<title>Photo Gallery</title>
 
 <style>
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   text-align: center;
   background: #f0f0f0;
-}
-
-h1 {
-  margin-top: 20px;
-}
-
-#uploadForm {
-  margin: 20px;
-}
-
-button {
-  padding: 10px 15px;
-  cursor: pointer;
 }
 
 .gallery {
@@ -37,105 +23,96 @@ button {
   background: white;
   padding: 10px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-.card img {
+img {
   width: 300px;
   border-radius: 8px;
 }
 
-.delete {
-  margin-top: 8px;
-  background: red;
-  color: white;
-  border: none;
+button {
+  margin-top: 5px;
   padding: 6px 10px;
-  border-radius: 5px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Josh Hambling's Photography</h1>
+<h1>Josh Hambling Photography</h1>
 
-<input type="file" id="imageUpload" accept="image/*">
-<button onclick="uploadImage()">Upload Image</button>
+<input type="file" id="file">
+<button onclick="upload()">Upload</button>
 
 <div class="gallery" id="gallery"></div>
 
-<script>
-const cloudName = "dlquvrodn";
-const uploadPreset = "BusBase Photos";
+<script type="module">
+import { createClient }
+from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-let images = JSON.parse(localStorage.getItem("gallery")) || [];
+// ✅ YOUR CORRECT VALUES
+const supabaseUrl = "https://bhswvbdarzerwlfoykqh.supabase.co";
+const supabaseKey = "sb_publishable_mPrJkOk6wNivsBOE7dBOWQ_lvC57-pl";
 
-renderGallery();
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-async function uploadImage() {
-  const file = document.getElementById("imageUpload").files[0];
+const bucket = "photos";
 
-  if (!file) {
-    alert("Please choose an image.");
+async function upload() {
+  const file = document.getElementById("file").files[0];
+
+  if (!file) return alert("Select a file");
+
+  const fileName = Date.now() + "-" + file.name;
+
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(fileName, file);
+
+  if (error) {
+    alert("Upload failed: " + error.message);
     return;
   }
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", uploadPreset);
+  loadImages();
+}
 
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-    {
-      method: "POST",
-      body: formData
-    }
-  );
+async function loadImages() {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .list();
 
-  const data = await res.json();
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
-  if (data.secure_url) {
-    images.push(data.secure_url);
-    localStorage.setItem("gallery", JSON.stringify(images));
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
 
-    addCard(data.secure_url);
-    document.getElementById("imageUpload").value = "";
-  } else {
-    alert("Upload failed.");
+  for (const file of data) {
+    const { data: urlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(file.name);
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const img = document.createElement("img");
+    img.src = urlData.publicUrl;
+
+    const btn = document.createElement("button");
+    btn.textContent = "Delete (local only)";
+    btn.onclick = () => card.remove();
+
+    card.appendChild(img);
+    card.appendChild(btn);
+
+    gallery.appendChild(card);
   }
 }
 
-function renderGallery() {
-  document.getElementById("gallery").innerHTML = "";
-  images.forEach(url => addCard(url));
-}
-
-function addCard(url) {
-  const card = document.createElement("div");
-  card.className = "card";
-
-  const img = document.createElement("img");
-  img.src = url;
-
-  const btn = document.createElement("button");
-  btn.className = "delete";
-  btn.textContent = "Delete";
-
-  btn.onclick = () => {
-    images = images.filter(i => i !== url);
-    localStorage.setItem("gallery", JSON.stringify(images));
-    renderGallery();
-  };
-
-  card.appendChild(img);
-  card.appendChild(btn);
-
-  document.getElementById("gallery").appendChild(card);
-}
+loadImages();
 </script>
 
 </body>
