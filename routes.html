@@ -1,202 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Lynx Bus UK Routes</title>
+<meta charset="UTF-8">
+<title>Lynx Bus Routes</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background: #f4f6f8;
-    }
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
 
-    header {
-        background: #e60000;
-        color: white;
-        padding: 20px;
-        text-align: center;
-    }
+h1 {
+  text-align: center;
+}
 
-    #search {
-        width: 90%;
-        max-width: 600px;
-        padding: 10px;
-        margin: 20px auto;
-        display: block;
-        font-size: 16px;
-    }
+.search {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
 
-    .container {
-        max-width: 900px;
-        margin: auto;
-        padding: 10px;
-    }
+/* ROUTE CARD */
+.route {
+  background: white;
+  margin-bottom: 10px;
+  border-left: 5px solid #ff6600;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+}
 
-    .route {
-        background: white;
-        padding: 15px;
-        margin: 10px 0;
-        border-radius: 8px;
-        cursor: pointer;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
+.route-header {
+  padding: 15px;
+}
 
-    .route:hover {
-        background: #fff3f3;
-    }
+.route-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
 
-    .details {
-        display: none;
-        margin-top: 10px;
-        color: #333;
-    }
+.meta {
+  font-size: 14px;
+  color: #555;
+}
 
-    .via {
-        color: #666;
-        font-size: 14px;
-    }
+/* DROPDOWN */
+.details {
+  display: none;
+  padding: 0 15px 15px 15px;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+}
+
+.open .details {
+  display: block;
+}
+
+.tag {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #eee;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.new {
+  background: #ff6600;
+  color: white;
+}
+
+/* BACK BUTTON */
+.back-btn {
+  display: block;
+  width: 100%;
+  margin-top: 25px;
+  padding: 14px;
+  background: #d60000;
+  color: white;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background: #b80000;
+}
 </style>
 </head>
 
 <body>
 
-<header>
-    <h1>Lynx Bus UK Routes</h1>
-    <p>All routes + where they go via</p>
-</header>
+<h1>Lynx Bus Routes</h1>
 
-<input type="text" id="search" placeholder="Search route number or place...">
+<input class="search" id="search" placeholder="Search routes...">
 
-<div class="container" id="routes"></div>
+<div id="routes"></div>
+
+<!-- 🔴 BACK BUTTON -->
+<a class="back-btn" href="https://frankieandbenny120956-source.github.io/BusBase-Bus-List/index.html">
+  Back to Fleet List
+</a>
 
 <script>
+
 const routes = [
-    {
-        number: "33 / 33A",
-        from: "King's Lynn",
-        to: "Hunstanton / Docking",
-        via: "QE Hospital, Hillington, The Birchams, Sedgeford"
-    },
-    {
-        number: "34 / 35 / Coastliner 36",
-        from: "King's Lynn",
-        to: "Hunstanton → Wells-next-the-Sea → Fakenham",
-        via: "QE Hospital (34), Sandringham (35), Dersingham, Snettisham, Heacham"
-    },
-    {
-        number: "37",
-        from: "King's Lynn",
-        to: "Downham Market",
-        via: "West Winch, Hardwick Retail Park, Hilgay, Southery, Ten Mile Bank"
-    },
-    {
-        number: "38",
-        from: "King's Lynn",
-        to: "Fair Green",
-        via: "West Winch, Hardwick Retail Park"
-    },
-    {
-        number: "39",
-        from: "King's Lynn",
-        to: "Marham",
-        via: "West Winch, Hardwick Retail Park, Shouldham"
-    },
-    {
-        number: "41",
-        from: "King's Lynn",
-        to: "King's Reach",
-        via: "Fairstead, Gaywood, QE Hospital"
-    },
-    {
-        number: "42",
-        from: "King's Lynn",
-        to: "Fairstead",
-        via: "Gaywood"
-    },
-    {
-        number: "46 / X46",
-        from: "King's Lynn",
-        to: "Wisbech",
-        via: "Saddlebow, Islington, Terrington St John, Tilney St Lawrence, West Walton"
-    },
-    {
-        number: "48 / 49 / 49A",
-        from: "King's Lynn",
-        to: "Fakenham",
-        via: "Grimston, Gayton, Great Massingham, The Rudhams"
-    },
-    {
-        number: "54",
-        from: "King's Lynn",
-        to: "The Walpoles",
-        via: "South Lynn, Clenchwarton, Tilney All Saints"
-    },
-    {
-        number: "60",
-        from: "Wisbech",
-        to: "Downham Market",
-        via: "Emneth, Outwell, Upwell, Three Holes"
-    }
+
+  // ===== 33 FAMILY =====
+  {
+    number: "33",
+    from: "King's Lynn",
+    to: "Hunstanton",
+    via: "QE Hospital • Hillington • Sedgeford",
+    frequency: "Every 30–60 mins",
+    tag: "Main",
+    extra: "Main coastal trunk route between King's Lynn and Hunstanton."
+  },
+
+  {
+    number: "33B",
+    from: "Hunstanton",
+    to: "Ringstead Loop",
+    via: "Ringstead • Docking area villages",
+    frequency: "Hourly (from 1 June)",
+    tag: "NEW LOOP",
+    extra: "Rural loop serving Ringstead and surrounding villages."
+  },
+
+  {
+    number: "33C",
+    from: "King's Lynn",
+    to: "Hunstanton (Loop Service)",
+    via: "QE Hospital • Bircham • Sedgeford circular",
+    frequency: "Hourly (from 1 June)",
+    tag: "NEW LOOP",
+    extra: "New circular loop variant introduced 1st June."
+  },
+
+  // ===== COASTAL =====
+  {
+    number: "34",
+    from: "King's Lynn",
+    to: "Hunstanton",
+    via: "Snettisham • Dersingham • Heacham",
+    frequency: "Hourly",
+    tag: "Coastal",
+    extra: "Serves Snettisham and Dersingham villages."
+  },
+
+  {
+    number: "35",
+    from: "King's Lynn",
+    to: "Hunstanton",
+    via: "Sandringham • Heacham",
+    frequency: "Hourly",
+    tag: "Coastal",
+    extra: "Main Sandringham corridor route."
+  },
+
+  {
+    number: "36 Coastliner",
+    from: "King's Lynn",
+    to: "Fakenham",
+    via: "Hunstanton • Wells-next-the-Sea",
+    frequency: "Hourly",
+    tag: "Express",
+    extra: "Coastliner coastal express service."
+  },
+
+  // ===== TOWN =====
+  {
+    number: "41",
+    from: "King's Lynn",
+    to: "King's Reach",
+    via: "Fairstead • QE Hospital",
+    frequency: "Every 30–60 mins",
+    tag: "Town",
+    extra: "Urban estate service."
+  },
+
+  {
+    number: "42",
+    from: "King's Lynn",
+    to: "Fairstead",
+    via: "Gaywood",
+    frequency: "Every 30–60 mins",
+    tag: "Town",
+    extra: "Local estate circular."
+  },
+
+  {
+    number: "44",
+    from: "King's Lynn",
+    to: "King's Lynn Loop",
+    via: "Gaywood • Fairstead • Hardwick • Town Centre",
+    frequency: "Every 30 mins (from 1 June)",
+    tag: "NEW LOOP",
+    extra: "New circular town loop introduced 1st June."
+  },
+
+  // ===== RURAL / INTERURBAN =====
+  {
+    number: "37",
+    from: "King's Lynn",
+    to: "Downham Market",
+    via: "West Winch • Southery",
+    frequency: "Hourly–2 hourly",
+    tag: "Rural",
+    extra: "Key rural link service."
+  },
+
+  {
+    number: "38",
+    from: "King's Lynn",
+    to: "Fair Green",
+    via: "Hardwick • West Winch",
+    frequency: "Hourly",
+    tag: "Local",
+    extra: "Short local connector."
+  },
+
+  {
+    number: "39",
+    from: "King's Lynn",
+    to: "Marham",
+    via: "Shouldham • RAF Marham",
+    frequency: "Hourly–2 hourly",
+    tag: "Rural",
+    extra: "RAF Marham service."
+  },
+
+  {
+    number: "46 / X46",
+    from: "King's Lynn",
+    to: "Wisbech",
+    via: "Terrington • Walpole • St Germans",
+    frequency: "Hourly",
+    tag: "Interurban",
+    extra: "Cross-county Fenland link."
+  },
+
+  {
+    number: "48 / 49 / 49A",
+    from: "King's Lynn",
+    to: "Fakenham",
+    via: "Gayton • Grimston • Great Massingham",
+    frequency: "Hourly combined",
+    tag: "Rural",
+    extra: "Grouped rural corridor services."
+  },
+
+  {
+    number: "60",
+    from: "Wisbech",
+    to: "Downham Market",
+    via: "Outwell • Upwell • Three Holes",
+    frequency: "Hourly–2 hourly",
+    tag: "Cross-county",
+    extra: "Fenland cross-county route."
+  }
+
 ];
 
-const container = document.getElementById("routes");
-const search = document.getElementById("search");
+function render(list) {
+  const container = document.getElementById("routes");
+  container.innerHTML = "";
 
-function displayRoutes(filter = "") {
-    container.innerHTML = "";
+  list.forEach(r => {
+    container.innerHTML += `
+      <div class="route" onclick="this.classList.toggle('open')">
+        <div class="route-header">
+          <h2>Route ${r.number}</h2>
+          <div class="meta"><b>${r.from}</b> → <b>${r.to}</b></div>
+          <div class="tag ${r.tag.includes("NEW") ? "new" : ""}">
+            ${r.tag}
+          </div>
+        </div>
 
-    routes
-        .filter(r =>
-            r.number.toLowerCase().includes(filter) ||
-            r.from.toLowerCase().includes(filter) ||
-            r.to.toLowerCase().includes(filter) ||
-            r.via.toLowerCase().includes(filter)
-        )
-        .forEach(route => {
-            const div = document.createElement("div");
-            div.className = "route";
-
-            div.innerHTML = `
-                <strong>Route ${route.number}</strong><br>
-                ${route.from} → ${route.to}
-                <div class="details">
-                    <p class="via"><b>Via:</b> ${route.via}</p>
-                </div>
-            `;
-
-            div.addEventListener("click", () => {
-                const details = div.querySelector(".details");
-                details.style.display =
-                    details.style.display === "block" ? "none" : "block";
-            });
-
-            container.appendChild(div);
-        });
+        <div class="details">
+          <div class="meta"><b>Via:</b> ${r.via}</div>
+          <div class="meta"><b>Frequency:</b> ${r.frequency}</div>
+          <div class="meta" style="margin-top:8px;">${r.extra}</div>
+        </div>
+      </div>
+    `;
+  });
 }
 
-search.addEventListener("input", e => {
-    displayRoutes(e.target.value.toLowerCase());
+document.getElementById("search").addEventListener("input", e => {
+  const q = e.target.value.toLowerCase();
+  render(routes.filter(r =>
+    r.number.toLowerCase().includes(q) ||
+    r.from.toLowerCase().includes(q) ||
+    r.to.toLowerCase().includes(q)
+  ));
 });
 
-displayRoutes();
-</script>
+render(routes);
 
-<div style="margin:20px;">
-    <a href="index.html"
-       style="
-       display:inline-block;
-       padding:12px 20px;
-       background:#e60000;
-       color:white;
-       text-decoration:none;
-       border-radius:8px;
-       font-weight:bold;">
-       Back to Fleet List
-    </a>
-</div>
+</script>
 
 </body>
 </html>
-
