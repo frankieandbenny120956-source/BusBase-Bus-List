@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Photo Gallery</title>
+<title>Shared Photo Gallery</title>
 
 <style>
 body {
@@ -34,7 +34,7 @@ img {
 
 <body>
 
-<h1>Photo Upload Site</h1>
+<h1>Shared Photo Gallery</h1>
 
 <input type="file" id="file">
 <button onclick="uploadImage()">Upload</button>
@@ -44,10 +44,9 @@ img {
 <script>
 const cloudName = "dlquvrodn";
 const uploadPreset = "galleryupload";
+const tag = "busbase_gallery";
 
-let images = JSON.parse(localStorage.getItem("gallery")) || [];
-render();
-
+// Upload image
 async function uploadImage() {
   const file = document.getElementById("file").files[0];
   if (!file) return alert("Select a file");
@@ -55,6 +54,7 @@ async function uploadImage() {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", uploadPreset);
+  formData.append("tags", tag);
 
   const res = await fetch(
     `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
@@ -67,30 +67,37 @@ async function uploadImage() {
   const data = await res.json();
 
   if (data.secure_url) {
-    images.push(data.secure_url);
-    localStorage.setItem("gallery", JSON.stringify(images));
-    render();
+    loadImages();
   } else {
     alert("Upload failed");
   }
 }
 
-function render() {
+// Load ALL images from Cloudinary
+async function loadImages() {
+  const res = await fetch(
+    `https://res.cloudinary.com/${cloudName}/image/list/${tag}.json`
+  );
+
+  const data = await res.json();
+
   const gallery = document.getElementById("gallery");
   gallery.innerHTML = "";
 
-  images.forEach(url => {
+  data.resources.forEach(img => {
     const card = document.createElement("div");
     card.className = "card";
 
-    const img = document.createElement("img");
-    img.src = url;
+    const image = document.createElement("img");
+    image.src = img.secure_url;
 
-    card.appendChild(img);
+    card.appendChild(image);
     gallery.appendChild(card);
   });
 }
+
+loadImages();
 </script>
 
 </body>
-</html>
+</html>>
