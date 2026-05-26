@@ -29,101 +29,67 @@ img {
   width: 300px;
   border-radius: 8px;
 }
-
-button {
-  margin-top: 5px;
-  padding: 6px 10px;
-}
 </style>
 </head>
 
 <body>
 
-<h1>Josh Hambling Photography</h1>
+<h1>Photo Upload Site</h1>
 
 <input type="file" id="file">
-<button onclick="upload()">Upload</button>
+<button onclick="uploadImage()">Upload</button>
 
 <div class="gallery" id="gallery"></div>
 
-<script type="module">
-import { createClient }
-from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+<script>
+const cloudName = "dlquvrodn";
+const uploadPreset = "galleryupload";
 
-const supabaseUrl = "https://bhswvbdarzerwlfoykqh.supabase.co";
+let images = JSON.parse(localStorage.getItem("gallery")) || [];
+render();
 
-const supabaseKey =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJoc3d2YmRhcnplcndsZm95a3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDQyMDAsImV4cCI6MjA5NTM4MDIwMH0.tu0DiUIYCZovBRhGSW1Wsu9FKl2m3BXck0_W343q5Pk";
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-const bucket = "photos";
-
-async function upload() {
+async function uploadImage() {
   const file = document.getElementById("file").files[0];
+  if (!file) return alert("Select a file");
 
-  if (!file) {
-    alert("Select a file");
-    return;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    {
+      method: "POST",
+      body: formData
+    }
+  );
+
+  const data = await res.json();
+
+  if (data.secure_url) {
+    images.push(data.secure_url);
+    localStorage.setItem("gallery", JSON.stringify(images));
+    render();
+  } else {
+    alert("Upload failed");
   }
-
-  const fileName = Date.now() + "-" + file.name;
-
-  const { error } = await supabase.storage
-    .from(bucket)
-    .upload(fileName, file, {
-      cacheControl: "3600",
-      upsert: false
-    });
-
-  if (error) {
-    alert("Upload failed: " + error.message);
-    return;
-  }
-
-  await loadImages();
 }
 
-async function loadImages() {
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .list("", {
-      limit: 100,
-      sortBy: { column: "name", order: "desc" }
-    });
-
-  if (error) {
-    alert("Load failed: " + error.message);
-    return;
-  }
-
+function render() {
   const gallery = document.getElementById("gallery");
   gallery.innerHTML = "";
 
-  for (const file of data) {
-
-    const { data: urlData } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(file.name);
-
+  images.forEach(url => {
     const card = document.createElement("div");
     card.className = "card";
 
     const img = document.createElement("img");
-    img.src = urlData.publicUrl;
-
-    const btn = document.createElement("button");
-    btn.textContent = "Remove (local only)";
-    btn.onclick = () => card.remove();
+    img.src = url;
 
     card.appendChild(img);
-    card.appendChild(btn);
-
     gallery.appendChild(card);
-  }
+  });
 }
-
-loadImages();
 </script>
 
 </body>
