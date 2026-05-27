@@ -4,247 +4,123 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Website Updates | BusBase</title>
-
 <style>
+
 :root {
-    --bg: linear-gradient(to bottom, #eef3f8, #dce7f2);
-    --text: #222;
-    --header: #003366;
-    --nav: #00509e;
-    --card: #ffffff;
-    --muted: #666;
-    --shadow: rgba(0,0,0,0.08);
-    --detail: #f8fbff;
+  --bg: radial-gradient(circle at left 35%, rgba(148,163,184,.38), transparent 26%), linear-gradient(135deg,#020817 0%,#0b1220 52%,#111827 100%);
+  --text:#f8fafc;
+  --muted:#cbd5e1;
+  --header:#061a35;
+  --nav:#073b82;
+  --nav2:#05265a;
+  --card:rgba(30,41,59,.78);
+  --card-solid:#1e293b;
+  --border:rgba(226,232,240,.35);
+  --table-line:rgba(226,232,240,.14);
+  --shadow:rgba(0,0,0,.38);
+  --accent:#1d6fe9;
 }
-body.dark {
-    --bg: linear-gradient(to bottom, #111827, #1f2937);
-    --text: #f3f4f6;
-    --header: #020617;
-    --nav: #0f172a;
-    --card: #1e293b;
-    --muted: #cbd5e1;
-    --shadow: rgba(0,0,0,0.35);
-    --detail: #334155;
+body.light {
+  --bg: radial-gradient(circle at left 35%, rgba(148,163,184,.30), transparent 26%), linear-gradient(135deg,#edf5ff 0%,#dcecff 48%,#eef5ff 100%);
+  --text:#07122b;
+  --muted:#40516c;
+  --header:#061a35;
+  --nav:#073b82;
+  --nav2:#05265a;
+  --card:rgba(255,255,255,.88);
+  --card-solid:#ffffff;
+  --border:rgba(15,23,42,.16);
+  --table-line:rgba(15,23,42,.13);
+  --shadow:rgba(15,23,42,.16);
+  --accent:#0969da;
 }
-
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: var(--bg);
-    margin: 0;
-    padding: 0;
-    color: var(--text);
-}
-
-header {
-    background: var(--header);
-    color: white;
-    padding: 25px;
-    text-align: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2.2em;
-}
-
-nav {
-    background: var(--nav);
-    text-align: center;
-    padding: 12px;
-}
-
-nav a, nav button {
-    color: white;
-    text-decoration: none;
-    margin: 0 15px;
-    font-weight: bold;
-    transition: 0.2s;
-}
-
-nav a:hover, nav button:hover {
-    color: #cce5ff;
-}
-
-.container {
-    max-width: 950px;
-    margin: 30px auto;
-    padding: 20px;
-}
-
-.update-entry {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px var(--shadow);
-    border-left: 8px solid #00509e;
-    transition: transform 0.2s ease;
-}
-
-.update-entry:hover {
-    transform: translateY(-3px);
-}
-
-.date {
-    font-size: 0.9em;
-    color: var(--muted);
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-h2 {
-    margin: 0 0 10px 0;
-    color: #003366;
-}
-
-ul {
-    margin: 0;
-    padding-left: 20px;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    background: var(--header);
-    color: white;
-    margin-top: 40px;
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.brand-header{background:linear-gradient(180deg,#061a35,#020817);padding:18px 16px 16px;text-align:center;box-shadow:0 10px 35px rgba(0,0,0,.35)}
+.logo{width:190px;max-width:62vw;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));}
+nav{background:linear-gradient(180deg,var(--nav),var(--nav2));display:flex;justify-content:center;align-items:center;gap:26px;padding:13px 16px;flex-wrap:wrap;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+nav a,nav button{color:#fff;text-decoration:none;font-weight:800;font-size:15px;background:none;border:0;cursor:pointer;font-family:inherit;padding:7px 0;position:relative;}
+nav a.active::after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:3px;background:#fff;border-radius:999px;}
+.theme-toggle{background:rgba(2,8,23,.55)!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:9px!important;padding:9px 17px!important;box-shadow:0 4px 12px rgba(0,0,0,.24)}
+main{max-width:1160px;margin:0 auto;padding:46px 22px 50px;}
+.page-title{text-align:center;margin-bottom:30px;}
+.page-title h1{font-size:clamp(2rem,4vw,3.2rem);line-height:1.1;margin:0 0 12px;font-weight:900;letter-spacing:-.04em;}
+.page-title p{margin:0;color:var(--muted);font-weight:700;font-size:1.05rem;}
+.card,.intro-card,.update-card,.update-entry,.stat-card,.route{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 18px 45px var(--shadow);backdrop-filter:blur(12px);}
+footer{background:rgba(2,8,23,.66);border-top:1px solid rgba(255,255,255,.08);color:#fff;text-align:center;font-weight:900;padding:21px;margin-top:18px;}
+.badge,.tag{display:inline-block;border-radius:8px;background:#0b67db;color:#fff;font-weight:900;padding:6px 11px;font-size:.86rem}.new{background:#16a34a!important}.planned{background:#f59e0b!important}
+@media(max-width:700px){.logo{width:145px}nav{gap:12px}nav a,nav button{font-size:13px}.theme-toggle{padding:7px 12px!important}main{padding:30px 14px}.page-title h1{font-size:2rem}}
 
 
-nav button, .dark-toggle {
-    color: white;
-    text-decoration: none;
-    margin: 0 15px;
-    font-weight: bold;
-    transition: 0.2s;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-}
-
-body.dark h2,
-body.dark .intro-card h2,
-body.dark .route-header h2 {
-    color: #e5e7eb;
-}
-
-body.dark td {
-    border-bottom-color: rgba(255,255,255,0.12);
-}
-
-body.dark tbody tr:not(.details):hover,
-body.dark .route:hover,
-body.dark .update-card:hover,
-body.dark .update-entry:hover,
-body.dark .stat-card:hover {
-    background-color: rgba(255,255,255,0.04);
-}
+.timeline{position:relative;max-width:760px;margin:0 auto}.timeline:before{content:"";position:absolute;left:36px;top:8px;bottom:8px;width:4px;background:linear-gradient(#1d6fe9,#0b67db);border-radius:999px}.update-entry{display:grid;grid-template-columns:80px 1fr 80px;gap:18px;align-items:center;margin-bottom:14px;padding:16px 18px 16px 95px;position:relative}.update-entry:before{content:"";position:absolute;left:27px;width:22px;height:22px;border-radius:50%;background:#1d6fe9;box-shadow:0 0 0 6px rgba(29,111,233,.18)}.date{font-weight:900;text-align:center;line-height:1.05}.date strong{display:block;font-size:1.45rem}.update-entry h2{margin:0 0 5px;font-size:1.1rem}.update-entry p{margin:0;color:var(--muted);font-weight:650}.status{justify-self:end}.update-pill{background:#0b67db;color:#fff;border-radius:7px;font-weight:900;padding:6px 10px;font-size:.78rem}@media(max-width:700px){.timeline:before{display:none}.update-entry{grid-template-columns:1fr;padding:20px}.update-entry:before{display:none}.date{text-align:left}.status{justify-self:start}}
 
 </style>
 </head>
-
 <body>
-
-<header>
-    <h1>Website Updates</h1>
+<header class="brand-header">
+  <img class="logo" src="busbase-logo-removebg-preview.png" alt="BusBase logo">
 </header>
-
 <nav>
-    <a href="index.html">Fleet List</a>
-    <a href="routes.html">Routes</a>
-    <a href="upcoming.html">Upcoming Changes</a>
-    <a href="updates.html">Website Updates</a>
-    <a href="stats.html">Fleet Statistics</a>
-    <button type="button" class="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+  <a href="index.html" class="">Fleet List</a><a href="routes.html" class="">Routes</a><a href="upcoming.html" class="">Upcoming Changes</a><a href="updates.html" class="active">Website Updates</a><a href="stats.html" class="">Fleet Statistics</a>
+  <button type="button" class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
 </nav>
-
-<div class="container">
-
-    <div class="update-entry">
-        <div class="date">27 May 2026</div>
-        <h2>Dark Mode Added</h2>
-        <ul>
-            <li>Added a Dark Mode / Light Mode button to the website navigation</li>
-            <li>Dark mode now saves using localStorage, so the setting stays on when changing pages</li>
-            <li>Updated page backgrounds, cards, tables, route cards and text colours for dark mode</li>
-            <li>Fixed the dark mode button so it works properly across the site</li>
-        </ul>
+<main>
+  <section class="page-title">
+    <h1>Website Updates</h1>
+    <p>Latest BusBase site changes</p>
+  </section>
+<section class="timeline">
+  <div class="update-entry">
+    <div class="date"><strong>27</strong>May<br>2026</div>
+    <div>
+      <h2>Dark Mode Added</h2>
+      <p>Added Dark Mode / Light Mode, saving with localStorage across pages.</p>
     </div>
+    <div class="status"><span class="update-pill">Update</span></div>
+  </div>
 
-    <div class="update-entry">
-        <div class="date">27 May 2026</div>
-        <h2>Fleet Statistics Page Added</h2>
-        <ul>
-            <li>Added a new Fleet Statistics page</li>
-            <li>Included total vehicles, single deckers, double deckers and onboard feature counts</li>
-            <li>Added a vehicle type breakdown table</li>
-            <li>Added Fleet Statistics to the main navigation</li>
-        </ul>
+  <div class="update-entry">
+    <div class="date"><strong>27</strong>May<br>2026</div>
+    <div>
+      <h2>Fleet Statistics Page Added</h2>
+      <p>New stats page with vehicle counts and type breakdown.</p>
     </div>
+    <div class="status"><span class="update-pill">Update</span></div>
+  </div>
 
-    <div class="update-entry">
-        <div class="date">27 May 2026</div>
-        <h2>Website Update Completed</h2>
-        <ul>
-            <li>Added Upcoming Changes page</li>
-            <li>Improved website navigation</li>
-            <li>Updated overall page styling</li>
-        </ul>
+  <div class="update-entry">
+    <div class="date"><strong>27</strong>May<br>2026</div>
+    <div>
+      <h2>Website Update Completed</h2>
+      <p>Added Upcoming Changes page and improved navigation.</p>
     </div>
+    <div class="status"><span class="update-pill">Update</span></div>
+  </div>
 
-    <div class="update-entry">
-        <div class="date">27 May 2026</div>
-        <h2>New Website Layout Complete</h2>
-        <ul>
-            <li>Redesigned the Fleet List layout</li>
-            <li>Updated the Route Page to match the new BusBase design</li>
-            <li>Updated the Fleet List to match Upcoming Changes and Website Updates</li>
-        </ul>
+  <div class="update-entry">
+    <div class="date"><strong>27</strong>May<br>2026</div>
+    <div>
+      <h2>New Website Layout Complete</h2>
+      <p>Redesigned Fleet List and Route pages.</p>
     </div>
+    <div class="status"><span class="update-pill">Update</span></div>
+  </div>
 
-    <div class="update-entry">
-        <div class="date">Future Updates</div>
-        <h2>Planned Additions</h2>
-        <ul>
-            <li>Tracking system</li>
-            <li>User Photography Site</li>
-            <li>User Account System</li>
-        </ul>
+  <div class="update-entry">
+    <div class="date"><strong>27</strong>May<br>2026</div>
+    <div>
+      <h2>Full BusBase Redesign</h2>
+      <p>Added the new BusBase logo, full modern dashboard redesign, updated all 5 pages, improved styling, dark/light mode polish, and general bug fixes.</p>
     </div>
-</div>
+    <div class="status"><span class="update-pill">Major Update</span></div>
+  </div>
 
-<footer>
-    BusBase Fleet Information
-</footer>
-
-
-<script>
-function toggleDarkMode() {
-    document.body.classList.toggle('dark');
-    const isDark = document.body.classList.contains('dark');
-    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-
-    const button = document.querySelector('.dark-toggle');
-    if (button) {
-        button.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-    }
-}
-
-function applySavedTheme() {
-    const isDark = localStorage.getItem('darkMode') === 'true';
-    document.body.classList.toggle('dark', isDark);
-
-    const button = document.querySelector('.dark-toggle');
-    if (button) {
-        button.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-    }
-}
-
-applySavedTheme();
-</script>
-
-</body>
-</html>
+  <div class="update-entry">
+    <div class="date"><strong>Future</strong>TBA</div>
+    <div>
+      <h2>Planned Additions</h2>
+      <p>Tracking system, photography site, user accounts.</p>
+    </div>
+    <div class="status"><span class="update-pill planned">Planned</span></div>
+  </div>
+</section>

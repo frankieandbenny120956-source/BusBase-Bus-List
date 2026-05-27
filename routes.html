@@ -4,276 +4,92 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lynx Bus Routes | BusBase</title>
-
 <style>
+
 :root {
-    --bg: linear-gradient(to bottom, #eef3f8, #dce7f2);
-    --text: #222;
-    --header: #003366;
-    --nav: #00509e;
-    --card: #ffffff;
-    --muted: #555;
-    --shadow: rgba(0,0,0,0.08);
-    --detail: #f8fbff;
-    --border: #dbe8f5;
-    --input-border: #c6d7e8;
+  --bg: radial-gradient(circle at left 35%, rgba(148,163,184,.38), transparent 26%), linear-gradient(135deg,#020817 0%,#0b1220 52%,#111827 100%);
+  --text:#f8fafc;
+  --muted:#cbd5e1;
+  --header:#061a35;
+  --nav:#073b82;
+  --nav2:#05265a;
+  --card:rgba(30,41,59,.78);
+  --card-solid:#1e293b;
+  --border:rgba(226,232,240,.35);
+  --table-line:rgba(226,232,240,.14);
+  --shadow:rgba(0,0,0,.38);
+  --accent:#1d6fe9;
 }
-
-body.dark {
-    --bg: linear-gradient(to bottom, #111827, #1f2937);
-    --text: #f3f4f6;
-    --header: #020617;
-    --nav: #0f172a;
-    --card: #1e293b;
-    --muted: #cbd5e1;
-    --shadow: rgba(0,0,0,0.35);
-    --detail: #334155;
-    --border: rgba(255,255,255,0.10);
-    --input-border: rgba(255,255,255,0.18);
+body.light {
+  --bg: radial-gradient(circle at left 35%, rgba(148,163,184,.30), transparent 26%), linear-gradient(135deg,#edf5ff 0%,#dcecff 48%,#eef5ff 100%);
+  --text:#07122b;
+  --muted:#40516c;
+  --header:#061a35;
+  --nav:#073b82;
+  --nav2:#05265a;
+  --card:rgba(255,255,255,.88);
+  --card-solid:#ffffff;
+  --border:rgba(15,23,42,.16);
+  --table-line:rgba(15,23,42,.13);
+  --shadow:rgba(15,23,42,.16);
+  --accent:#0969da;
 }
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.brand-header{background:linear-gradient(180deg,#061a35,#020817);padding:18px 16px 16px;text-align:center;box-shadow:0 10px 35px rgba(0,0,0,.35)}
+.logo{width:190px;max-width:62vw;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));}
+nav{background:linear-gradient(180deg,var(--nav),var(--nav2));display:flex;justify-content:center;align-items:center;gap:26px;padding:13px 16px;flex-wrap:wrap;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+nav a,nav button{color:#fff;text-decoration:none;font-weight:800;font-size:15px;background:none;border:0;cursor:pointer;font-family:inherit;padding:7px 0;position:relative;}
+nav a.active::after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:3px;background:#fff;border-radius:999px;}
+.theme-toggle{background:rgba(2,8,23,.55)!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:9px!important;padding:9px 17px!important;box-shadow:0 4px 12px rgba(0,0,0,.24)}
+main{max-width:1160px;margin:0 auto;padding:46px 22px 50px;}
+.page-title{text-align:center;margin-bottom:30px;}
+.page-title h1{font-size:clamp(2rem,4vw,3.2rem);line-height:1.1;margin:0 0 12px;font-weight:900;letter-spacing:-.04em;}
+.page-title p{margin:0;color:var(--muted);font-weight:700;font-size:1.05rem;}
+.card,.intro-card,.update-card,.update-entry,.stat-card,.route{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 18px 45px var(--shadow);backdrop-filter:blur(12px);}
+footer{background:rgba(2,8,23,.66);border-top:1px solid rgba(255,255,255,.08);color:#fff;text-align:center;font-weight:900;padding:21px;margin-top:18px;}
+.badge,.tag{display:inline-block;border-radius:8px;background:#0b67db;color:#fff;font-weight:900;padding:6px 11px;font-size:.86rem}.new{background:#16a34a!important}.planned{background:#f59e0b!important}
+@media(max-width:700px){.logo{width:145px}nav{gap:12px}nav a,nav button{font-size:13px}.theme-toggle{padding:7px 12px!important}main{padding:30px 14px}.page-title h1{font-size:2rem}}
 
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: var(--bg);
-    margin: 0;
-    padding: 0;
-    color: var(--text);
-}
 
-header {
-    background: var(--header);
-    color: white;
-    padding: 25px;
-    text-align: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-}
+.search{width:100%;padding:16px 18px;border-radius:14px;border:1px solid var(--border);background:var(--card);color:var(--text);box-shadow:0 14px 35px var(--shadow);font-size:1rem;margin-bottom:22px}.search::placeholder{color:var(--muted)}
+.route{display:grid;grid-template-columns:92px 1fr 120px 30px;align-items:center;margin-bottom:14px;overflow:hidden}.route-date{height:100%;background:rgba(29,111,233,.16);border-left:8px solid var(--accent);display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:104px;font-weight:900}.route-date strong{font-size:1.85rem;line-height:1}.route-date span{font-size:.82rem;color:var(--muted);text-align:center}.route-header{padding:22px 18px}.route-header h2{margin:0 0 7px;font-size:1.25rem}.meta{color:var(--muted);font-weight:650;line-height:1.5}.details{display:none;grid-column:1/-1;border-top:1px solid var(--border);padding:18px 22px;background:rgba(15,23,42,.24)}.open .details{display:block}.route-arrow{font-size:1.8rem;color:var(--muted);font-weight:900}.route-tag{text-align:center}@media(max-width:760px){.route{grid-template-columns:76px 1fr 28px}.route-tag{grid-column:2;margin:0 18px 16px;text-align:left}.route-date{min-height:90px}}
+body.light .details{background:#f3f8ff}
 
-header h1 {
-    margin: 0;
-    font-size: 2.2em;
-}
-
-header p {
-    margin: 8px 0 0;
-}
-
-nav {
-    background: var(--nav);
-    text-align: center;
-    padding: 12px;
-}
-
-nav a,
-nav button {
-    color: white;
-    text-decoration: none;
-    margin: 0 15px;
-    font-weight: bold;
-    transition: 0.2s;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    padding: 0;
-}
-
-nav a:hover,
-nav button:hover {
-    color: #cce5ff;
-}
-
-.container {
-    max-width: 950px;
-    margin: 30px auto;
-    padding: 20px;
-}
-
-.intro-card {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px var(--shadow);
-}
-
-.intro-card h2,
-.route-header h2 {
-    color: #003366;
-}
-
-body.dark .intro-card h2,
-body.dark .route-header h2 {
-    color: #e5e7eb;
-}
-
-.search {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 14px 16px;
-    margin: 0 0 22px;
-    font-size: 16px;
-    border: 1px solid var(--input-border);
-    border-radius: 12px;
-    outline: none;
-    background: var(--card);
-    color: var(--text);
-    box-shadow: 0 2px 8px var(--shadow);
-}
-
-.search::placeholder {
-    color: var(--muted);
-}
-
-.search:focus {
-    border-color: #00509e;
-}
-
-.route {
-    background: var(--card);
-    margin-bottom: 16px;
-    border-left: 8px solid #00509e;
-    border-radius: 14px;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 4px 15px var(--shadow);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.route:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 7px 20px var(--shadow);
-}
-
-.route-header {
-    padding: 18px 20px;
-}
-
-.route-header h2 {
-    margin: 0 0 8px;
-    font-size: 1.35em;
-}
-
-.meta {
-    font-size: 0.95em;
-    color: var(--muted);
-    line-height: 1.5;
-}
-
-.details {
-    display: none;
-    padding: 16px 20px 20px;
-    background: var(--detail);
-    border-top: 1px solid var(--border);
-}
-
-.open .details {
-    display: block;
-}
-
-.tag {
-    display: inline-block;
-    padding: 5px 10px;
-    background: #e7f1fb;
-    color: #003366;
-    border-radius: 20px;
-    font-size: 0.8em;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-body.dark .tag {
-    background: #334155;
-    color: #e5e7eb;
-}
-
-.new,
-body.dark .new {
-    background: #f0ad4e;
-    color: white;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    background: var(--header);
-    color: white;
-    margin-top: 40px;
-}
-
-@media (max-width: 650px) {
-    nav a,
-    nav button {
-        display: block;
-        margin: 8px 0;
-    }
-
-    header h1 {
-        font-size: 1.7em;
-    }
-
-    .container {
-        margin: 15px auto;
-        padding: 14px;
-    }
-}
 </style>
 </head>
-
 <body>
-
-<header>
+<header class="brand-header">
+  <img class="logo" src="busbase-logo-removebg-preview.png" alt="BusBase logo">
+</header>
+<nav>
+  <a href="index.html" class="">Fleet List</a><a href="routes.html" class="active">Routes</a><a href="upcoming.html" class="">Upcoming Changes</a><a href="updates.html" class="">Website Updates</a><a href="stats.html" class="">Fleet Statistics</a>
+  <button type="button" class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
+</nav>
+<main>
+  <section class="page-title">
     <h1>Lynx Bus Routes</h1>
     <p>Full network route guide</p>
-</header>
-
-<nav>
-    <a href="index.html">Fleet List</a>
-    <a href="routes.html">Routes</a>
-    <a href="upcoming.html">Upcoming Changes</a>
-    <a href="updates.html">Website Updates</a>
-    <a href="stats.html">Fleet Statistics</a>
-    <button type="button" onclick="toggleDarkMode()" id="themeBtn">Dark Mode</button>
-</nav>
-
-<div class="container">
-    <div class="intro-card">
-        <h2>Route Network</h2>
-        <p>Search or click a route card to view route details, frequency and extra notes.</p>
-    </div>
-
-    <input class="search" id="search" placeholder="Search by route, place or destination...">
-
-    <div id="routes"></div>
-</div>
-
-<footer>
-    BusBase Fleet Information
-</footer>
-
+  </section>
+<input class="search" id="search" placeholder="Search by route, place or destination...">
+<div id="routes"></div>
+</main>
+<footer>BusBase Fleet Information</footer>
 <script>
-function toggleDarkMode() {
-    document.body.classList.toggle('dark');
-    const isDark = document.body.classList.contains('dark');
-    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
 
-    const button = document.getElementById('themeBtn');
-    if (button) {
-        button.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-    }
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light');
+  localStorage.setItem('busbaseTheme',isLight?'light':'dark');
+  updateThemeButton();
 }
-
-function applySavedTheme() {
-    const isDark = localStorage.getItem('darkMode') === 'true';
-    document.body.classList.toggle('dark', isDark);
-
-    const button = document.getElementById('themeBtn');
-    if (button) {
-        button.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-    }
+function updateThemeButton(){
+  const btn=document.querySelector('.theme-toggle');
+  if(btn) btn.textContent=document.body.classList.contains('light')?'🌙 Dark Mode':'☀️ Light Mode';
 }
-
-applySavedTheme();
+(function(){
+  if(localStorage.getItem('busbaseTheme')==='light') document.body.classList.add('light');
+  updateThemeButton();
+})();
 
 const routes = [
 
@@ -470,42 +286,37 @@ extra:"School services."
 }
 
 ];
-
-function render(list){
-const container=document.getElementById("routes");
-container.innerHTML="";
-
-list.forEach(r=>{
-container.innerHTML+=`
-<div class="route" onclick="this.classList.toggle('open')">
-<div class="route-header">
-<h2>Route ${r.number}</h2>
-<div class="meta"><b>${r.from}</b> → <b>${r.to}</b></div>
-<div class="tag ${r.tag.includes('NEW')?'new':''}">
-${r.tag}
-</div>
-</div>
-
-<div class="details">
-<div class="meta"><b>Via:</b> ${r.via}</div>
-<div class="meta"><b>Frequency:</b> ${r.frequency}</div>
-<div class="meta" style="margin-top:8px;">${r.extra}</div>
-</div>
-</div>`;
-});
+function routeDate(number){
+  if(String(number).includes('44')) return ['44','May','2026'];
+  if(String(number).includes('36')) return ['36','May','2026'];
+  const n=String(number).split(' ')[0].replace(/[^0-9A-Z]/g,'');
+  return [n,'May','2026'];
 }
-
-document.getElementById("search").addEventListener("input",e=>{
-const q=e.target.value.toLowerCase();
-render(routes.filter(r=>
-r.number.toLowerCase().includes(q)||
-r.from.toLowerCase().includes(q)||
-r.to.toLowerCase().includes(q)
-));
+function render(list){
+  const container=document.getElementById('routes');
+  container.innerHTML='';
+  list.forEach(r=>{
+    const d=routeDate(r.number);
+    container.innerHTML+=`
+    <div class="route" onclick="this.classList.toggle('open')">
+      <div class="route-date"><strong>${d[0]}</strong><span>${d[1]}<br>${d[2]}</span></div>
+      <div class="route-header">
+        <h2>${r.from} – ${r.to}</h2>
+        <div class="meta"><b>Via</b> ${r.via}</div>
+        <div class="meta"><b>${r.frequency}</b></div>
+      </div>
+      <div class="route-tag"><span class="tag ${r.tag.includes('NEW')?'new':''}">${r.tag}</span></div>
+      <div class="route-arrow">›</div>
+      <div class="details"><div class="meta">${r.extra}</div></div>
+    </div>`;
+  });
+}
+document.getElementById('search').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  render(routes.filter(r=>r.number.toLowerCase().includes(q)||r.from.toLowerCase().includes(q)||r.to.toLowerCase().includes(q)||r.via.toLowerCase().includes(q)));
 });
-
 render(routes);
-</script>
 
+</script>
 </body>
 </html>

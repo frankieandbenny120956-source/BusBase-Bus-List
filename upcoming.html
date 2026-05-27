@@ -4,189 +4,107 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Upcoming Changes | BusBase</title>
-
 <style>
+
 :root {
-    --bg: linear-gradient(to bottom, #eef3f8, #dce7f2);
-    --text: #222;
-    --header: #003366;
-    --nav: #00509e;
-    --card: #ffffff;
-    --muted: #666;
-    --shadow: rgba(0,0,0,0.08);
+  --bg: radial-gradient(circle at left 35%, rgba(148,163,184,.38), transparent 26%), linear-gradient(135deg,#020817 0%,#0b1220 52%,#111827 100%);
+  --text:#f8fafc;
+  --muted:#cbd5e1;
+  --header:#061a35;
+  --nav:#073b82;
+  --nav2:#05265a;
+  --card:rgba(30,41,59,.78);
+  --card-solid:#1e293b;
+  --border:rgba(226,232,240,.35);
+  --table-line:rgba(226,232,240,.14);
+  --shadow:rgba(0,0,0,.38);
+  --accent:#1d6fe9;
 }
+body.light {
+  --bg: radial-gradient(circle at left 35%, rgba(148,163,184,.30), transparent 26%), linear-gradient(135deg,#edf5ff 0%,#dcecff 48%,#eef5ff 100%);
+  --text:#07122b;
+  --muted:#40516c;
+  --header:#061a35;
+  --nav:#073b82;
+  --nav2:#05265a;
+  --card:rgba(255,255,255,.88);
+  --card-solid:#ffffff;
+  --border:rgba(15,23,42,.16);
+  --table-line:rgba(15,23,42,.13);
+  --shadow:rgba(15,23,42,.16);
+  --accent:#0969da;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.brand-header{background:linear-gradient(180deg,#061a35,#020817);padding:18px 16px 16px;text-align:center;box-shadow:0 10px 35px rgba(0,0,0,.35)}
+.logo{width:190px;max-width:62vw;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));}
+nav{background:linear-gradient(180deg,var(--nav),var(--nav2));display:flex;justify-content:center;align-items:center;gap:26px;padding:13px 16px;flex-wrap:wrap;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+nav a,nav button{color:#fff;text-decoration:none;font-weight:800;font-size:15px;background:none;border:0;cursor:pointer;font-family:inherit;padding:7px 0;position:relative;}
+nav a.active::after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:3px;background:#fff;border-radius:999px;}
+.theme-toggle{background:rgba(2,8,23,.55)!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:9px!important;padding:9px 17px!important;box-shadow:0 4px 12px rgba(0,0,0,.24)}
+main{max-width:1160px;margin:0 auto;padding:46px 22px 50px;}
+.page-title{text-align:center;margin-bottom:30px;}
+.page-title h1{font-size:clamp(2rem,4vw,3.2rem);line-height:1.1;margin:0 0 12px;font-weight:900;letter-spacing:-.04em;}
+.page-title p{margin:0;color:var(--muted);font-weight:700;font-size:1.05rem;}
+.card,.intro-card,.update-card,.update-entry,.stat-card,.route{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 18px 45px var(--shadow);backdrop-filter:blur(12px);}
+footer{background:rgba(2,8,23,.66);border-top:1px solid rgba(255,255,255,.08);color:#fff;text-align:center;font-weight:900;padding:21px;margin-top:18px;}
+.badge,.tag{display:inline-block;border-radius:8px;background:#0b67db;color:#fff;font-weight:900;padding:6px 11px;font-size:.86rem}.new{background:#16a34a!important}.planned{background:#f59e0b!important}
+@media(max-width:700px){.logo{width:145px}nav{gap:12px}nav a,nav button{font-size:13px}.theme-toggle{padding:7px 12px!important}main{padding:30px 14px}.page-title h1{font-size:2rem}}
 
-body.dark {
-    --bg: linear-gradient(to bottom, #111827, #1f2937);
-    --text: #f3f4f6;
-    --header: #020617;
-    --nav: #0f172a;
-    --card: #1e293b;
-    --muted: #cbd5e1;
-    --shadow: rgba(0,0,0,0.35);
-}
 
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: var(--bg);
-    margin: 0;
-    padding: 0;
-    color: var(--text);
-}
+.changes{max-width:860px;margin:0 auto}.updated{text-align:center;color:var(--muted);font-weight:900;margin:-8px 0 28px;font-size:1.05rem}.update-card{display:grid;grid-template-columns:90px 1fr;gap:22px;align-items:center;padding:34px 36px;margin-bottom:26px}.confirmed{border-left:8px solid #22c55e}.expected{border-left:8px solid #f59e0b}.icon-circle{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:2rem;font-weight:900}.confirmed .icon-circle{border:5px solid #22c55e;color:#22c55e}.expected .icon-circle{border:5px solid #f59e0b;color:#f59e0b}.update-card h2{margin:0 0 18px;font-size:1.65rem}.update-card p{margin:0;color:var(--muted);font-size:1.05rem;line-height:1.7}@media(max-width:650px){.update-card{grid-template-columns:1fr;padding:26px}.icon-circle{width:50px;height:50px}}
 
-header {
-    background: var(--header);
-    color: white;
-    padding: 25px;
-    text-align: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2.2em;
-}
-
-nav {
-    background: var(--nav);
-    text-align: center;
-    padding: 12px;
-}
-
-nav a,
-nav button {
-    color: white;
-    text-decoration: none;
-    margin: 0 15px;
-    font-weight: bold;
-    transition: 0.2s;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    padding: 0;
-}
-
-nav a:hover,
-nav button:hover {
-    color: #cce5ff;
-}
-
-.container {
-    max-width: 950px;
-    margin: 30px auto;
-    padding: 20px;
-}
-
-.update-card {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 15px var(--shadow);
-    transition: transform 0.2s ease;
-}
-
-.update-card:hover {
-    transform: translateY(-3px);
-}
-
-.confirmed {
-    border-left: 8px solid #28a745;
-}
-
-.expected {
-    border-left: 8px solid #f0ad4e;
-}
-
-h2 {
-    margin-top: 0;
-    color: #003366;
-}
-
-body.dark h2 {
-    color: #e5e7eb;
-}
-
-.meta {
-    font-size: 0.95em;
-    color: var(--muted);
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    background: var(--header);
-    color: white;
-    margin-top: 40px;
-}
 </style>
 </head>
-
 <body>
-
-<header>
-    <h1>Upcoming Changes</h1>
+<header class="brand-header">
+  <img class="logo" src="busbase-logo-removebg-preview.png" alt="BusBase logo">
 </header>
-
 <nav>
-    <a href="index.html">Fleet List</a>
-    <a href="routes.html">Routes</a>
-    <a href="upcoming.html">Upcoming Changes</a>
-    <a href="updates.html">Website Updates</a>
-    <a href="stats.html">Fleet Statistics</a>
-    <button type="button" onclick="toggleDarkMode()" id="themeBtn">Dark Mode</button>
+  <a href="index.html" class="">Fleet List</a><a href="routes.html" class="">Routes</a><a href="upcoming.html" class="active">Upcoming Changes</a><a href="updates.html" class="">Website Updates</a><a href="stats.html" class="">Fleet Statistics</a>
+  <button type="button" class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
 </nav>
-
-<div class="container">
-
-    <div class="meta">
-        Last updated: 27 May 2026
+<main>
+  <section class="page-title">
+    <h1>Upcoming Changes</h1>
+    <p>▣ Last updated: 27 May 2026</p>
+  </section>
+<section class="changes">
+  <div class="updated">▣ Last updated: 27 May 2026</div>
+  <div class="update-card confirmed">
+    <div class="icon-circle">✓</div>
+    <div>
+      <h2>Confirmed Changes</h2>
+      <p>Lynx has confirmed that they are no longer serving The Buttlands in Wells-next-the-Sea. They have also announced the new route 44 <strong>“The Loop”</strong>, starting 1 June 2026.</p>
     </div>
-
-    <div class="update-card confirmed">
-        <h2>Confirmed Changes</h2>
-        <p>
-            Lynx has confirmed that they are no longer serving The Buttlands in Wells-next-the-Sea.
-            They have also announced the new route 44 <strong>"The Loop"</strong>, operating Monday–Saturday,
-            looping via King's Lynn Bus Station, South Wootton, Knights Hill, Queen Elizabeth Hospital, and Hardwick.
-            This starts on <strong>1 June 2026</strong>.
-        </p>
+  </div>
+  <div class="update-card expected">
+    <div class="icon-circle">◷</div>
+    <div>
+      <h2>Expected Changes</h2>
+      <p>Fleet updates, route amendments, and operational changes expected in the near future will appear here.</p>
     </div>
-
-    <div class="update-card expected">
-        <h2>Expected Changes</h2>
-        <p>Fleet updates, route amendments, and operational changes expected in the near future will appear here.</p>
-    </div>
-
-</div>
-
-<footer>
-    BusBase Fleet Information
-</footer>
-
+  </div>
+</section>
+</main>
+<footer>BusBase Fleet Information</footer>
 <script>
-function toggleDarkMode() {
-    document.body.classList.toggle('dark');
-    const isDark = document.body.classList.contains('dark');
-    localStorage.setItem('darkMode', isDark);
 
-    document.getElementById('themeBtn').textContent =
-        isDark ? 'Light Mode' : 'Dark Mode';
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light');
+  localStorage.setItem('busbaseTheme',isLight?'light':'dark');
+  updateThemeButton();
 }
+function updateThemeButton(){
+  const btn=document.querySelector('.theme-toggle');
+  if(btn) btn.textContent=document.body.classList.contains('light')?'🌙 Dark Mode':'☀️ Light Mode';
+}
+(function(){
+  if(localStorage.getItem('busbaseTheme')==='light') document.body.classList.add('light');
+  updateThemeButton();
+})();
 
-window.onload = function () {
-    const savedDark = localStorage.getItem('darkMode') === 'true';
 
-    if (savedDark) {
-        document.body.classList.add('dark');
-        document.getElementById('themeBtn').textContent = 'Light Mode';
-    }
-};
 </script>
-
 </body>
 </html>
