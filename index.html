@@ -40,6 +40,26 @@ tr:hover {
 .details td {
   background: #fafafa;
 }
+
+.routes-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 12px 24px;
+  background: linear-gradient(180deg, #ff1a1a 0%, #cc0000 100%);
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 1px solid #990000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: all 0.2s ease;
+}
+
+.routes-btn:hover {
+  background: linear-gradient(180deg, #ff3333 0%, #b30000 100%);
+  transform: translateY(-1px);
+}
+
 </style>
 </head>
 
@@ -48,6 +68,7 @@ tr:hover {
 <header>
   <h1>LynxBus Fleet List as of 27/5/2026</h1>
   <p>Click on a bus row to see detailed features.</p>
+  <a href="https://busbasegroup.github.io/BusBase-Bus-List/routes.html" class="routes-btn">View Routes</a>
 </header>
 
 <div class="fleet-container">
