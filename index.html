@@ -46,7 +46,7 @@ tr:hover {
 <body>
 
 <header>
-  <h1>Full LynxBus List (Updated Fleet)</h1>
+  <h1>LynxBus Fleet List as of 27/5/2026</h1>
   <p>Click on a bus row to see detailed features.</p>
 </header>
 
@@ -55,7 +55,7 @@ tr:hover {
     <thead>
       <tr>
         <th>Fleet Number</th>
-        <th>Description</th>
+        <th>Vehicle Type</th>
         <th>Route Branding</th>
       </tr>
     </thead>
@@ -63,29 +63,7 @@ tr:hover {
   </table>
 </div>
 
-<div style="margin:20px;">
-  <a href="routes.html"
-     style="display:inline-block;padding:12px 20px;background:#e60000;color:white;text-decoration:none;border-radius:8px;font-weight:bold;">
-     View Routes
-  </a>
 
-  <button onclick="openProtected()"
-    style="padding:12px 20px;background:#333;color:white;border:none;border-radius:8px;font-weight:bold;margin-left:10px;">
-    Josh's Photography
-  </button>
-</div>
-<script>
-
-function openProtected() {
-  const password = prompt("Enter password:");
-
-  if (password === "29 is a shit bus") {
-    window.location.href =
-      "https://busbasegroup.github.io/BusBase-Bus-List/joshphotos.html";
-  } else {
-    alert("Wrong password.");
-  }
-}
 
 const fleet = [
   {
