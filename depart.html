@@ -494,8 +494,27 @@ footer {
 </nav>
 
 <footer>
-  BusBase Fleet Information
+  <p>BusBase Fleet Information</p>
+  <a href="disclaimer.html" class="footer-link">Disclaimer & Contact Info</a>
 </footer>
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: var(--muted);
+}
+
+.footer-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: #60a5fa;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.footer-link:hover {
+  color: #93c5fd;
+}
 
 <script>
 function toggleTheme(){
