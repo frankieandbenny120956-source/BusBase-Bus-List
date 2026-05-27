@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Departures | BusBase</title>
+<link rel="icon" href="busbase-logo-removebg-preview.png">
+
+<style>
+:root {
+  --bg: #07111f;
+  --panel: #101c2e;
+  --panel2: #14243a;
+  --text: #f4f7fb;
+  --muted: #b6c2d1;
+  --blue: #2563eb;
+  --blue2: #1d4ed8;
+  --border: rgba(255,255,255,0.08);
+}
+
+body.light {
+  --bg: #eef3f8;
+  --panel: #ffffff;
+  --panel2: #f8fbff;
+  --text: #172033;
+  --muted: #5b6678;
+  --blue: #00509e;
+  --blue2: #003366;
+  --border: rgba(0,0,0,0.08);
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: radial-gradient(circle at top, #10213a, var(--bg));
+  color: var(--text);
+}
+
+body.light {
+  background: linear-gradient(to bottom, #eef3f8, #dce7f2);
+}
+
+header {
+  background: #020617;
+  text-align: center;
+  padding: 24px 16px;
+}
+
+body.light header {
+  background: #003366;
+}
+
+.site-logo {
+  max-width: 260px;
+  width: 80%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+nav {
+  background: var(--blue2);
+  text-align: center;
+  padding: 12px;
+}
+
+nav a,
+nav button {
+  color: white;
+  text-decoration: none;
+  margin: 6px 12px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  display: inline-block;
+}
+
+nav a:hover,
+nav button:hover,
+nav .active {
+  color: #cce5ff;
+}
+
+main {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+.page-title {
+  background: linear-gradient(135deg, var(--panel), var(--panel2));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 26px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+}
+
+.page-title h1 {
+  margin: 0 0 8px;
+  font-size: 2.1em;
+}
+
+.page-title p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.departure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.departure-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.16);
+}
+
+.departure-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.25em;
+}
+
+.departure-card p {
+  color: var(--muted);
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+
+.departure-card a {
+  display: inline-block;
+  background: var(--blue);
+  color: white;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.departure-card a:hover {
+  background: var(--blue2);
+}
+
+.note {
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 0.95em;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="busbase-logo-removebg-preview.png" alt="BusBase" class="site-logo">
+</header>
+
+<nav>
+  <a href="index.html">Fleet List</a>
+  <a href="routes.html">Routes</a>
+  <a href="departures.html" class="active">Live Departures</a>
+  <a href="upcoming.html">Upcoming Changes</a>
+  <a href="updates.html">Website Updates</a>
+  <a href="stats.html">Fleet Statistics</a>
+  <button type="button" class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
+</nav>
+
+<main>
+  <section class="page-title">
+    <h1>Live Departures</h1>
+    <p>Quick links to live departure information for key LynxBus locations.</p>
+  </section>
+
+  <section class="departure-grid">
+
+    <div class="departure-card">
+      <h2>King's Lynn Bus Station</h2>
+      <p>Main hub for LynxBus services including routes 33, 34, 35, 36, 37, 39, 46 and more.</p>
+      <a href="https://bustimes.org/localities/kings-lynn" target="_blank">Open Departures</a>
+    </div>
+
+    <div class="departure-card">
+      <h2>Hunstanton Bus Station</h2>
+      <p>Live departures for coastal services including routes 33, 34, 35 and 36.</p>
+      <a href="https://bustimes.org/localities/hunstanton" target="_blank">Open Departures</a>
+    </div>
+
+    <div class="departure-card">
+      <h2>QE Hospital</h2>
+      <p>Useful stop for town and interurban services serving King's Lynn and nearby areas.</p>
+      <a href="https://bustimes.org/localities/kings-lynn" target="_blank">Open Departures</a>
+    </div>
+
+    <div class="departure-card">
+      <h2>Wells-next-the-Sea</h2>
+      <p>Coastal departure information for services towards Hunstanton, Fakenham and King's Lynn.</p>
+      <a href="https://bustimes.org/localities/wells-next-the-sea" target="_blank">Open Departures</a>
+    </div>
+
+    <div class="departure-card">
+      <h2>Fakenham</h2>
+      <p>Live departure links for services including the Coastliner corridor.</p>
+      <a href="https://bustimes.org/localities/fakenham" target="_blank">Open Departures</a>
+    </div>
+
+    <div class="departure-card">
+      <h2>Wisbech</h2>
+      <p>Useful for cross-county services including links towards King's Lynn and Downham Market.</p>
+      <a href="https://bustimes.org/localities/wisbech" target="_blank">Open Departures</a>
+    </div>
+
+  </section>
+
+  <p class="note">
+    Live departure information opens using external public transport sources. BusBase does not control live departure data.
+  </p>
+</main>
+
+<footer>
+  BusBase Fleet Information
+</footer>
+
+<script>
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light');
+  localStorage.setItem('busbaseTheme', isLight ? 'light' : 'dark');
+  updateThemeButton();
+}
+
+function updateThemeButton(){
+  const btn = document.querySelector('.theme-toggle');
+  if (btn) {
+    btn.textContent = document.body.classList.contains('light') ? '🌙 Dark Mode' : '☀️ Light Mode';
+  }
+}
+
+(function(){
+  if (localStorage.getItem('busbaseTheme') === 'light') {
+    document.body.classList.add('light');
+  }
+  updateThemeButton();
+})();
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Departures | BusBase</title>
+<link rel="icon" href="busbase-logo-removebg-preview.png">
+
+<style>
+:root {
+  --bg: #07111f;
+  --panel: #101c2e;
+  --panel2: #14243a;
+  --text: #f4f7fb;
+  --muted: #b6c2d1;
+  --blue: #2563eb;
+  --blue2: #1d4ed8;
+  --border: rgba(255,255,255,0.08);
+}
+
+body.light {
+  --bg: #eef3f8;
+  --panel: #ffffff;
+  --panel2: #f8fbff;
+  --text: #172033;
+  --muted: #5b6678;
+  --blue: #00509e;
+  --blue2: #003366;
+  --border: rgba(0,0,0,0.08);
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: radial-gradient(circle at top, #10213a, var(--bg));
+  color: var(--text);
+}
+
+body.light {
+  background: linear-gradient(to bottom, #eef3f8, #dce7f2);
+}
+
+header {
+  background: #020617;
+  text-align: center;
+  padding: 24px 16px;
+}
+
+body.light header {
+  background: #003366;
+}
+
+.site-logo {
+  max-width: 260px;
+  width: 80%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+nav {
+  background: var(--blue2);
+  text-align: center;
+  padding: 12px;
+}
+
+nav a,
+nav button {
+  color: white;
+  text-decoration: none;
+  margin: 6px 12px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  display: inline-block;
+}
+
+nav a:hover,
+nav button:hover,
+nav .active {
+  color: #cce5ff;
+}
+
+main {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+.page-title {
+  background: linear-gradient(135deg, var(--panel), var(--panel2));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 26px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+}
+
+.page-title h1 {
+  margin: 0 0 8px;
+  font-size: 2.1em;
+}
+
+.page-title p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.departure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.departure-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.16);
+}
+
+.departure-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.25em;
+}
+
+.departure-card p {
+  color: var(--muted);
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+
+.departure-card a {
+  display: inline-block;
+  background: var(--blue);
+  color: white;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.departure-card a:hover {
+  background: var(--blue2);
+}
+
+.note {
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 0.95em;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="busbase-logo-removebg-preview.png" alt="BusBase" class="site-logo">
+</header>
+
+<nav>
+  <a href="index.html">Fleet List</a>
+  <a href="routes.html">Routes</a>
+  <a href="departures.html" class="active">Live Departures</a>
+  <a href="upcoming.html">Upcoming Changes</a>
+  <a href="updates.html">Website Updates</a>
+  <a href="stats.html">Fleet Statistics</a>
+  <button type="button" class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
+</nav>
+
+<main>
+  <section class="page-title">
+    <h1>Live Departures</h1>
+    <p>Quick links to live departure information for key LynxBus locations.</p>
+  </section>
+
+  <section class="departure-grid">
+
+    <div class="departure-card">
+      <h2>King's Lynn Bus Station</h2>
+      <p>Main hub for LynxBus services including routes 33, 34, 35, 36, 37, 39, 46 and more.</p>
+      <a href="https://bustimes.org/localities/kings-lynn" target="_blank">Open Departures</a>
+    </div>
+
+    <div class="departure-card">
+      <h2>Hunstanton Bus Station</h2>
+      <p>Live departures for coastal services including routes 33, 34, 35 and 36.</p>
+      <a href="https://bustimes.org/localities/hunstanton" target="_blank">Open Departures</a>
+    </div>
+
+    <div class="departure-card">
+      <h2>QE Hospital</h2>
+      <p>Useful stop for town and interurban services serving King's Lynn and nearby areas.</p>
+      <a href="https://bustimes.org/localities/kings-lynn" target="_blank">Open Departures</a>
+    </div>
+
+    <div class="departure-card">
+      <h2>Wells-next-the-Sea</h2>
+      <p>Coastal departure information for services towards Hunstanton, Fakenham and King's Lynn.</p>
+      <a href="https://bustimes.org/localities/wells-next-the-sea" target="_blank">Open Departures</a>
+    </div>
+
+    <div class="departure-card">
+      <h2>Fakenham</h2>
+      <p>Live departure links for services including the Coastliner corridor.</p>
+      <a href="https://bustimes.org/localities/fakenham" target="_blank">Open Departures</a>
+    </div>
+
+ <div class="departure-card">
+  <h2>Downham Market</h2>
+  <p>Live departures for LynxBus services serving Downham Market and connections towards King's Lynn.</p>
+  <a href="https://bustimes.org/localities/downham-market" target="_blank">Open Departures</a>
+    </div>
+
+  </section>
+
+  <p class="note">
+    Live departure information opens using external public transport sources. BusBase does not control live departure data.
+  </p>
+</main>
+
+<nav>
+  <a href="index.html" class="">Fleet List</a><a href="routes.html" class="">Routes</a><a href="depart.html" class="">Departures</a><a href="upcoming.html" class="">Upcoming Changes</a><a href="updates.html" class="active">Website Updates</a><a href="stats.html" class="">Fleet Statistics</a>
+  <button type="button" class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
+</nav>
+
+<footer>
+  BusBase Fleet Information
+</footer>
+
+<script>
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light');
+  localStorage.setItem('busbaseTheme', isLight ? 'light' : 'dark');
+  updateThemeButton();
+}
+
+function updateThemeButton(){
+  const btn = document.querySelector('.theme-toggle');
+  if (btn) {
+    btn.textContent = document.body.classList.contains('light') ? '🌙 Dark Mode' : '☀️ Light Mode';
+  }
+}
+
+(function(){
+  if (localStorage.getItem('busbaseTheme') === 'light') {
+    document.body.classList.add('light');
+  }
+  updateThemeButton();
+})();
+</script>
+
+</body>
+</html>
