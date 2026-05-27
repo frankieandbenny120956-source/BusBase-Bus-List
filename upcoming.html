@@ -1,58 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Upcoming Changes</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upcoming Changes | BusBase</title>
+
 <style>
 body {
-  font-family: Arial, sans-serif;
-  max-width: 900px;
-  margin: auto;
-  padding: 20px;
-  background: #f4f4f4;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(to bottom, #eef3f8, #dce7f2);
+    margin: 0;
+    padding: 0;
+    color: #222;
 }
 
-.card {
-  background: white;
-  padding: 15px;
-  margin: 15px 0;
-  border-radius: 10px;
+header {
+    background: #003366;
+    color: white;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
 }
 
-.confirmed { border-left: 6px solid green; }
-.expected { border-left: 6px solid orange; }
-.rumour { border-left: 6px solid red; }
+header h1 {
+    margin: 0;
+    font-size: 2.2em;
+}
 
-a {
-  color: blue;
+nav {
+    background: #00509e;
+    text-align: center;
+    padding: 12px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+nav a:hover {
+    color: #cce5ff;
+}
+
+.container {
+    max-width: 950px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.update-card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+}
+
+.update-card:hover {
+    transform: translateY(-3px);
+}
+
+.confirmed {
+    border-left: 8px solid #28a745;
+}
+
+.expected {
+    border-left: 8px solid #f0ad4e;
+}
+
+h2 {
+    margin-top: 0;
+    color: #003366;
+}
+
+.meta {
+    font-size: 0.95em;
+    color: #666;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #003366;
+    color: white;
+    margin-top: 40px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Upcoming Changes</h1>
+<header>
+    <h1>Upcoming Changes</h1>
+</header>
 
-<p><a href="index.html">Back to Fleet List</a> | <a href="routes.html">View Routes</a></p>
+<nav>
+    <a href="index.html">Fleet List</a>
+    <a href="routes.html">Routes</a>
+</nav>
 
-<p><b>Last updated:</b> 27/5/2026</p>
+<div class="container">
 
-<h2>Confirmed Changes</h2>
-<div class="card confirmed">
-  <h3>No confirmed changes</h3>
-  <p>There are currently no officially confirmed fleet or route changes.</p>
+    <div class="meta">
+        Last updated: 27 May 2026
+    </div>
+
+    <div class="update-card confirmed">
+        <h2>Confirmed Changes</h2>
+        <p>No confirmed fleet or route changes are currently listed.</p>
+    </div>
+
+    <div class="update-card expected">
+        <h2>Expected Changes</h2>
+        <p>Fleet updates, route amendments, and operational changes expected in the near future will appear here.</p>
+    </div>
+
 </div>
 
-<h2>Expected Changes</h2>
-<div class="card expected">
-  <h3>Possible Fleet Updates</h3>
-  <p>Further fleet updates may be added here when more information becomes available.</p>
-</div>
-
-<h2>Rumours</h2>
-<div class="card rumour">
-  <h3>Unconfirmed Changes</h3>
-  <p>Any unconfirmed vehicle transfers, withdrawals or route changes can be listed here.</p>
-</div>
+<footer>
+    BusBase Fleet Information
+</footer>
 
 </body>
 </html>
