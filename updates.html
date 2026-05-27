@@ -1,411 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Website Updates | BusBase</title>
-<link rel="icon" href="busbase-logo-removebg-preview.png">
-
-<style>
-:root{
-  color-scheme:dark;
-  --bg:#080b12;
-  --bg-2:#0d1220;
-  --surface:rgba(255,255,255,.075);
-  --surface-2:rgba(255,255,255,.11);
-  --surface-3:rgba(255,255,255,.045);
-  --text:#f6f8ff;
-  --muted:#9ca8bd;
-  --line:rgba(255,255,255,.12);
-  --accent:#56f0c4;
-  --accent-2:#5b8cff;
-  --accent-3:#b76cff;
-  --warning:#ffbf69;
-  --good:#4ade80;
-  --shadow:0 24px 80px rgba(0,0,0,.38);
-  --radius:26px;
-}
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  min-height:100vh;
-  font-family:Inter,system-ui,sans-serif;
-  background:
-    radial-gradient(circle at 12% 8%,rgba(86,240,196,.18),transparent 28%),
-    radial-gradient(circle at 92% 0%,rgba(91,140,255,.18),transparent 28%),
-    linear-gradient(135deg,var(--bg),var(--bg-2));
-  color:var(--text);
-}
-
-.app-shell{
-  display:grid;
-  grid-template-columns:292px minmax(0,1fr);
-  min-height:100vh;
-}
-
-.sidebar{
-  position:sticky;
-  top:0;
-  height:100vh;
-  padding:24px;
-  border-right:1px solid var(--line);
-  background:rgba(8,11,18,.72);
-  backdrop-filter:blur(24px);
-  display:flex;
-  flex-direction:column;
-  gap:22px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:12px;
-  border:1px solid var(--line);
-  border-radius:24px;
-  background:var(--surface);
-}
-
-.brand img{
-  width:58px;
-  height:58px;
-}
-
-.brand-kicker{
-  font-size:.76rem;
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.16em;
-  color:var(--accent);
-}
-
-.brand-name{
-  font-size:1.24rem;
-  font-weight:950;
-}
-
-.brand-sub{
-  color:var(--muted);
-  font-size:.82rem;
-}
-
-.nav{
-  display:grid;
-  gap:9px;
-}
-
-.nav a{
-  display:flex;
-  align-items:center;
-  gap:11px;
-  padding:12px 14px;
-  border-radius:16px;
-  color:var(--muted);
-  text-decoration:none;
-  font-weight:800;
-}
-
-.nav a:hover{
-  background:var(--surface);
-  color:var(--text);
-}
-
-.nav a.active{
-  background:linear-gradient(135deg,rgba(86,240,196,.18),rgba(91,140,255,.16));
-  color:white;
-}
-
-.content{
-  padding:32px;
-}
-
-.hero{
-  margin-bottom:24px;
-  padding:34px;
-  border-radius:32px;
-  border:1px solid var(--line);
-  background:linear-gradient(135deg,var(--surface-2),var(--surface));
-  box-shadow:var(--shadow);
-}
-
-.hero h1{
-  margin:0 0 10px;
-  font-size:4rem;
-  font-weight:950;
-}
-
-.hero p{
-  color:var(--muted);
-  line-height:1.6;
-}
-
-.badge{
-  display:inline-flex;
-  padding:7px 12px;
-  border-radius:999px;
-  background:linear-gradient(135deg,var(--accent-2),var(--accent-3));
-  color:white;
-  font-weight:900;
-  margin-bottom:18px;
-}
-
-.intro-card,
-.update-entry{
-  background:linear-gradient(180deg,var(--surface),var(--surface-3));
-  border:1px solid var(--line);
-  border-radius:26px;
-  box-shadow:0 18px 48px rgba(0,0,0,.18);
-  backdrop-filter:blur(18px);
-}
-
-.intro-card{
-  padding:24px;
-  margin-bottom:22px;
-}
-
-.nav-card{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-top:18px;
-}
-
-.official-link{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:12px 16px;
-  border-radius:14px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#041018;
-  text-decoration:none;
-  font-weight:950;
-}
-
-.timeline{
-  max-width:860px;
-}
-
-.update-entry{
-  display:grid;
-  grid-template-columns:86px 1fr 90px;
-  gap:18px;
-  align-items:center;
-  margin-bottom:14px;
-  padding:18px;
-}
-
-.date{
-  font-weight:950;
-  text-align:center;
-}
-
-.date strong{
-  display:block;
-  font-size:1.45rem;
-}
-
-.update-pill{
-  display:inline-flex;
-  align-items:center;
-  border-radius:999px;
-  padding:7px 12px;
-  font-size:.78rem;
-  font-weight:950;
-  background:linear-gradient(135deg,var(--accent-2),var(--accent-3));
-  color:white;
-}
-
-.new{
-  background:var(--good)!important;
-}
-
-.planned{
-  background:var(--warning)!important;
-  color:#1f1300!important;
-}
-
-footer{
-  margin-top:28px;
-  color:var(--muted);
-  font-weight:800;
-  text-align:center;
-  padding:20px;
-}
-
-.footer-link{
-  color:var(--accent);
-  text-decoration:none;
-}
-
-@media(max-width:980px){
-  .app-shell{
-    grid-template-columns:1fr;
-  }
-
-  .sidebar{
-    position:relative;
-    height:auto;
-  }
-}
-
-@media(max-width:720px){
-  .hero h1{
-    font-size:2.5rem;
-  }
-
-  .update-entry{
-    grid-template-columns:1fr;
-  }
-
-  .content{
-    padding:18px;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Updates | LynxBus</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="app-shell">
+<header>
+  <div class="brand">
+    <div class="logo">LB</div>
+    <div>
+      <h1>LynxBus</h1>
+      <p>Fleet list and vehicle features</p>
+    </div>
+  </div>
+  <a class="top-button" href="routes.html">All routes</a>
+</header>
 
-  <aside class="sidebar">
+<main>
+  <section class="card hero">
+    <h2>Site Updates</h2>
+    <p>Latest changes and improvements to the LynxBus fleet website.</p>
+  </section>
 
-    <div class="brand">
-      <img src="busbase-logo-removebg-preview.png" alt="BusBase logo">
-
-      <div>
-        <div class="brand-kicker">BusBase</div>
-        <div class="brand-name">Fleet Nexus</div>
-        <div class="brand-sub">Modern LynxBus reference</div>
-      </div>
+  <section class="stats">
+    <div class="stat-card">
+      <h3>Latest update</h3>
+      <strong>27 May</strong>
+      <p>Homepage-style layout added.</p>
     </div>
 
-    <nav class="nav">
-      <a href="index.html">Fleet Nexus</a>
-      <a href="routes.html">Routes</a>
-      <a href="depart.html">Live Departures</a>
-      <a href="upcoming.html">Upcoming Changes</a>
-      <a href="updates.html" class="active">Website Updates</a>
-      <a href="stats.html">Statistics</a>
-      <a href="disclaimer.html">Disclaimer</a>
-    </nav>
+    <div class="stat-card">
+      <h3>Status</h3>
+      <strong>Live</strong>
+      <p>Website pages are being redesigned.</p>
+    </div>
+  </section>
 
-  </aside>
+  <section class="links card">
+    <a href="routes.html">View Routes</a>
+    <a href="stats.html">Statistics</a>
+    <a href="upcoming.html">Upcoming Changes</a>
+    <a href="updates.html">Site Updates</a>
+    <a href="disclaimer.html">Disclaimer</a>
+  </section>
 
-  <main class="content">
+  <section class="card">
+    <h2>Recent Updates</h2>
 
-    <section class="hero">
-      <span class="badge">Website Updates</span>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Update</th>
+          <th>Status</th>
+        </tr>
+      </thead>
 
-      <h1>BusBase Updates</h1>
+      <tbody>
+        <tr>
+          <td>27 May 2026</td>
+          <td>Updated the site pages to match the new LynxBus homepage layout.</td>
+          <td>Complete</td>
+        </tr>
 
-      <p>
-        Latest improvements, feature additions and design changes made to the
-        BusBase Fleet Nexus website.
-      </p>
-    </section>
+        <tr>
+          <td>27 May 2026</td>
+          <td>Added cleaner cards, simpler navigation and mobile-friendly spacing.</td>
+          <td>Complete</td>
+        </tr>
 
-    <section class="intro-card">
+        <tr>
+          <td>26 May 2026</td>
+          <td>Statistics and upcoming changes pages prepared for redesign.</td>
+          <td>Planned</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>
 
-      <h2>Navigation</h2>
-
-      <div class="nav-card">
-        <a href="index.html" class="official-link">Fleet List</a>
-        <a href="routes.html" class="official-link">View Routes</a>
-        <a href="stats.html" class="official-link">Statistics</a>
-        <a href="upcoming.html" class="official-link">Upcoming Changes</a>
-        <a href="updates.html" class="official-link">Site Updates</a>
-        <a href="disclaimer.html" class="official-link">Disclaimer</a>
-      </div>
-
-    </section>
-
-    <section class="timeline">
-
-      <div class="update-entry">
-
-        <div class="date">
-          <strong>27</strong>
-          MAY
-        </div>
-
-        <div>
-          <h2>Homepage Redesign</h2>
-
-          <p>
-            The website now uses the new LynxBus inspired homepage layout with
-            cleaner navigation cards, larger headers and updated responsive
-            sections.
-          </p>
-        </div>
-
-        <div class="status">
-          <span class="update-pill new">NEW</span>
-        </div>
-
-      </div>
-
-      <div class="update-entry">
-
-        <div class="date">
-          <strong>27</strong>
-          MAY
-        </div>
-
-        <div>
-          <h2>Modern UI Improvements</h2>
-
-          <p>
-            Added improved spacing, glass-effect cards, responsive mobile layout,
-            updated buttons and smoother visual styling across the website.
-          </p>
-        </div>
-
-        <div class="status">
-          <span class="update-pill">UPDATED</span>
-        </div>
-
-      </div>
-
-      <div class="update-entry">
-
-        <div class="date">
-          <strong>26</strong>
-          MAY
-        </div>
-
-        <div>
-          <h2>Statistics Page Upgrade</h2>
-
-          <p>
-            Fleet statistics now display in responsive cards matching the
-            homepage design style.
-          </p>
-        </div>
-
-        <div class="status">
-          <span class="update-pill planned">PLANNED</span>
-        </div>
-
-      </div>
-
-    </section>
-
-    <footer>
-      BusBase Fleet Information •
-      <a class="footer-link" href="disclaimer.html">
-        Disclaimer & Contact
-      </a>
-    </footer>
-
-  </main>
-
-</div>
+<footer>LynxBus Fleet Database</footer>
 
 </body>
 </html>
