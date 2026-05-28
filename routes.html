@@ -1,63 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lynx Bus Routes | BusBase</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BusBase | Routes</title>
 <link rel="icon" href="busbase-logo-removebg-preview.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  color-scheme:dark;
-  --bg:#080b12;--bg-2:#0d1220;--surface:rgba(255,255,255,.075);--surface-2:rgba(255,255,255,.11);--surface-3:rgba(255,255,255,.045);
-  --text:#f6f8ff;--muted:#9ca8bd;--line:rgba(255,255,255,.12);--line-strong:rgba(255,255,255,.18);
-  --accent:#56f0c4;--accent-2:#5b8cff;--accent-3:#b76cff;--warning:#ffbf69;--good:#4ade80;--danger:#fb7185;
-  --shadow:0 24px 80px rgba(0,0,0,.38);--radius:26px;--radius-sm:16px;
+:root {
+  --bg:#eef3f8;
+  --panel:#ffffff;
+  --text:#172033;
+  --muted:#667085;
+  --border:#d8e0ea;
+  --primary:#0f766e;
+  --primary-dark:#115e59;
+  --primary-soft:#ccfbf1;
+  --accent:#f59e0b;
+  --shadow:0 18px 45px rgba(15,23,42,.08);
+  --radius:24px;
 }
-body.light{
-  color-scheme:light;
-  --bg:#f5f7fb;--bg-2:#eaf0f8;--surface:rgba(255,255,255,.82);--surface-2:rgba(255,255,255,.95);--surface-3:rgba(10,20,40,.045);
-  --text:#101828;--muted:#5d6b82;--line:rgba(16,24,40,.12);--line-strong:rgba(16,24,40,.18);
-  --accent:#00a884;--accent-2:#3366ff;--accent-3:#7c3aed;--shadow:0 24px 70px rgba(16,24,40,.14);
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  background:linear-gradient(180deg,#f8fafc 0%,var(--bg) 100%);
+  color:var(--text);
+  min-height:100vh;
 }
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at 12% 8%,rgba(86,240,196,.18),transparent 28%),radial-gradient(circle at 92% 0%,rgba(91,140,255,.18),transparent 28%),linear-gradient(135deg,var(--bg),var(--bg-2));color:var(--text)}
-body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(to bottom,black,transparent 82%);pointer-events:none}.app-shell{display:grid;grid-template-columns:292px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;padding:24px;border-right:1px solid var(--line);background:rgba(8,11,18,.72);backdrop-filter:blur(24px);display:flex;flex-direction:column;gap:22px}body.light .sidebar{background:rgba(255,255,255,.68)}.brand{display:flex;align-items:center;gap:14px;padding:12px;border:1px solid var(--line);border-radius:24px;background:var(--surface)}.brand img{width:58px;height:58px;object-fit:contain}.brand-kicker{font-size:.76rem;font-weight:900;text-transform:uppercase;letter-spacing:.16em;color:var(--accent)}.brand-name{font-size:1.24rem;font-weight:950;letter-spacing:-.04em}.brand-sub{font-size:.82rem;color:var(--muted);font-weight:700;margin-top:2px}.nav{display:grid;gap:9px}.nav a,.theme-toggle{display:flex;align-items:center;gap:11px;width:100%;min-height:46px;padding:12px 14px;border-radius:16px;border:1px solid transparent;background:transparent;color:var(--muted);text-decoration:none;font:800 14px/1.1 inherit;cursor:pointer}.nav a:hover,.theme-toggle:hover{background:var(--surface);color:var(--text);border-color:var(--line)}.nav a.active{background:linear-gradient(135deg,rgba(86,240,196,.18),rgba(91,140,255,.16));color:var(--text);border-color:rgba(86,240,196,.35);box-shadow:0 10px 28px rgba(86,240,196,.08)}.nav a.active::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px var(--accent)}.sidebar-note{margin-top:auto;padding:16px;border:1px solid var(--line);border-radius:20px;background:var(--surface-3);color:var(--muted);font-size:.86rem;line-height:1.45;font-weight:700}.content{min-width:0;padding:32px}.hero,.page-title{position:relative;overflow:hidden;margin:0 0 24px;padding:34px;border:1px solid var(--line);border-radius:32px;background:linear-gradient(135deg,var(--surface-2),var(--surface));box-shadow:var(--shadow);backdrop-filter:blur(22px);text-align:left}.hero::after,.page-title::after{content:"";position:absolute;right:-70px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(86,240,196,.28),transparent 68%)}.page-title h1,.hero h1{position:relative;margin:0 0 10px;font-size:clamp(2.25rem,5vw,4.4rem);line-height:.95;letter-spacing:-.065em;font-weight:950}.page-title p,.hero p{position:relative;max-width:760px;margin:0;color:var(--muted);font-size:1.05rem;line-height:1.65;font-weight:700}.card,.intro-card,.update-card,.update-entry,.stat-card,.route,.departure-card,.info-card{background:linear-gradient(180deg,var(--surface),var(--surface-3));border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 18px 48px rgba(0,0,0,.18);backdrop-filter:blur(18px)}.intro-card{padding:24px;margin-bottom:22px}.intro-card h2,.info-card h2,.departure-card h2,.update-card h2{margin:0 0 9px;letter-spacing:-.03em}.intro-card p,.info-card p,.info-card li,.departure-card p,.update-card p,.update-entry p,.meta,.note,.updated{color:var(--muted);line-height:1.65;font-weight:650}.badge,.tag,.update-pill{display:inline-flex;align-items:center;border-radius:999px;background:linear-gradient(135deg,var(--accent-2),var(--accent-3));color:white;font-weight:950;padding:7px 12px;font-size:.78rem}.new{background:var(--good)!important}.planned{background:var(--warning)!important;color:#1f1300!important}.search,input.search{width:100%;padding:17px 19px;border-radius:18px;border:1px solid var(--line);background:var(--surface);color:var(--text);box-shadow:0 14px 36px rgba(0,0,0,.14);font-size:1rem;margin-bottom:22px;outline:none}.search:focus{border-color:rgba(86,240,196,.55);box-shadow:0 0 0 4px rgba(86,240,196,.12)}.search::placeholder{color:var(--muted)}.table-wrap{overflow-x:auto;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line)}table{width:100%;border-collapse:collapse;background:var(--surface);min-width:720px}th{background:rgba(255,255,255,.09);color:var(--text);text-align:left;padding:17px 20px;font-size:.84rem;text-transform:uppercase;letter-spacing:.08em}td{padding:16px 20px;border-bottom:1px solid var(--line);font-weight:750}tbody tr:not(.details):hover{background:rgba(86,240,196,.08);cursor:pointer}.details td{background:rgba(86,240,196,.06);border-left:7px solid var(--accent);font-weight:550}.details ul{list-style:none;padding:0;margin:12px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:9px}.details li{padding:9px 11px;border-radius:14px;background:var(--surface-3);border:1px solid var(--line)}.chev,.route-arrow{color:var(--muted);font-size:1.4rem}.stats-grid,.departure-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-bottom:32px}.stat-card{padding:22px;display:grid;grid-template-columns:58px 1fr;align-items:center;gap:16px}.stat-icon{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(86,240,196,.16),rgba(91,140,255,.16));font-size:1.9rem}.stat-card h2{margin:0 0 4px;color:var(--muted);font-size:.88rem;text-transform:uppercase;letter-spacing:.08em}.stat-number{font-size:2.1rem;font-weight:950}.section-title{font-size:1.45rem;margin:0 0 14px;letter-spacing:-.03em}.departure-card{padding:24px}.departure-card a,.official-link{display:inline-flex;align-items:center;justify-content:center;margin-top:6px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#041018;text-decoration:none;padding:12px 16px;border-radius:14px;font-weight:950}.route{display:grid;grid-template-columns:96px 1fr 126px 32px;align-items:center;margin-bottom:14px;overflow:hidden}.route-date{height:100%;background:linear-gradient(180deg,rgba(86,240,196,.15),rgba(91,140,255,.12));border-left:7px solid var(--accent);display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:108px;font-weight:950}.route-date strong{font-size:1.9rem;line-height:1}.route-date span{font-size:.8rem;color:var(--muted);text-align:center}.route-header{padding:22px 18px}.route-header h2{margin:0 0 7px;font-size:1.25rem}.details{display:none;grid-column:1/-1;border-top:1px solid var(--line);padding:18px 22px;background:rgba(255,255,255,.035)}.open .details{display:block}.route-tag{text-align:center}.changes{max-width:900px}.update-card{display:grid;grid-template-columns:76px 1fr;gap:22px;align-items:start;padding:28px;margin-bottom:18px}.confirmed{border-left:7px solid var(--good)}.expected{border-left:7px solid var(--warning)}.icon-circle{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;font-size:1.8rem;font-weight:950;background:var(--surface-3);border:1px solid var(--line)}.timeline{position:relative;max-width:860px}.timeline:before{content:"";position:absolute;left:36px;top:8px;bottom:8px;width:4px;background:linear-gradient(var(--accent),var(--accent-2));border-radius:999px}.update-entry{display:grid;grid-template-columns:86px 1fr 90px;gap:18px;align-items:center;margin-bottom:14px;padding:18px 18px 18px 100px;position:relative}.update-entry:before{content:"";position:absolute;left:27px;width:22px;height:22px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 7px rgba(86,240,196,.14)}.date{font-weight:950;text-align:center;line-height:1.05;color:var(--text)}.date strong{display:block;font-size:1.45rem}.status{justify-self:end}.info-card{padding:26px;margin-bottom:18px}.warning{border-left:7px solid var(--warning)}.contact{border-left:7px solid var(--accent-2)}.help{border-left:7px solid var(--good)}.info{border-left:7px solid var(--accent-3)}footer{margin-top:28px;color:var(--muted);font-weight:800;text-align:center;padding:20px}.footer-link{color:var(--accent);text-decoration:none}@media(max-width:980px){.app-shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.brand{max-width:520px}.content{padding:18px}.nav{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}.sidebar-note{display:none}}@media(max-width:720px){.page-title,.hero{padding:26px}.page-title h1,.hero h1{font-size:2.35rem}.route{grid-template-columns:76px 1fr 28px}.route-tag{grid-column:2;margin:0 18px 16px;text-align:left}.route-date{min-height:92px}.timeline:before,.update-entry:before{display:none}.update-entry{grid-template-columns:1fr;padding:20px}.date{text-align:left}.status{justify-self:start}.update-card{grid-template-columns:1fr}.content{padding:14px}.brand img{width:48px;height:48px}}
+.site-header {
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+.header-inner {
+  max-width:1240px;
+  margin:auto;
+  padding:18px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.brand {
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.brand img {
+  height:58px;
+  width:auto;
+  filter:brightness(0);
+}
+.brand h1 {
+  font-size:1.35rem;
+  font-weight:900;
+  letter-spacing:-.04em;
+}
+.brand p {
+  color:var(--muted);
+  font-size:.92rem;
+  font-weight:600;
+  margin-top:2px;
+}
+.header-actions {
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.nav-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px 20px;
+  border-radius:16px;
+  background:white;
+  color:var(--text);
+  text-decoration:none;
+  font-weight:800;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  transition:.2s ease;
+}
+.nav-btn:hover,.nav-btn.active {
+  background:var(--primary);
+  color:white;
+  transform:translateY(-2px);
+}
+main {
+  max-width:1240px;
+  margin:auto;
+  padding:36px 24px 56px;
+}
+.hero {
+  display:grid;
+  grid-template-columns:1.5fr .8fr;
+  gap:22px;
+  align-items:stretch;
+  margin-bottom:24px;
+}
+.hero-card {
+  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
+  color:white;
+  border-radius:32px;
+  padding:42px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+.hero-card:after {
+  content:"";
+  position:absolute;
+  width:280px;
+  height:280px;
+  right:-90px;
+  top:-90px;
+  border-radius:50%;
+  background:rgba(255,255,255,.10);
+}
+.hero-card h2 {
+  font-size:clamp(2.2rem,5vw,4rem);
+  line-height:.95;
+  letter-spacing:-.07em;
+  font-weight:900;
+  margin-bottom:16px;
+  position:relative;
+}
+.hero-card p {
+  color:rgba(255,255,255,.88);
+  max-width:680px;
+  line-height:1.7;
+  font-weight:600;
+  position:relative;
+}
+.summary-card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:32px;
+  padding:28px;
+  box-shadow:var(--shadow);
+}
+.summary-card h3 {
+  font-size:1rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:14px;
+}
+.summary-number {
+  font-size:3.2rem;
+  font-weight:900;
+  letter-spacing:-.06em;
+  color:var(--primary);
+}
+.summary-card p {
+  color:var(--muted);
+  line-height:1.6;
+  font-weight:600;
+  margin-top:8px;
+}
+.nav-buttons {
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin:24px 0;
+}
+.search {
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px 18px;
+  font:600 15px/1 Inter,sans-serif;
+  outline:none;
+  background:#fff;
+  color:var(--text);
+  box-shadow:var(--shadow);
+  margin-bottom:22px;
+}
+.search:focus {
+  border-color:var(--primary);
+  box-shadow:0 0 0 4px rgba(15,118,110,.12);
+}
+.routes-panel {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:32px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.panel-top {
+  padding:24px 28px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.panel-top h2 {
+  font-size:1.25rem;
+  letter-spacing:-.03em;
+}
+.panel-top p {
+  color:var(--muted);
+  font-weight:600;
+  margin-top:4px;
+}
+.count-pill {
+  background:var(--primary-soft);
+  color:var(--primary-dark);
+  border-radius:999px;
+  padding:9px 13px;
+  font-weight:900;
+  font-size:.86rem;
+}
+.routes-list {
+  padding:18px;
+  display:grid;
+  gap:14px;
+}
+.route {
+  display:grid;
+  grid-template-columns:96px 1fr 150px 32px;
+  align-items:center;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:#fbfdff;
+  overflow:hidden;
+  transition:.16s ease;
+}
+.route:hover {
+  background:#f8fbfb;
+  cursor:pointer;
+  transform:translateY(-1px);
+}
+.route-date {
+  height:100%;
+  min-height:108px;
+  background:linear-gradient(180deg,var(--primary-soft),#eef2ff);
+  border-left:7px solid var(--primary);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  font-weight:900;
+  color:var(--primary-dark);
+}
+.route-date strong {
+  font-size:1.9rem;
+  line-height:1;
+}
+.route-date span {
+  font-size:.8rem;
+  color:var(--muted);
+  text-align:center;
+  margin-top:4px;
+}
+.route-header {
+  padding:22px 18px;
+}
+.route-header h2 {
+  margin:0 0 7px;
+  font-size:1.25rem;
+  letter-spacing:-.03em;
+}
+.meta {
+  color:var(--muted);
+  line-height:1.6;
+  font-weight:650;
+}
+.route-tag {
+  text-align:center;
+}
+.tag {
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:7px 11px;
+  background:#eef2ff;
+  color:#3730a3;
+  font-size:.82rem;
+  font-weight:900;
+}
+.tag.new {
+  background:var(--primary-soft);
+  color:var(--primary-dark);
+}
+.route-arrow {
+  color:var(--muted);
+  font-size:1.6rem;
+}
+.details {
+  display:none;
+  grid-column:1/-1;
+  border-top:1px solid var(--border);
+  padding:18px 22px;
+  background:white;
+}
+.open .details {
+  display:block;
+}
+.empty {
+  padding:34px 24px;
+  color:var(--muted);
+  font-weight:700;
+  text-align:center;
+}
+footer {
+  text-align:center;
+  color:var(--muted);
+  font-weight:700;
+  padding:34px 20px 0;
+}
+.footer-link {
+  color:var(--primary);
+  text-decoration:none;
+}
+@media(max-width:900px) {
+  .hero { grid-template-columns:1fr; }
+  .route { grid-template-columns:76px 1fr 28px; }
+  .route-tag { grid-column:2; text-align:left; padding:0 18px 16px; }
+}
+@media(max-width:620px) {
+  .header-inner, main { padding-left:16px; padding-right:16px; }
+  .hero-card { padding:30px; }
+  .header-actions { width:100%; }
+  .nav-btn { width:100%; }
+  .route-date { min-height:92px; }
+}
 </style>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand"><img src="busbase-logo-removebg-preview.png" alt="BusBase logo"><div><div class="brand-kicker">BusBase</div><div class="brand-name">Fleet Nexus</div><div class="brand-sub">Modern LynxBus reference</div></div></div>
-      <nav class="nav"><a href="index.html">Fleet Nexus</a><a href="routes.html" class="active">Routes</a><a href="depart.html">Live Departures</a><a href="upcoming.html">Upcoming Changes</a><a href="updates.html">Website Updates</a><a href="stats.html">Statistics</a><a href="disclaimer.html">Disclaimer</a><button type="button" class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button></nav>
-      <div class="sidebar-note">Modernised interface with cleaner cards, smoother spacing, responsive navigation and saved light/dark mode.</div>
-    </aside>
-    <main class="content">
-      <section class="page-title">
-    <h1>Lynx Bus Routes</h1>
-    <p>Full network route guide</p>
-  </section>
-<input class="search" id="search" placeholder="Search by route, place or destination...">
-<div id="routes"></div>
-      <footer>BusBase Fleet Information • <a class="footer-link" href="disclaimer.html">Disclaimer & Contact</a></footer>
-    </main>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <img src="busbase-logo-removebg-preview.png" alt="BusBase Logo">
+      <div>
+        <h1>BusBase | Fleet & Routes</h1>
+        <p>Built by enthusiasts, for enthusiasts (and others)</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="nav-btn">Fleet List</a>
+    </div>
   </div>
-<script>
-function toggleTheme(){
-  const isLight=document.body.classList.toggle('light');
-  localStorage.setItem('busbaseTheme',isLight?'light':'dark');
-  updateThemeButton();
-}
-function updateThemeButton(){
-  const btn=document.querySelector('.theme-toggle');
-  if(btn) btn.textContent=document.body.classList.contains('light')?'🌙 Dark Mode':'☀️ Light Mode';
-}
-(function(){
-  if(localStorage.getItem('busbaseTheme')==='light') document.body.classList.add('light');
-  updateThemeButton();
-})();
+</header>
 
+<main>
+  <section class="hero">
+    <div class="hero-card">
+      <h2>Routes</h2>
+      <p>Browse BusBase routes by number, destination, places served and route notes. Select a route to view extra details.</p>
+    </div>
+    <aside class="summary-card">
+      <h3>Total routes</h3>
+      <div class="summary-number" id="totalRoutes">0</div>
+      <p>Route guide loaded directly from your BusBase routes list.</p>
+    </aside>
+  </section>
+
+  <div class="nav-buttons">
+    <a href="index.html" class="nav-btn">Fleet List</a>
+    <a href="routes.html" class="nav-btn active">View Routes</a>
+    <a href="stats.html" class="nav-btn">Statistics</a>
+    <a href="upcoming.html" class="nav-btn">Upcoming Changes</a>
+    <a href="updates.html" class="nav-btn">Site Updates</a>
+    <a href="disclaimer.html" class="nav-btn">Disclaimer</a>
+  </div>
+
+  <input class="search" id="search" placeholder="Search by route, place or destination...">
+
+  <section class="routes-panel">
+    <div class="panel-top">
+      <div>
+        <h2>Route guide</h2>
+        <p>Click a route to open its notes.</p>
+      </div>
+      <div class="count-pill" id="visibleCount">0 shown</div>
+    </div>
+    <div class="routes-list" id="routes"></div>
+  </section>
+
+  <footer>BusBase | Fleet & Routes • <a class="footer-link" href="disclaimer.html">Disclaimer & Contact</a></footer>
+</main>
+
+<script>
 const routes = [
 
-/* ===== 33 FAMILY ===== */
 {
 number:"33",
 from:"King's Lynn",
@@ -65,8 +398,9 @@ to:"Hunstanton",
 via:"QE Hospital • Hillington • Bircham • Sedgeford",
 frequency:"Every 3 Hours (Every 2 Hours from 1 June)",
 tag:"Main",
-extra:"Main corridor route to Docking & Sedgeford."
+extra:"The 33 provides a key connection between King's Lynn and the North Norfolk coast, serving villages including Hillington, Bircham and Sedgeford before reaching Hunstanton."
 },
+
 {
 number:"33A",
 from:"Bircham",
@@ -74,8 +408,9 @@ to:"Docking",
 via:"Village service",
 frequency:"Schooldays",
 tag:"School",
-extra:"Short rural connector."
+extra:"A rural schoolday service linking Bircham with Docking and surrounding villages, mainly focused on local travel and school movements."
 },
+
 {
 number:"33B",
 from:"Hunstanton",
@@ -83,8 +418,9 @@ to:"Ringstead Loop",
 via:"Ringstead • Docking area",
 frequency:"Hourly (from 1 June)",
 tag:"NEW LOOP",
-extra:"Ringstead circular service."
+extra:"The 33B loop service provides improved local access around Ringstead and nearby villages with direct links into Hunstanton."
 },
+
 {
 number:"33C",
 from:"King's Lynn",
@@ -92,10 +428,9 @@ to:"Hunstanton (Loop)",
 via:"QE Hospital • Bircham • Sedgeford circular",
 frequency:"Hourly (from 1 June)",
 tag:"NEW LOOP",
-extra:"Hunstanton Circular."
+extra:"A new circular variation of the 33 corridor designed to improve connectivity between King's Lynn, Bircham, Sedgeford and Hunstanton."
 },
 
-/* ===== COASTAL ===== */
 {
 number:"34",
 from:"King's Lynn",
@@ -103,8 +438,9 @@ to:"Hunstanton",
 via:"Snettisham • Dersingham • Heacham",
 frequency:"Every 30 mins",
 tag:"QEH Hopper",
-extra:"Serves Snettisham & Dersingham corridor."
+extra:"The 34 is one of the busiest LynxBus routes, linking King's Lynn with Hunstanton via major coastal villages and the QE Hospital corridor."
 },
+
 {
 number:"35",
 from:"King's Lynn",
@@ -112,8 +448,9 @@ to:"Hunstanton",
 via:"Sandringham • Heacham",
 frequency:"Hourly",
 tag:"Royal Route",
-extra:"Sandringham estate route."
+extra:"The 35 serves Sandringham Estate and surrounding villages, offering a scenic route between King's Lynn and Hunstanton."
 },
+
 {
 number:"36 Coastliner",
 from:"King's Lynn",
@@ -121,10 +458,9 @@ to:"Fakenham",
 via:"Hunstanton • Wells-next-the-Sea",
 frequency:"Hourly",
 tag:"Coastal",
-extra:"Coastal express route."
+extra:"The Coastliner 36 is a flagship coastal route connecting King's Lynn with Wells-next-the-Sea and Fakenham along the North Norfolk coastline."
 },
 
-/* ===== TOWN ===== */
 {
 number:"41",
 from:"King's Lynn",
@@ -132,8 +468,9 @@ to:"King's Reach",
 via:"Fairstead • QE Hospital",
 frequency:"Every 30–60 mins",
 tag:"Town",
-extra:"Urban estate link."
+extra:"The 41 provides an important urban connection between King's Lynn town centre, Fairstead and King's Reach."
 },
+
 {
 number:"42",
 from:"King's Lynn",
@@ -141,8 +478,9 @@ to:"Fairstead",
 via:"Gaywood",
 frequency:"Every 20 mins",
 tag:"Town",
-extra:"Local loop service."
+extra:"A frequent town service linking King's Lynn with Gaywood and Fairstead, providing key local transport connections."
 },
+
 {
 number:"43",
 from:"King's Lynn",
@@ -150,8 +488,9 @@ to:"North Wootton",
 via:"Estates",
 frequency:"School / peak",
 tag:"School",
-extra:"School-focused service."
+extra:"The 43 mainly operates during peak and school times, serving residential estates and North Wootton."
 },
+
 {
 number:"44",
 from:"King's Lynn",
@@ -159,10 +498,9 @@ to:"King's Lynn Loop",
 via:"Gaywood • Fairstead • Hardwick • Town Centre",
 frequency:"Every 2 hours (from 1 June)",
 tag:"NEW LOOP",
-extra:"New circular town loop."
+extra:"A circular town route connecting major residential areas including Gaywood, Fairstead and Hardwick with King's Lynn town centre."
 },
 
-/* ===== RURAL / INTERURBAN ===== */
 {
 number:"37",
 from:"King's Lynn",
@@ -170,8 +508,9 @@ to:"Downham Market",
 via:"West Winch • Southery",
 frequency:"Hourly–2 hourly",
 tag:"Rural",
-extra:"Rural town link."
+extra:"The 37 links King's Lynn with Downham Market through rural villages including West Winch and Southery."
 },
+
 {
 number:"38",
 from:"King's Lynn",
@@ -179,8 +518,9 @@ to:"Fair Green",
 via:"Hardwick • West Winch",
 frequency:"Hourly",
 tag:"Local",
-extra:"Short estate link."
+extra:"A shorter local route providing links between King's Lynn, Hardwick and Fair Green."
 },
+
 {
 number:"39",
 from:"King's Lynn",
@@ -188,8 +528,9 @@ to:"Marham",
 via:"Shouldham • RAF Marham",
 frequency:"Hourly–2 hourly",
 tag:"Rural",
-extra:"RAF access route."
+extra:"The 39 serves RAF Marham and surrounding villages, providing an important rural and military transport connection."
 },
+
 {
 number:"46 / X46",
 from:"King's Lynn",
@@ -197,10 +538,9 @@ to:"Wisbech",
 via:"Terrington • Walpole • St Germans",
 frequency:"Hourly",
 tag:"Interurban",
-extra:"Fenland cross-county route."
+extra:"An important interurban service linking King's Lynn with Wisbech through Fenland communities."
 },
 
-/* ===== FAKENHAM CORRIDOR ===== */
 {
 number:"48 / 49 / 49A",
 from:"King's Lynn",
@@ -208,10 +548,9 @@ to:"Fakenham",
 via:"Gayton • Grimston • Great Massingham",
 frequency:"Hourly combined",
 tag:"Rural",
-extra:"Grouped rural corridor."
+extra:"A group of rural routes serving villages between King's Lynn and Fakenham via Gayton and Great Massingham."
 },
 
-/* ===== SPECIAL ===== */
 {
 number:"54",
 from:"King's Lynn",
@@ -219,8 +558,9 @@ to:"Walpoles",
 via:"Tilney • Clenchwarton",
 frequency:"1–2 hourly",
 tag:"Rural",
-extra:"Western villages link."
+extra:"The 54 provides village links west of King's Lynn including Tilney and Clenchwarton."
 },
+
 {
 number:"54A",
 from:"King's Lynn",
@@ -228,8 +568,9 @@ to:"Terrington Schools",
 via:"School link",
 frequency:"Schooldays",
 tag:"School",
-extra:"School-only variant."
+extra:"A dedicated schoolday route connecting King's Lynn with schools in the Terrington area."
 },
+
 {
 number:"60",
 from:"Wisbech",
@@ -237,8 +578,9 @@ to:"Downham Market",
 via:"Outwell • Upwell • Three Holes",
 frequency:"Hourly–2 hourly",
 tag:"Cross-county",
-extra:"Fenland route."
+extra:"The 60 connects Fenland towns and villages including Outwell, Upwell and Three Holes."
 },
+
 {
 number:"414 / 415",
 from:"Dersingham",
@@ -246,19 +588,30 @@ to:"Alderman Peel High School",
 via:"Docking",
 frequency:"Schooldays",
 tag:"School",
-extra:"School services."
+extra:"School-focused services linking Dersingham and Docking with Alderman Peel High School."
 }
 
 ];
+
 function routeDate(number){
   if(String(number).includes('44')) return ['44','May','2026'];
   if(String(number).includes('36')) return ['36','May','2026'];
   const n=String(number).split(' ')[0].replace(/[^0-9A-Z]/g,'');
   return [n,'May','2026'];
 }
+
 function render(list){
   const container=document.getElementById('routes');
   container.innerHTML='';
+
+  document.getElementById('totalRoutes').textContent = routes.length;
+  document.getElementById('visibleCount').textContent = `${list.length} shown`;
+
+  if(!list.length){
+    container.innerHTML = '<div class="empty">No routes match your search.</div>';
+    return;
+  }
+
   list.forEach(r=>{
     const d=routeDate(r.number);
     container.innerHTML+=`
@@ -266,6 +619,7 @@ function render(list){
       <div class="route-date"><strong>${d[0]}</strong><span>${d[1]}<br>${d[2]}</span></div>
       <div class="route-header">
         <h2>${r.from} – ${r.to}</h2>
+        <div class="meta"><b>Route ${r.number}</b></div>
         <div class="meta"><b>Via</b> ${r.via}</div>
         <div class="meta"><b>${r.frequency}</b></div>
       </div>
@@ -275,10 +629,18 @@ function render(list){
     </div>`;
   });
 }
+
 document.getElementById('search').addEventListener('input',e=>{
   const q=e.target.value.toLowerCase();
-  render(routes.filter(r=>r.number.toLowerCase().includes(q)||r.from.toLowerCase().includes(q)||r.to.toLowerCase().includes(q)||r.via.toLowerCase().includes(q)));
+  render(routes.filter(r=>
+    r.number.toLowerCase().includes(q)||
+    r.from.toLowerCase().includes(q)||
+    r.to.toLowerCase().includes(q)||
+    r.via.toLowerCase().includes(q)||
+    r.tag.toLowerCase().includes(q)
+  ));
 });
+
 render(routes);
 </script>
 </body>
