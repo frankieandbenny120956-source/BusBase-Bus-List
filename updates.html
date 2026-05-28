@@ -1,374 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Site Updates | LynxBus</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Website Updates | BusBase</title>
+<link rel="icon" href="busbase-logo-removebg-preview.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-
-:root{
-  --bg:#0b1220;
-  --bg2:#111827;
-  --card:#182233;
-  --card2:#1f2c40;
-  --text:#f8fafc;
-  --muted:#94a3b8;
-  --line:#334155;
-  --accent:#3b82f6;
-  --accent2:#60a5fa;
+:root {
+  --bg:#eef3f8; --panel:#ffffff; --text:#172033; --muted:#667085; --border:#d8e0ea;
+  --primary:#0f766e; --primary-dark:#115e59; --primary-soft:#ccfbf1; --accent:#f59e0b;
+  --shadow:0 18px 45px rgba(15,23,42,.08); --radius:24px;
 }
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:linear-gradient(135deg,var(--bg),var(--bg2));
-  color:var(--text);
-}
-
-header{
-  max-width:1200px;
-  margin:auto;
-  padding:30px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:16px;
-}
-
-.logo{
-  width:60px;
-  height:60px;
-  border-radius:18px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
-  font-weight:900;
-}
-
-.brand h1{
-  margin:0;
-  font-size:34px;
-}
-
-.brand p{
-  margin:4px 0 0;
-  color:var(--muted);
-}
-
-.top-button{
-  padding:12px 18px;
-  border-radius:14px;
-  background:var(--card);
-  border:1px solid var(--line);
-  color:white;
-  text-decoration:none;
-  font-weight:700;
-}
-
-.top-button:hover{
-  background:var(--card2);
-}
-
-main{
-  max-width:1200px;
-  margin:auto;
-  padding:0 20px 40px;
-}
-
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:24px;
-  padding:26px;
-  margin-bottom:22px;
-}
-
-.hero{
-  background:
-    linear-gradient(
-      135deg,
-      rgba(59,130,246,.25),
-      rgba(96,165,250,.08)
-    ),
-    var(--card);
-}
-
-.hero h2{
-  margin:0 0 10px;
-  font-size:42px;
-}
-
-.hero p{
-  margin:0;
-  color:var(--muted);
-  max-width:700px;
-  line-height:1.6;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-  gap:18px;
-  margin-bottom:22px;
-}
-
-.stat-card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:24px;
-}
-
-.stat-card h3{
-  margin:0;
-  color:var(--muted);
-  font-size:14px;
-  text-transform:uppercase;
-}
-
-.stat-card strong{
-  display:block;
-  margin:12px 0;
-  font-size:38px;
-}
-
-.stat-card p{
-  margin:0;
-  color:var(--muted);
-}
-
-.links{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.links a{
-  padding:12px 16px;
-  border-radius:14px;
-  background:#243247;
-  border:1px solid var(--line);
-  color:white;
-  text-decoration:none;
-  font-weight:700;
-}
-
-.links a:hover{
-  background:#30435f;
-}
-
-.section-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-}
-
-.section-head h2{
-  margin:0;
-}
-
-.section-head p{
-  margin:5px 0 0;
-  color:var(--muted);
-}
-
-.section-head span{
-  color:var(--muted);
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th{
-  text-align:left;
-  padding:14px;
-  color:var(--muted);
-  border-bottom:1px solid var(--line);
-}
-
-td{
-  padding:16px 14px;
-  border-bottom:1px solid var(--line);
-}
-
-tbody tr:hover{
-  background:rgba(255,255,255,.03);
-}
-
-footer{
-  text-align:center;
-  color:var(--muted);
-  padding:35px;
-}
-
-@media(max-width:700px){
-
-  header{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:18px;
-  }
-
-  .hero h2{
-    font-size:32px;
-  }
-
-  .section-head{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-  }
-
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#f8fafc 0%,var(--bg) 100%);color:var(--text);min-height:100vh}
+.site-header{background:rgba(255,255,255,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.header-inner{max-width:1240px;margin:auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px} .brand img{height:58px;width:auto;filter:brightness(0)}
+.brand h1{font-size:1.35rem;font-weight:900;letter-spacing:-.04em} .brand p{color:var(--muted);font-size:.92rem;font-weight:600;margin-top:2px}
+.header-actions,.nav-buttons{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.nav-btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 20px;border-radius:16px;background:white;color:var(--text);text-decoration:none;font-weight:800;border:1px solid var(--border);box-shadow:var(--shadow);transition:.2s ease}
+.nav-btn:hover,.nav-btn.active{background:var(--primary);color:white;transform:translateY(-2px)}
+main{max-width:1240px;margin:auto;padding:36px 24px 56px}
+.hero{display:grid;grid-template-columns:1.5fr .8fr;gap:22px;align-items:stretch;margin-bottom:24px}
+.hero-card{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;border-radius:32px;padding:42px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero-card:after{content:"";position:absolute;width:280px;height:280px;right:-90px;top:-90px;border-radius:50%;background:rgba(255,255,255,.10)}
+.hero-card h2{font-size:clamp(2.2rem,5vw,4rem);line-height:.95;letter-spacing:-.07em;font-weight:900;margin-bottom:16px;position:relative}
+.hero-card p{color:rgba(255,255,255,.88);max-width:720px;line-height:1.7;font-weight:600;position:relative}
+.summary-card,.panel{background:var(--panel);border:1px solid var(--border);border-radius:32px;padding:28px;box-shadow:var(--shadow)}
+.summary-card h3{font-size:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.summary-number{font-size:3.2rem;font-weight:900;letter-spacing:-.06em;color:var(--primary)} .summary-card p{color:var(--muted);line-height:1.6;font-weight:600;margin-top:8px}
+.nav-buttons{margin:24px 0}
+.updates-panel{background:var(--panel);border:1px solid var(--border);border-radius:32px;box-shadow:var(--shadow);overflow:hidden}
+.panel-top{padding:24px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.panel-top h2{font-size:1.25rem;letter-spacing:-.03em} .panel-top p{color:var(--muted);font-weight:600;margin-top:4px}
+.count-pill{background:var(--primary-soft);color:var(--primary-dark);border-radius:999px;padding:9px 13px;font-weight:900;font-size:.86rem}
+.updates-list{padding:18px;display:grid;gap:14px}
+.update-card{display:grid;grid-template-columns:96px 1fr 140px;align-items:center;border:1px solid var(--border);border-radius:24px;background:#fbfdff;overflow:hidden;transition:.16s ease}
+.update-card:hover{transform:translateY(-1px);background:#f8fbfb}
+.update-date{height:100%;min-height:112px;background:linear-gradient(180deg,var(--primary-soft),#eef2ff);border-left:7px solid var(--primary);display:flex;flex-direction:column;justify-content:center;align-items:center;font-weight:900;color:var(--primary-dark)}
+.update-date strong{font-size:1.9rem;line-height:1} .update-date span{font-size:.75rem;color:var(--muted);text-align:center;margin-top:4px}
+.update-body{padding:22px 18px} .update-body h3{font-size:1.18rem;letter-spacing:-.03em;margin-bottom:7px} .update-body p{color:var(--muted);line-height:1.65;font-weight:650}
+.tag{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:7px 11px;background:#eef2ff;color:#3730a3;font-size:.82rem;font-weight:900;margin-right:18px;white-space:nowrap} .tag.new{background:var(--primary-soft);color:var(--primary-dark)} .tag.warn{background:#fef3c7;color:#92400e}
+.change-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0}
+.change-card{background:var(--panel);border:1px solid var(--border);border-radius:24px;padding:22px;box-shadow:var(--shadow)} .change-card h3{font-size:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px} .change-card strong{display:block;color:var(--primary);font-size:2.25rem;font-weight:900;letter-spacing:-.05em} .change-card span{color:var(--muted);font-weight:650;line-height:1.5}
+footer{text-align:center;color:var(--muted);font-weight:700;padding:34px 20px 0} .footer-link{color:var(--primary);text-decoration:none}
+@media(max-width:900px){.hero,.change-grid{grid-template-columns:1fr}.update-card{grid-template-columns:76px 1fr}.tag{margin:0 18px 18px;justify-self:start}}
+@media(max-width:620px){.header-inner,main{padding-left:16px;padding-right:16px}.hero-card{padding:30px}.header-actions,.nav-btn{width:100%}}
 </style>
 </head>
-
 <body>
-
-<header>
-
-  <div class="brand">
-
-    <div class="logo">
-      LB
-    </div>
-
-    <div>
-      <h1>LynxBus</h1>
-      <p>Fleet list and vehicle features</p>
-    </div>
-
-  </div>
-
-  <a class="top-button" href="routes.html">
-    All routes
-  </a>
-
-</header>
-
+<header class="site-header"><div class="header-inner"><div class="brand"><img src="busbase-logo-removebg-preview.png" alt="BusBase Logo"><div><h1>BusBase</h1><p>Fleet Nexus • Modern LynxBus reference</p></div></div><div class="header-actions"><a href="index.html" class="nav-btn">Fleet Nexus</a></div></div></header>
 <main>
-
-  <section class="card hero">
-
-    <h2>Site Updates</h2>
-
-    <p>
-      Latest updates, redesigns and improvements made to the
-      LynxBus fleet website.
-    </p>
-
-  </section>
-
-  <section class="stats">
-
-    <div class="stat-card">
-      <h3>Total Updates</h3>
-      <strong>3</strong>
-      <p>Recent website improvements.</p>
-    </div>
-
-    <div class="stat-card">
-      <h3>Latest Update</h3>
-      <strong>27 MAY</strong>
-      <p>Updates page rebuilt to match index layout.</p>
-    </div>
-
-    <div class="stat-card">
-      <h3>Status</h3>
-      <strong>LIVE</strong>
-      <p>New design is active.</p>
-    </div>
-
-    <div class="stat-card">
-      <h3>Design</h3>
-      <strong>INDEX</strong>
-      <p>Same layout as homepage.</p>
-    </div>
-
-  </section>
-
-  <section class="card links">
-
-    <a href="index.html">Fleet List</a>
-    <a href="routes.html">View Routes</a>
-    <a href="stats.html">Statistics</a>
-    <a href="upcoming.html">Upcoming Changes</a>
-    <a href="updates.html">Site Updates</a>
-    <a href="disclaimer.html">Disclaimer</a>
-
-  </section>
-
-  <section class="card">
-
-    <div class="section-head">
-
-      <div>
-        <h2>Recent Updates</h2>
-        <p>Newest changes to the website.</p>
-      </div>
-
-      <span>3 shown</span>
-
-    </div>
-
-    <table>
-
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Update</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-
-      <tbody>
-
-        <tr>
-          <td>27 May 2026</td>
-          <td>Rebuilt updates page to match homepage design.</td>
-          <td>Complete</td>
-        </tr>
-
-        <tr>
-          <td>27 May 2026</td>
-          <td>Removed old sidebar layout and added homepage cards.</td>
-          <td>Complete</td>
-        </tr>
-
-        <tr>
-          <td>26 May 2026</td>
-          <td>Prepared LynxBus pages for redesign.</td>
-          <td>Planned</td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </section>
-
+<section class="hero"><div class="hero-card"><h2>Website Updates</h2><p>Track BusBase site changes, route-data refreshes and page improvements. This page now reflects the detailed route changes added across the Routes, Statistics and Upcoming Changes pages.</p></div><aside class="summary-card"><h3>Latest update</h3><div class="summary-number">28</div><p>May 2026 • detailed route information and new June route changes added.</p></aside></section>
+<div class="nav-buttons"><a href="index.html" class="nav-btn">Fleet List</a><a href="routes.html" class="nav-btn">Routes</a><a href="live.html" class="nav-btn">Live Departures</a><a href="upcoming.html" class="nav-btn">Upcoming Changes</a><a href="updates.html" class="nav-btn active">Website Updates</a><a href="stats.html" class="nav-btn">Statistics</a><a href="disclaimer.html" class="nav-btn">Disclaimer</a></div>
+<section class="change-grid">
+  <article class="change-card"><h3>Routes listed</h3><strong id="routeTotal">0</strong><span>Detailed route records now used across BusBase.</span></article>
+  <article class="change-card"><h3>New loop updates</h3><strong>3</strong><span>33B, 33C and 44 added as new loop changes.</span></article>
+  <article class="change-card"><h3>Pages refreshed</h3><strong>4</strong><span>Routes, Statistics, Upcoming Changes and Website Updates.</span></article>
+</section>
+<section class="updates-panel"><div class="panel-top"><div><h2>Update log</h2><p>Recent website changes and route data updates.</p></div><div class="count-pill" id="updateCount">0 updates</div></div><div class="updates-list" id="updates"></div></section>
+<footer>BusBase Fleet Information • <a class="footer-link" href="disclaimer.html">Disclaimer & Contact</a></footer>
 </main>
+<script>
+const routes = [
 
-<footer>
-  LynxBus Fleet Database
-</footer>
+{
+number:"33",
+from:"King's Lynn",
+to:"Hunstanton",
+via:"QE Hospital • Hillington • Bircham • Sedgeford",
+frequency:"Every 3 Hours (Every 2 Hours from 1 June)",
+tag:"Main",
+extra:"The 33 provides a key connection between King's Lynn and the North Norfolk coast, serving villages including Hillington, Bircham and Sedgeford before reaching Hunstanton."
+},
 
+{
+number:"33A",
+from:"Bircham",
+to:"Docking",
+via:"Village service",
+frequency:"Schooldays",
+tag:"School",
+extra:"A rural schoolday service linking Bircham with Docking and surrounding villages, mainly focused on local travel and school movements."
+},
+
+{
+number:"33B",
+from:"Hunstanton",
+to:"Ringstead Loop",
+via:"Ringstead • Docking area",
+frequency:"Hourly (from 1 June)",
+tag:"NEW LOOP",
+extra:"The 33B loop service provides improved local access around Ringstead and nearby villages with direct links into Hunstanton."
+},
+
+{
+number:"33C",
+from:"King's Lynn",
+to:"Hunstanton (Loop)",
+via:"QE Hospital • Bircham • Sedgeford circular",
+frequency:"Hourly (from 1 June)",
+tag:"NEW LOOP",
+extra:"A new circular variation of the 33 corridor designed to improve connectivity between King's Lynn, Bircham, Sedgeford and Hunstanton."
+},
+
+{
+number:"34",
+from:"King's Lynn",
+to:"Hunstanton",
+via:"Snettisham • Dersingham • Heacham",
+frequency:"Every 30 mins",
+tag:"QEH Hopper",
+extra:"The 34 is one of the busiest LynxBus routes, linking King's Lynn with Hunstanton via major coastal villages and the QE Hospital corridor."
+},
+
+{
+number:"35",
+from:"King's Lynn",
+to:"Hunstanton",
+via:"Sandringham • Heacham",
+frequency:"Hourly",
+tag:"Royal Route",
+extra:"The 35 serves Sandringham Estate and surrounding villages, offering a scenic route between King's Lynn and Hunstanton."
+},
+
+{
+number:"36 Coastliner",
+from:"King's Lynn",
+to:"Fakenham",
+via:"Hunstanton • Wells-next-the-Sea",
+frequency:"Hourly",
+tag:"Coastal",
+extra:"The Coastliner 36 is a flagship coastal route connecting King's Lynn with Wells-next-the-Sea and Fakenham along the North Norfolk coastline."
+},
+
+{
+number:"41",
+from:"King's Lynn",
+to:"King's Reach",
+via:"Fairstead • QE Hospital",
+frequency:"Every 30–60 mins",
+tag:"Town",
+extra:"The 41 provides an important urban connection between King's Lynn town centre, Fairstead and King's Reach."
+},
+
+{
+number:"42",
+from:"King's Lynn",
+to:"Fairstead",
+via:"Gaywood",
+frequency:"Every 20 mins",
+tag:"Town",
+extra:"A frequent town service linking King's Lynn with Gaywood and Fairstead, providing key local transport connections."
+},
+
+{
+number:"43",
+from:"King's Lynn",
+to:"North Wootton",
+via:"Estates",
+frequency:"School / peak",
+tag:"School",
+extra:"The 43 mainly operates during peak and school times, serving residential estates and North Wootton."
+},
+
+{
+number:"44",
+from:"King's Lynn",
+to:"King's Lynn Loop",
+via:"Gaywood • Fairstead • Hardwick • Town Centre",
+frequency:"Every 2 hours (from 1 June)",
+tag:"NEW LOOP",
+extra:"A circular town route connecting major residential areas including Gaywood, Fairstead and Hardwick with King's Lynn town centre."
+},
+
+{
+number:"37",
+from:"King's Lynn",
+to:"Downham Market",
+via:"West Winch • Southery",
+frequency:"Hourly–2 hourly",
+tag:"Rural",
+extra:"The 37 links King's Lynn with Downham Market through rural villages including West Winch and Southery."
+},
+
+{
+number:"38",
+from:"King's Lynn",
+to:"Fair Green",
+via:"Hardwick • West Winch",
+frequency:"Hourly",
+tag:"Local",
+extra:"A shorter local route providing links between King's Lynn, Hardwick and Fair Green."
+},
+
+{
+number:"39",
+from:"King's Lynn",
+to:"Marham",
+via:"Shouldham • RAF Marham",
+frequency:"Hourly–2 hourly",
+tag:"Rural",
+extra:"The 39 serves RAF Marham and surrounding villages, providing an important rural and military transport connection."
+},
+
+{
+number:"46 / X46",
+from:"King's Lynn",
+to:"Wisbech",
+via:"Terrington • Walpole • St Germans",
+frequency:"Hourly",
+tag:"Interurban",
+extra:"An important interurban service linking King's Lynn with Wisbech through Fenland communities."
+},
+
+{
+number:"48 / 49 / 49A",
+from:"King's Lynn",
+to:"Fakenham",
+via:"Gayton • Grimston • Great Massingham",
+frequency:"Hourly combined",
+tag:"Rural",
+extra:"A group of rural routes serving villages between King's Lynn and Fakenham via Gayton and Great Massingham."
+},
+
+{
+number:"54",
+from:"King's Lynn",
+to:"Walpoles",
+via:"Tilney • Clenchwarton",
+frequency:"1–2 hourly",
+tag:"Rural",
+extra:"The 54 provides village links west of King's Lynn including Tilney and Clenchwarton."
+},
+
+{
+number:"54A",
+from:"King's Lynn",
+to:"Terrington Schools",
+via:"School link",
+frequency:"Schooldays",
+tag:"School",
+extra:"A dedicated schoolday route connecting King's Lynn with schools in the Terrington area."
+},
+
+{
+number:"60",
+from:"Wisbech",
+to:"Downham Market",
+via:"Outwell • Upwell • Three Holes",
+frequency:"Hourly–2 hourly",
+tag:"Cross-county",
+extra:"The 60 connects Fenland towns and villages including Outwell, Upwell and Three Holes."
+},
+
+{
+number:"414 / 415",
+from:"Dersingham",
+to:"Alderman Peel High School",
+via:"Docking",
+frequency:"Schooldays",
+tag:"School",
+extra:"School-focused services linking Dersingham and Docking with Alderman Peel High School."
+}
+
+];
+
+const updates = [
+  {
+    day:"28", month:"May", year:"2026", tag:"ROUTE DATA", tagClass:"new",
+    title:"Detailed route guide added across BusBase",
+    body:"Replaced the older shorter route notes with fuller route descriptions, including route purpose, key places served, frequency notes and tags."
+  },
+  {
+    day:"28", month:"May", year:"2026", tag:"NEW LOOPS", tagClass:"new",
+    title:"June route changes added",
+    body:"Added upcoming changes for route 33B Hunstanton–Ringstead Loop, route 33C King's Lynn–Hunstanton circular, and route 44 King's Lynn town loop from 1 June."
+  },
+  {
+    day:"28", month:"May", year:"2026", tag:"STATS", tagClass:"",
+    title:"Statistics page updated",
+    body:"Statistics now reads from the detailed routes list, including total routes and breakdowns by route tag and frequency type."
+  },
+  {
+    day:"28", month:"May", year:"2026", tag:"UPCOMING", tagClass:"warn",
+    title:"Upcoming Changes page refreshed",
+    body:"Added route change cards and detailed notes for the confirmed route updates, including the 1 June service changes."
+  },
+  {
+    day:"28", month:"May", year:"2026", tag:"DESIGN", tagClass:"",
+    title:"Modernised page layout",
+    body:"Cleaner cards, smoother spacing, responsive navigation and improved route-style update cards have been added to match the current BusBase design."
+  }
+];
+
+function renderUpdates(){
+  const list=document.getElementById('updates');
+  document.getElementById('routeTotal').textContent=routes.length;
+  document.getElementById('updateCount').textContent=`${updates.length} updates`;
+  list.innerHTML=updates.map(u=>`
+    <article class="update-card">
+      <div class="update-date"><strong>${u.day}</strong><span>${u.month}<br>${u.year}</span></div>
+      <div class="update-body"><h3>${u.title}</h3><p>${u.body}</p></div>
+      <span class="tag ${u.tagClass}">${u.tag}</span>
+    </article>
+  `).join('');
+}
+renderUpdates();
+</script>
 </body>
 </html>
