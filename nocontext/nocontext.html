@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>No Context Twitch Clips | BusBase</title>
+
+        <style>
+            :root {
+                --bg: #f5f8fc;
+                --card: #fff;
+                --text: #121a2f;
+                --muted: #58657f;
+                --green: #0f766e;
+                --green2: #11897d;
+                --border: #d8e1ee;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+                background: var(--bg);
+                color: var(--text);
+            }
+
+            .wrap {
+                max-width: 1200px;
+                margin: auto;
+                padding: 34px 24px;
+            }
+
+            .top-grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 20px;
+                margin-bottom: 22px;
+            }
+
+            .hero,
+            .summary-card,
+            .panel,
+            .stat,
+            .clipTable {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 24px;
+                box-shadow: 0 18px 50px rgba(18, 26, 47, 0.07);
+            }
+
+            .hero {
+                position: relative;
+                overflow: hidden;
+                background: linear-gradient(
+                    135deg,
+                    var(--green),
+                    var(--green2)
+                );
+                color: white;
+                padding: 46px;
+                min-height: 240px;
+            }
+
+            .hero::after {
+                content: "";
+                position: absolute;
+                width: 260px;
+                height: 260px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.12);
+                right: -45px;
+                top: -35px;
+            }
+
+            .logo,
+            h1,
+            .hero p {
+                position: relative;
+                z-index: 1;
+            }
+
+            .logo {
+                font-size: 16px;
+                font-weight: 900;
+                margin-bottom: 18px;
+            }
+
+            h1 {
+                font-size: 56px;
+                line-height: 1;
+                margin: 0 0 18px;
+                letter-spacing: -2px;
+            }
+
+            .hero p {
+                font-weight: 700;
+                max-width: 760px;
+                line-height: 1.6;
+                margin: 0;
+            }
+
+            .summary-card {
+                padding: 30px;
+            }
+
+            .summary-card h3,
+            .stat span {
+                display: block;
+                color: var(--muted);
+                text-transform: uppercase;
+                letter-spacing: 1.4px;
+                font-size: 13px;
+                font-weight: 900;
+                margin: 0 0 14px;
+            }
+
+            .summary-card .big {
+                font-size: 56px;
+                font-weight: 900;
+                color: var(--green);
+                line-height: 1;
+                margin-bottom: 14px;
+            }
+
+            .summary-card p {
+                color: var(--muted);
+                line-height: 1.6;
+                font-weight: 700;
+                margin: 0;
+            }
+
+            .nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin: 0 0 22px;
+            }
+
+            .nav a {
+                background: white;
+                color: var(--text);
+                text-decoration: none;
+                padding: 13px 20px;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                font-weight: 900;
+                box-shadow: 0 8px 22px rgba(18, 26, 47, 0.06);
+            }
+
+            .nav a.active {
+                background: var(--text);
+                color: white;
+            }
+
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                margin-bottom: 22px;
+            }
+
+            .stat {
+                padding: 22px;
+            }
+
+            .stat b {
+                display: block;
+                color: var(--text);
+                font-size: 34px;
+                margin-top: 10px;
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 18px;
+            }
+
+            .panel {
+                padding: 30px;
+            }
+
+            .panel h2 {
+                font-size: 24px;
+                margin: 0 0 14px;
+            }
+
+            .sub,
+            .panel p {
+                color: var(--muted);
+                line-height: 1.7;
+                font-weight: 600;
+                margin: 0 0 16px;
+            }
+
+            .player {
+                text-align: center;
+            }
+
+            .status {
+                min-height: 96px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                font-weight: 900;
+                color: var(--green);
+                margin: 22px 0;
+            }
+
+            button {
+                background: var(--text);
+                color: white;
+                border: 0;
+                border-radius: 12px;
+                padding: 14px 22px;
+                font-size: 16px;
+                font-weight: 900;
+                cursor: pointer;
+                margin: 6px;
+            }
+
+            button:hover {
+                opacity: 0.9;
+            }
+
+            .volume {
+                margin-top: 20px;
+                color: var(--muted);
+                font-weight: 800;
+            }
+
+            input[type="range"] {
+                width: 270px;
+                max-width: 100%;
+            }
+
+            #birdBox {
+                display: none;
+                margin: 18px auto;
+            }
+
+            #birdBox img {
+                width: 100%;
+                max-width: 430px;
+                border-radius: 20px;
+                box-shadow: 0 12px 34px rgba(18, 26, 47, 0.18);
+            }
+
+            .clipTable {
+                margin-top: 18px;
+                overflow: hidden;
+            }
+
+            .clipTable h2 {
+                margin: 0;
+                padding: 24px 28px 4px;
+            }
+
+            .clipTable .sub {
+                padding: 0 28px 22px;
+                margin: 0;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th,
+            td {
+                padding: 18px 24px;
+                text-align: left;
+                border-bottom: 1px solid var(--border);
+            }
+
+            th {
+                color: var(--muted);
+                background: #f7faff;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            td {
+                font-weight: 700;
+            }
+
+            .footer {
+                text-align: center;
+                color: var(--muted);
+                margin: 24px 0 6px;
+                font-weight: 700;
+            }
+
+            @media (max-width: 800px) {
+                .top-grid,
+                .grid,
+                .stats {
+                    grid-template-columns: 1fr;
+                }
+                h1 {
+                    font-size: 38px;
+                }
+                .status {
+                    font-size: 23px;
+                }
+                .wrap {
+                    padding: 18px;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="wrap">
+            <div class="top-grid">
+                <section class="hero">
+                    <div class="logo">BusBase</div>
+                    <h1>No Context Twitch Clips</h1>
+                    <p>
+                        Built by enthusiasts, for enthusiasts — now featuring
+                        random Twitch clips with no context.
+                    </p>
+                </section>
+
+                <aside class="summary-card">
+                    <h3>Clips Loaded</h3>
+                    <div class="big" id="loaded">0</div>
+                    <p>
+                        Random audio clips loaded directly from the no-context
+                        archive.
+                    </p>
+                </aside>
+            </div>
+
+            <nav class="nav">
+                <a href="/">Fleet List</a>
+                <a href="/routes">View Routes</a>
+                <a href="/stats">Statistics</a>
+                <a href="/upcoming">Upcoming Changes</a>
+                <a href="/updates">Site Updates</a>
+                <a class="active" href="/nocontext/nocontext.html"
+                    >No Context Clips</a
+                >
+                <a href="/nocontext/selfies.html">No Context Photos</a>
+            </nav>
+
+            <section class="stats">
+                <div class="stat">
+                    <span>Clips Played</span><b id="played">0</b>
+                </div>
+                <div class="stat"><span>Context Found</span><b>0%</b></div>
+                <div class="stat">
+                    <span>Chaos Level</span><b id="chaos">0</b>
+                </div>
+            </section>
+
+            <section class="grid">
+                <div class="panel">
+                    <h2>What is this?</h2>
+                    <p>
+                        A random collection of audio clips with no explanation,
+                        no warning, and absolutely no useful context.
+                    </p>
+                    <p>
+                        Press the button, hear a random clip, then immediately
+                        question what just happened.
+                    </p>
+                </div>
+
+                <div class="panel player">
+                    <h2>What’s Being Said Next?</h2>
+                    <p class="sub">
+                        Press the button to generate a random clip.
+                    </p>
+
+                    <div id="status" class="status">Press the button...</div>
+
+                    <div id="birdBox">
+                        <img src="the-best-bird.png" alt="Special image" />
+                    </div>
+
+                    <button onclick="newClip()">What’s Being Said Next?</button>
+                    <button onclick="togglePlay()" id="playBtn">▶ Play</button>
+
+                    <div class="volume">
+                        Volume<br />
+                        <input
+                            id="volume"
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value="1"
+                        />
+                    </div>
+
+                    <audio id="audio"></audio>
+                </div>
+            </section>
+
+            <section class="clipTable">
+                <h2>Clip List</h2>
+                <p class="sub">
+                    The titles stay hidden so the context stays missing.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Clip</th>
+                            <th>Status</th>
+                            <th>Context</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clipRows"></tbody>
+                </table>
+            </section>
+
+            <div class="footer">BusBase | No Context Twitch Clips</div>
+        </div>
+
+        <script>
+            const clips = [
+                { file: "the-best-bird.mp3", bird: true },
+                { file: "euuuughhhhh.mp3" },
+                { file: "DJ Bin Bag.mp3" },
+                { file: "Kisses.mp3" },
+                { file: "no-context-001.mp3" },
+                { file: "no-context-002.mp3" },
+                { file: "no-context-003.mp3" },
+                { file: "no-context-004.mp3" },
+                { file: "no-context-005.mp3" },
+                { file: "no-context-006.mp3" },
+                { file: "no-context-007.mp3" },
+                { file: "no-context-008.mp3" },
+                { file: "no-context-009.mp3" },
+                { file: "no-context-010.mp3" },
+                { file: "no-context-011.mp3" },
+                { file: "no-context-012.mp3" },
+                { file: "no-context-013.mp3" },
+                { file: "no-context-014.mp3" },
+                { file: "no-context-015.mp3" },
+                { file: "no-context-016.mp3" },
+                { file: "no-context-017.mp3" },
+                { file: "no-context-018.mp3" },
+                { file: "no-context-019.mp3" },
+                { file: "no-context-020.mp3" },
+                { file: "no-context-021.mp3" },
+                { file: "no-context-022.mp3" },
+                { file: "no-context-023.mp3" },
+                { file: "no-context-024.mp3" },
+                { file: "no-context-025.mp3" },
+                { file: "no-context-026.mp3" },
+                { file: "no-context-027.mp3" },
+                { file: "no-context-028.mp3" },
+                { file: "no-context-029.mp3" },
+                { file: "no-context-030.mp3" },
+                { file: "no-context-031.mp3" },
+                { file: "no-context-032.mp3" },
+                { file: "no-context-033.mp3" },
+                { file: "no-context-034.mp3" },
+                { file: "no-context-035.mp3" },
+                { file: "no-context-036.mp3" },
+                { file: "no-context-037.mp3" },
+                { file: "no-context-038.mp3" },
+                { file: "no-context-039.mp3" },
+                { file: "no-context-040.mp3" },
+                { file: "no-context-041.mp3" },
+                { file: "no-context-042.mp3" },
+                { file: "no-context-043.mp3" },
+                { file: "no-context-044.mp3" },
+                { file: "no-context-045.mp3" },
+                { file: "no-context-046.mp3" },
+                { file: "no-context-047.mp3" },
+                { file: "no-context-048.mp3" },
+                { file: "no-context-049.mp3" },
+                { file: "no-context-050.mp3" },
+                { file: "no-context-051.mp3" },
+                { file: "no-context-052.mp3" },
+                { file: "no-context-053.mp3" },
+                { file: "no-context-054.mp3" },
+                { file: "no-context-055.mp3" },
+                { file: "no-context-056.mp3" },
+                { file: "no-context-057.mp3" },
+                { file: "no-context-058.mp3" },
+                { file: "no-context-059.mp3" },
+                { file: "no-context-060.mp3" },
+                { file: "no-context-061.mp3" },
+            ];
+
+            const audio = document.getElementById("audio");
+            const statusText = document.getElementById("status");
+            const playBtn = document.getElementById("playBtn");
+            const birdBox = document.getElementById("birdBox");
+
+            let last = -1;
+            let played = 0;
+
+            document.getElementById("loaded").textContent = clips.length;
+
+            function buildRows() {
+                const rows = document.getElementById("clipRows");
+                rows.innerHTML = "";
+
+                clips.forEach((clip, i) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+      <td>No Context Clip #${String(i + 1).padStart(3, "0")}</td>
+      <td>${clip.bird ? "Special clip" : "Audio ready"}</td>
+      <td>Missing</td>
+    `;
+                    rows.appendChild(tr);
+                });
+            }
+
+            function newClip() {
+                let i;
+
+                do {
+                    i = Math.floor(Math.random() * clips.length);
+                } while (i === last && clips.length > 1);
+
+                last = i;
+
+                const clip = clips[i];
+
+                audio.pause();
+                audio.currentTime = 0;
+                audio.src = clip.file;
+                audio.load();
+
+                statusText.textContent =
+                    "🎙️ No Context Clip #" + String(i + 1).padStart(3, "0");
+                birdBox.style.display = clip.bird ? "block" : "none";
+
+                audio.play();
+                playBtn.textContent = "⏸ Pause";
+
+                played++;
+                document.getElementById("played").textContent = played;
+                document.getElementById("chaos").textContent = Math.floor(
+                    Math.random() * 999,
+                );
+            }
+
+            function togglePlay() {
+                if (!audio.src) {
+                    newClip();
+                    return;
+                }
+
+                if (audio.paused) {
+                    audio.play();
+                    playBtn.textContent = "⏸ Pause";
+                } else {
+                    audio.pause();
+                    playBtn.textContent = "▶ Play";
+                }
+            }
+
+            document.getElementById("volume").addEventListener("input", (e) => {
+                audio.volume = e.target.value;
+            });
+
+            audio.addEventListener("ended", () => {
+                playBtn.textContent = "▶ Play";
+            });
+
+            buildRows();
+        </script>
+    </body>
+</html>
