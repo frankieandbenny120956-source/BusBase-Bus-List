@@ -2,76 +2,283 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>No Context Roger | BusBase</title>
+
 <style>
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6f7fb;color:#172033}
-.wrap{max-width:1100px;margin:auto;padding:24px}
-.hero,.panel,.card{background:white;border-radius:22px;box-shadow:0 8px 30px #0001}
-.hero{padding:28px;margin-bottom:18px}
-.logo{max-height:70px;margin-bottom:12px}
-h1{margin:0;color:#172033;font-size:38px}
-.sub{color:#667085;margin-top:8px}
-.nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-.nav a{background:#e8eefc;color:#174ea6;text-decoration:none;border-radius:999px;padding:10px 16px;font-weight:700}
-.nav a.active{background:#174ea6;color:white}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
-.card{padding:18px}
-.card b{display:block;font-size:30px;color:#174ea6;margin-top:5px}
-.panel{padding:28px;text-align:center}
-.status{font-size:34px;font-weight:900;color:#174ea6;margin:25px 0}
-button{background:#174ea6;color:white;border:0;border-radius:999px;padding:14px 22px;font-size:17px;font-weight:800;cursor:pointer;margin:6px}
+:root{
+  --bg:#f6f7fb;
+  --card:#fff;
+  --text:#172033;
+  --muted:#667085;
+  --blue:#174ea6;
+  --soft:#e8eefc;
+  --border:#e2e8f0;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.wrap{
+  max-width:1150px;
+  margin:auto;
+  padding:24px;
+}
+
+.hero,.panel,.stat,.clipTable{
+  background:var(--card);
+  border-radius:22px;
+  box-shadow:0 8px 30px rgba(0,0,0,.07);
+}
+
+.hero{
+  padding:28px;
+  margin-bottom:18px;
+}
+
+.logo{
+  font-size:38px;
+  font-weight:900;
+  color:var(--blue);
+}
+
+h1{
+  font-size:42px;
+  margin:14px 0 8px;
+}
+
+.sub{
+  color:var(--muted);
+  margin:0;
+}
+
+.nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:20px;
+}
+
+.nav a{
+  background:var(--soft);
+  color:var(--blue);
+  text-decoration:none;
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight:800;
+}
+
+.nav a.active{
+  background:var(--blue);
+  color:white;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.panel{
+  padding:28px;
+}
+
+.player{
+  text-align:center;
+}
+
+.status{
+  min-height:100px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  font-weight:900;
+  color:var(--blue);
+  margin:22px 0;
+}
+
+button{
+  background:var(--blue);
+  color:white;
+  border:0;
+  border-radius:999px;
+  padding:14px 22px;
+  font-size:17px;
+  font-weight:900;
+  cursor:pointer;
+  margin:6px;
+}
+
 button:hover{opacity:.9}
-#birdBox{display:none;margin:20px auto}
-#birdBox img{max-width:430px;width:100%;border-radius:18px;box-shadow:0 8px 25px #0002}
-input[type=range]{width:260px}
-.footer{text-align:center;color:#667085;margin-top:20px}
-@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}h1{font-size:28px}.status{font-size:24px}}
+
+.volume{
+  margin-top:20px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+input[type=range]{
+  width:270px;
+  max-width:100%;
+}
+
+#birdBox{
+  display:none;
+  margin:18px auto;
+}
+
+#birdBox img{
+  width:100%;
+  max-width:430px;
+  border-radius:20px;
+  box-shadow:0 8px 26px rgba(0,0,0,.16);
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin:18px 0;
+}
+
+.stat{
+  padding:18px;
+}
+
+.stat span{
+  display:block;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.stat b{
+  display:block;
+  color:var(--blue);
+  font-size:30px;
+  margin-top:6px;
+}
+
+.clipTable{
+  margin-top:18px;
+  padding:24px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:14px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+}
+
+th{
+  color:var(--muted);
+  background:#fbfdff;
+  font-size:14px;
+}
+
+.footer{
+  text-align:center;
+  color:var(--muted);
+  margin:22px 0 6px;
+}
+
+@media(max-width:800px){
+  .grid,.stats{grid-template-columns:1fr}
+  h1{font-size:31px}
+  .status{font-size:25px}
+  .wrap{padding:16px}
+}
 </style>
 </head>
+
 <body>
 
 <div class="wrap">
 
 <section class="hero">
-  <img class="logo" src="/logo.png" alt="BusBase Logo" onerror="this.style.display='none'">
+  <div class="logo">BusBase</div>
   <h1>BusBase | No Context Roger</h1>
   <p class="sub">Built by enthusiasts, for enthusiasts — now with absolutely no context.</p>
 
-  <div class="nav">
+  <nav class="nav">
     <a href="/">Fleet List</a>
     <a href="/routes">View Routes</a>
     <a href="/statistics">Statistics</a>
     <a href="/upcoming-changes">Upcoming Changes</a>
     <a href="/site-updates">Site Updates</a>
-    <a class="active" href="/roger/nocontext/">No Context Roger</a>
-  </div>
+    <a class="active" href="/roger/nocontext.html">No Context Roger</a>
+  </nav>
+</section>
+
+<section class="stats">
+  <div class="stat"><span>Clips loaded</span><b id="loaded">0</b></div>
+  <div class="stat"><span>Clips played</span><b id="played">0</b></div>
+  <div class="stat"><span>Context found</span><b>0%</b></div>
+  <div class="stat"><span>Chaos level</span><b id="chaos">0</b></div>
 </section>
 
 <section class="grid">
-  <div class="card">Clips loaded<b id="loaded">0</b></div>
-  <div class="card">Clips played<b id="played">0</b></div>
-  <div class="card">Context found<b>0%</b></div>
-  <div class="card">Chaos level<b id="chaos">0</b></div>
-</section>
 
-<section class="panel">
-  <h2>What’s Roger Saying Next?</h2>
-  <p class="sub">Press the button for a random No Context Roger audio clip.</p>
-
-  <div id="status" class="status">Press the button...</div>
-
-  <div id="birdBox">
-    <img src="images/the-best-bird.png" alt="The Best Bird">
+  <div class="panel">
+    <h2>What is this?</h2>
+    <p class="sub">
+      A random collection of Roger audio clips with no explanation, no warning,
+      and absolutely no useful context.
+    </p>
+    <br>
+    <p class="sub">
+      Press the button, hear a random clip, then immediately question what just happened.
+    </p>
   </div>
 
-  <button onclick="newClip()">What’s Roger Saying Next?</button>
-  <button onclick="togglePlay()" id="playBtn">▶ Play</button>
+  <div class="panel player">
+    <h2>What’s Roger Saying Next?</h2>
+    <p class="sub">Press the button to generate a random clip.</p>
 
-  <p class="sub">Volume</p>
-  <input id="volume" type="range" min="0" max="1" step="0.01" value="1">
+    <div id="status" class="status">Press the button...</div>
 
-  <audio id="audio"></audio>
+    <div id="birdBox">
+      <img src="the-best-bird.png" alt="The Best Bird">
+    </div>
+
+    <button onclick="newClip()">What’s Roger Saying Next?</button>
+    <button onclick="togglePlay()" id="playBtn">▶ Play</button>
+
+    <div class="volume">
+      Volume<br>
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="1">
+    </div>
+
+    <audio id="audio"></audio>
+  </div>
+
+</section>
+
+<section class="clipTable">
+  <h2>Clip List</h2>
+  <p class="sub">The titles stay hidden so the context stays missing.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Clip</th>
+        <th>Status</th>
+        <th>Context</th>
+      </tr>
+    </thead>
+    <tbody id="clipRows"></tbody>
+  </table>
 </section>
 
 <div class="footer">BusBase | No Context Roger</div>
@@ -79,7 +286,11 @@ input[type=range]{width:260px}
 </div>
 
 <script>
-const clips = [
+const clips=[
+  {file:"the-best-bird.mp3",bird:true},
+  {file:"euuuughhhhh.mp3"},
+  {file:"DJ Bin Bag.mp3"},
+  {file:"Kisses for Roger.mp3"},
   {file:"roger-no-context-001.mp3"},
   {file:"roger-no-context-002.mp3"},
   {file:"roger-no-context-003.mp3"},
@@ -144,25 +355,50 @@ const clips = [
 ];
 
 const audio=document.getElementById("audio");
-const status=document.getElementById("status");
+const statusText=document.getElementById("status");
 const playBtn=document.getElementById("playBtn");
 const birdBox=document.getElementById("birdBox");
-let last=-1, played=0;
+
+let last=-1;
+let played=0;
 
 document.getElementById("loaded").textContent=clips.length;
 
+function buildRows(){
+  const rows=document.getElementById("clipRows");
+  rows.innerHTML="";
+
+  clips.forEach((clip,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>No Context Roger #${String(i+1).padStart(3,"0")}</td>
+      <td>${clip.bird ? "Bird special" : "Audio ready"}</td>
+      <td>Missing</td>
+    `;
+    rows.appendChild(tr);
+  });
+}
+
 function newClip(){
   let i;
-  do{i=Math.floor(Math.random()*clips.length)}while(i===last&&clips.length>1);
+
+  do{
+    i=Math.floor(Math.random()*clips.length);
+  }while(i===last && clips.length>1);
+
   last=i;
+
+  const clip=clips[i];
 
   audio.pause();
   audio.currentTime=0;
-  audio.src=clips[i].file;
+  audio.src=clip.file;
   audio.load();
 
-  status.textContent="🎙️ No Context Roger #"+String(i+1).padStart(3,"0");
-  birdBox.style.display = clips[i].bird ? "block" : "none";
+  statusText.textContent=
+    "🎙️ No Context Roger #"+String(i+1).padStart(3,"0");
+
+  birdBox.style.display=clip.bird ? "block" : "none";
 
   audio.play();
   playBtn.textContent="⏸ Pause";
@@ -173,16 +409,29 @@ function newClip(){
 }
 
 function togglePlay(){
-  if(!audio.src){newClip();return}
-  if(audio.paused){audio.play();playBtn.textContent="⏸ Pause"}
-  else{audio.pause();playBtn.textContent="▶ Play"}
+  if(!audio.src){
+    newClip();
+    return;
+  }
+
+  if(audio.paused){
+    audio.play();
+    playBtn.textContent="⏸ Pause";
+  }else{
+    audio.pause();
+    playBtn.textContent="▶ Play";
+  }
 }
 
 document.getElementById("volume").addEventListener("input",e=>{
   audio.volume=e.target.value;
 });
 
-audio.addEventListener("ended",()=>playBtn.textContent="▶ Play");
+audio.addEventListener("ended",()=>{
+  playBtn.textContent="▶ Play";
+});
+
+buildRows();
 </script>
 
 </body>
