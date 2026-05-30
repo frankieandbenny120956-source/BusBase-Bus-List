@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bus ETM Training Simulator</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f2f2f2;
+      display: grid;
+      place-items: center;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 18px;
+      color: #111827;
+    }
+    .etm {
+      width: min(370px, 100%);
+      background: #111;
+      border: 6px solid #050505;
+      border-radius: 4px;
+      box-shadow: 0 18px 45px rgba(0,0,0,.35);
+      overflow: hidden;
+    }
+    .screen {
+      background: #cfd9ee;
+      min-height: 560px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      border: 3px solid #2b2b2b;
+    }
+    .screen.pre-sale { grid-template-rows: 1fr; }
+    .screen.pre-sale .top-lines,
+    .screen.pre-sale .status-bar { display: none; }
+    .top-lines {
+      color: white;
+      font-weight: 700;
+      text-align: center;
+      border-bottom: 2px solid #000066;
+    }
+    .stage-line, .stop-line, .dest-line {
+      display: grid;
+      grid-template-columns: 30px 1fr 30px;
+      align-items: center;
+      min-height: 26px;
+      background: #003280;
+      border-bottom: 1px solid #87a7dc;
+      font-size: .82rem;
+    }
+    .stop-line { background: #2d61a5; font-size: .74rem; }
+    .dest-line { background: #00245f; font-size: .82rem; }
+    .arrow, .smallbtn {
+      background: #00165c;
+      color: white;
+      border: 1px solid #5f8bd9;
+      height: 100%;
+      font-weight: 900;
+      font-size: .9rem;
+      cursor: pointer;
+      padding: 0;
+      min-height: 26px;
+    }
+    .workarea { padding: 3px; font-size: .72rem; overflow: hidden; }
+    .page { display: none; height: 100%; }
+    .page.active { display: block; }
+    .header {
+      background: #001e6e;
+      color: white;
+      padding: 4px 6px;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 24px;
+      font-size: .68rem;
+      text-transform: uppercase;
+      border-bottom: 1px solid #6f8ed7;
+    }
+    .panel {
+      background: #dce6f8;
+      border: 1px solid #6c7fa8;
+      margin-top: 3px;
+      min-height: 70px;
+    }
+    .list-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 5px;
+      padding: 6px;
+      border-bottom: 1px solid #a5b4d4;
+      cursor: pointer;
+      background: #edf3ff;
+      min-height: 28px;
+    }
+    .list-row.selected { background: #f6b54a; }
+    .list-row.disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; }
+    .function-bar, .ticket-bar, .bottom-buttons {
+      display: grid;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .function-bar { grid-template-columns: repeat(5, 1fr); }
+    .ticket-bar { grid-template-columns: 26px repeat(4, 1fr) 26px; }
+    .bottom-buttons { grid-template-columns: repeat(4, 1fr); position: sticky; bottom: 0; }
+    button {
+      border: 1px solid #203c93;
+      background: #002a91;
+      color: white;
+      font-weight: 800;
+      padding: 5px 3px;
+      min-height: 28px;
+      cursor: pointer;
+      font-size: .64rem;
+      text-transform: uppercase;
+    }
+    button.red { background: #c1121f; }
+    button.green { background: #168a2f; }
+    button.orange { background: #f59e0b; color: #111; }
+    button.grey { background: #9ca3af; color: #334155; cursor: not-allowed; }
+    button.white { background: #e5edff; color: #001d66; }
+    .ticket-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+      margin-top: 4px;
+    }
+    .ticket-btn {
+      min-height: 61px;
+      color: #111;
+      border: 1px solid #374151;
+      position: relative;
+      text-align: left;
+      padding: 4px;
+      font-size: .63rem;
+    }
+    .ticket-btn.standard { background: #9be36d; }
+    .ticket-btn.period { background: #f6a1d5; }
+    .ticket-btn.child { background: #fff176; }
+    .ticket-btn.concession { background: #b6e3ff; }
+    .ticket-btn.invalid { background: #bfc7d5; color: #64748b; }
+    .qty {
+      position: absolute;
+      right: 6px;
+      bottom: 5px;
+      background: white;
+      border: 1px solid #111;
+      padding: 1px 7px;
+      border-radius: 3px;
+    }
+    .total-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: #e5e7eb;
+      border: 2px solid #334155;
+      margin-top: 7px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .total-strip div { padding: 8px; border-right: 1px solid #94a3b8; }
+    .total-strip div:last-child { border-right: 0; }
+    .status-bar {
+      background: #00165c;
+      color: white;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1px;
+      padding: 2px;
+      font-size: .57rem;
+      text-align: center;
+    }
+    .status-item {
+      background: #0b3d91;
+      padding: 5px 2px;
+      border: 1px solid #5b8cff;
+      cursor: pointer;
+    }
+    .ok { color: #86efac; }
+    .bad { color: #fca5a5; }
+    .warn { color: #fde68a; }
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      margin-top: 8px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #345;
+      font-size: .8rem;
+      background: white;
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      display: none;
+      place-items: center;
+      padding: 18px;
+      z-index: 20;
+    }
+    .modal.show { display: grid; }
+    .popup {
+      width: min(440px, 100%);
+      background: #f8fafc;
+      border: 4px solid #001d66;
+      box-shadow: 0 16px 50px rgba(0,0,0,.45);
+    }
+    .popup-body { padding: 14px; }
+    .ticket-paper {
+      font-family: "Courier New", monospace;
+      background: #fffef0;
+      padding: 12px;
+      border: 2px dashed #111;
+      margin-top: 8px;
+      display: none;
+      white-space: pre-wrap;
+      max-height: 190px;
+      overflow: auto;
+    }
+    .vimscreen {
+      position: fixed;
+      inset: 0;
+      background: #030712;
+      color: white;
+      display: none;
+      place-items: center;
+      text-align: center;
+      z-index: 10;
+      font-weight: 800;
+    }
+    .vimscreen.show { display: grid; }
+    .options-menu-page { background: #cfd9ee; padding: 0; }
+    .options-title {
+      background: #001e6e;
+      color: white;
+      padding: 7px;
+      font-weight: 900;
+      text-align: center;
+      border-bottom: 2px solid #0a1742;
+      text-transform: uppercase;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      padding: 5px;
+    }
+    .options-grid button {
+      min-height: 58px;
+      background: linear-gradient(#f8fbff, #b8c8e8);
+      color: #001e6e;
+      border: 2px solid #314a82;
+      font-size: .64rem;
+      text-transform: none;
+      box-shadow: inset 0 -3px 0 rgba(0,0,0,.15);
+    }
+    .options-grid small {
+      display: block;
+      font-weight: 600;
+      color: #334155;
+      font-size: .52rem;
+      margin-top: 3px;
+    }
+    .options-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 5px;
+      position: sticky;
+      bottom: 0;
+      background: #cfd9ee;
+    }
+    .test-output {
+      font-family: monospace;
+      font-size: .62rem;
+      color: #064e3b;
+      padding: 4px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="etm">
+    <section class="screen pre-sale" id="screenRoot">
+      <div class="top-lines" aria-label="ticket selling fare stage header">
+        <div class="stage-line">
+          <button class="arrow" onclick="moveStage(-1)">&lt;</button>
+          <div onclick="openStageList()" id="fareStage">Holt</div>
+          <button class="arrow" onclick="moveStage(1)">&gt;</button>
+        </div>
+        <div class="stop-line">
+          <button class="arrow" onclick="moveStop(-1)">&lt;</button>
+          <div onclick="openStopList()" id="currentStop">Railway Tavern</div>
+          <button class="arrow" onclick="moveStop(1)">&gt;</button>
+        </div>
+        <div class="dest-line">
+          <button class="arrow" onclick="moveDestination(-1)">&lt;</button>
+          <div onclick="openDestinationList()" id="destination">Letheringsett</div>
+          <button class="arrow" onclick="moveDestination(1)">&gt;</button>
+        </div>
+      </div>
+
+      <div class="workarea">
+        <section id="loginPage" class="page active">
+          <div class="header"><span>LOGGING IN</span><span>Printer: ON</span></div>
+          <div class="panel" style="padding:10px">
+            <p style="margin:4px 0 8px">Enter driver number and PIN. Demo login is 1234 / 1234.</p>
+            <input id="driverNo" placeholder="Driver number" value="1234">
+            <input id="pin" placeholder="PIN" type="password" value="1234" style="margin-top:6px">
+          </div>
+          <div class="bottom-buttons">
+            <button onclick="showInfo('Previous duty totals can be printed or erased before continuing.')">PRINT</button>
+            <button onclick="showInfo('Driver card / QR scanned. Duty totals ready to transfer.')">CARD/QR</button>
+            <button class="green" onclick="goVehicle()">OK</button>
+            <button class="red" onclick="showInfo('Screen darkened. Touch screen to wake.')">BACK</button>
+          </div>
+          <div class="test-output" id="testOutput"></div>
+        </section>
+
+        <section id="vehiclePage" class="page">
+          <div class="header"><span>SELECT VEHICLE</span><button onclick="showKeyboard('vehicleFilter')">SHOW KEYBOARD</button></div>
+          <input id="vehicleFilter" placeholder="Filter fleet number" oninput="filterVehicles()" style="display:none;margin-top:8px">
+          <div class="panel" id="vehicleList"></div>
+          <div class="bottom-buttons">
+            <button onclick="backTo('loginPage')">BACK</button>
+            <button onclick="showKeyboard('vehicleFilter')">SHOW KEYBOARD</button>
+            <button class="green" onclick="goChecklist()">ACCEPT</button>
+            <button onclick="showInfo('Depot changed to North Depot')">DEPOT</button>
+          </div>
+        </section>
+
+        <section id="checklistPage" class="page">
+          <div class="header"><span>VEHICLE CHECKLIST</span><span id="mileageText">Mileage due</span></div>
+          <div class="panel" id="checkList"></div>
+          <div class="bottom-buttons">
+            <button onclick="backTo('vehiclePage')">BACK</button>
+            <button onclick="openDefects()">DEFECTS</button>
+            <button onclick="passAllOthers()">PASS ALL OTHERS</button>
+            <button class="green" onclick="goDuty()">ACCEPT</button>
+          </div>
+        </section>
+
+        <section id="dutyPage" class="page">
+          <div class="header"><span>SELECT DUTY</span><button onclick="newDuty()">NEW DUTY</button></div>
+          <div class="panel" id="dutyList"></div>
+          <div class="bottom-buttons">
+            <button onclick="backTo('checklistPage')">BACK</button>
+            <button onclick="showDutyDetails()">DETAILS</button>
+            <button onclick="showKeyboard('dutyFilter')">SHOW KEYBOARD</button>
+            <button class="green" onclick="goTrips()">ACCEPT</button>
+          </div>
+          <input id="dutyFilter" placeholder="Duty number" style="display:none;margin-top:8px">
+        </section>
+
+        <section id="tripPage" class="page">
+          <div class="header"><span>STARTING A TRIP</span><button onclick="adHocTrip()">AD HOC</button></div>
+          <div class="panel" style="padding:8px">
+            <p style="margin:0 0 8px">Enter the trip details before opening the ticket selling screen.</p>
+            <label>Route / Service number</label>
+            <input id="manualRoute" placeholder="Example: 16 or 24A" value="16">
+            <label style="margin-top:6px;display:block">Destination</label>
+            <input id="manualDestination" placeholder="Example: City Centre" value="City Centre">
+            <label style="margin-top:6px;display:block">Departure time</label>
+            <input id="manualTime" type="time" value="15:15">
+            <label style="margin-top:6px;display:block">Direction</label>
+            <select id="manualDirection">
+              <option>Inbound</option>
+              <option>Outbound</option>
+              <option>Clockwise</option>
+              <option>Anti-Clockwise</option>
+            </select>
+          </div>
+          <div class="panel" style="padding:8px">
+            <strong>Trip preview</strong>
+            <div class="list-row"><span>Route</span><span id="previewRoute">16</span></div>
+            <div class="list-row"><span>Destination</span><span id="previewDestination">City Centre</span></div>
+            <div class="list-row"><span>Time</span><span id="previewTime">15:15</span></div>
+          </div>
+          <div class="bottom-buttons">
+            <button onclick="backTo('dutyPage')">BACK</button>
+            <button onclick="updateTripPreview()">PREVIEW</button>
+            <button class="green" onclick="startTrip()">ACCEPT</button>
+            <button onclick="showInfo('Enter route, destination and departure time, then press ACCEPT.')">HELP</button>
+          </div>
+        </section>
+
+        <section id="ticketPage" class="page">
+          <div class="function-bar">
+            <button onclick="openOptions()">OPTIONS</button>
+            <button onclick="viewCard()">VIEW CARD</button>
+            <button onclick="punch()">PUNCH</button>
+            <button onclick="repeatTx()">REPEAT</button>
+            <button class="red" onclick="annulScreen()">ANNUL</button>
+          </div>
+          <div class="ticket-bar">
+            <button onclick="prevCat()">&lt;</button>
+            <button id="catStandard" class="red" onclick="setCat('standard')">Standard</button>
+            <button id="catChild" onclick="setCat('child')">Child</button>
+            <button id="catPeriod" onclick="setCat('period')">Period</button>
+            <button id="catConcession" onclick="setCat('concession')">Conc.</button>
+            <button onclick="nextCat()">&gt;</button>
+          </div>
+          <div class="ticket-grid" id="tickets"></div>
+          <div class="total-strip">
+            <div>Total tickets<br><span id="totalTickets">0</span></div>
+            <div>Total value<br><span id="totalValue">£0.00</span></div>
+            <div>Selected<br><span id="selectedName">None</span></div>
+          </div>
+          <div class="bottom-buttons">
+            <button onclick="calcChange()">CALC</button>
+            <button onclick="clearBasket()">CLEAR</button>
+            <button class="green" id="issueBtn" onclick="issue()">ISSUE</button>
+            <button onclick="moreTickets()">MORE 1/2</button>
+          </div>
+          <pre class="ticket-paper" id="paper"></pre>
+        </section>
+
+        <section id="changePage" class="page">
+          <div class="header"><span>GIVING CHANGE</span><button onclick="backTo('ticketPage')">CANCEL</button></div>
+          <div class="panel" style="padding:10px">
+            <p><strong>Fare:</strong> <span id="changeFare">£0.00</span></p>
+            <input id="cashTendered" placeholder="Cash tendered" oninput="updateChange()">
+            <h2>Change due: <span id="changeDue">£0.00</span></h2>
+            <div class="keypad">
+              <button onclick="cashKey('1')">1</button><button onclick="cashKey('2')">2</button><button onclick="cashKey('3')">3</button>
+              <button onclick="cashKey('4')">4</button><button onclick="cashKey('5')">5</button><button onclick="cashKey('6')">6</button>
+              <button onclick="cashKey('7')">7</button><button onclick="cashKey('8')">8</button><button onclick="cashKey('9')">9</button>
+              <button onclick="cashKey('.')">.</button><button onclick="cashKey('0')">0</button><button onclick="cashClear()">C</button>
+            </div>
+          </div>
+          <div class="bottom-buttons">
+            <button onclick="noteIssued(5)">£5 NOTE</button>
+            <button onclick="noteIssued(10)">£10 NOTE</button>
+            <button onclick="creditVoucher()">CREDIT VOUCHER</button>
+            <button class="green" onclick="issue('Cash')">ISSUE</button>
+          </div>
+        </section>
+
+        <section id="cardPage" class="page">
+          <div class="header"><span>SMARTCARDS / QR</span><span>Reader ready</span></div>
+          <div class="panel" id="cardPanel" style="padding:10px;text-align:center">
+            <h2>PLACE CARD OR QR ON READER</h2>
+            <p>Concessionary cards, commercial cards, mTickets and paper QR codes are handled here.</p>
+          </div>
+          <div class="bottom-buttons">
+            <button onclick="cardAccepted('Concessionary card accepted')">CONC.</button>
+            <button onclick="productSelect()">PRODUCTS</button>
+            <button onclick="topUp()">TOP UP</button>
+            <button onclick="backTo('ticketPage')">BACK</button>
+          </div>
+        </section>
+
+        <section id="messagesPage" class="page">
+          <div class="header"><span>MESSAGES</span><button onclick="composeMessage()">COMPOSE</button></div>
+          <div class="ticket-bar" style="grid-template-columns:repeat(3,1fr)">
+            <button onclick="messageTab('Driver')">Driver</button>
+            <button onclick="messageTab('Service')">Service</button>
+            <button onclick="messageTab('Vehicle')">Vehicle</button>
+          </div>
+          <div class="panel" id="messagesList"></div>
+          <div class="bottom-buttons">
+            <button onclick="backTo('ticketPage')">BACK</button>
+            <button onclick="openSelectedMessage()">READ</button>
+            <button onclick="replyMessage()">REPLY</button>
+            <button onclick="composeMessage()">COMPOSE</button>
+          </div>
+        </section>
+
+        <section id="readMessagePage" class="page">
+          <div class="header"><span>READ MESSAGE</span><button onclick="goMessages()">BACK</button></div>
+          <div class="panel" style="padding:8px">
+            <h3 id="readMsgTitle" style="margin:0 0 6px">Message</h3>
+            <p><strong>From:</strong> <span id="readMsgFrom">Control</span></p>
+            <p><strong>Subject:</strong> <span id="readMsgSubject">Service update</span></p>
+            <div style="background:white;border:1px solid #6c7fa8;padding:8px;min-height:120px" id="readMsgBody"></div>
+          </div>
+          <div class="bottom-buttons">
+            <button onclick="goMessages()">BACK</button>
+            <button onclick="replyMessage()">REPLY</button>
+            <button onclick="showInfo('Message printed')">PRINT</button>
+            <button class="green" onclick="markReadAndBack()">ACCEPT</button>
+          </div>
+        </section>
+
+        <section id="composeMessagePage" class="page">
+          <div class="header"><span>COMPOSE MESSAGE</span><button onclick="goMessages()">CANCEL</button></div>
+          <div class="panel" style="padding:8px">
+            <strong>Select subject / reason</strong>
+            <div class="ticket-grid" id="subjectButtons" style="margin-top:6px">
+              <button onclick="selectSubject('Late running')">Late running</button>
+              <button onclick="selectSubject('Vehicle defect')">Vehicle defect</button>
+              <button onclick="selectSubject('Passenger incident')">Passenger incident</button>
+              <button onclick="selectSubject('Road closure')">Road closure</button>
+              <button onclick="selectSubject('Lost property')">Lost property</button>
+              <button onclick="selectSubject('Request assistance')">Assistance</button>
+            </div>
+            <p style="margin:8px 0 4px"><strong>Selected:</strong> <span id="composeSubject">None</span></p>
+            <textarea id="composeBody" rows="6" placeholder="Type message to office/depot"></textarea>
+            <div id="sendLinkBox" style="display:none;margin-top:8px;background:white;border:1px solid #6c7fa8;padding:6px">
+              <strong>Control-room link generated</strong>
+              <p style="margin:4px 0">Open this link on the other site/device. No server needed.</p>
+              <input id="sendLink" readonly onclick="this.select()">
+            </div>
+          </div>
+          <div class="bottom-buttons">
+            <button onclick="goMessages()">BACK</button>
+            <button onclick="clearCompose()">CLEAR</button>
+            <button onclick="cannedReply()">CANNED</button>
+            <button class="green" onclick="sendComposedMessage()">SEND</button>
+          </div>
+        </section>
+
+        <section id="controlRoomPage" class="page">
+          <div class="header"><span>CONTROL ROOM</span><button onclick="page('loginPage')">EXIT</button></div>
+          <div class="panel" style="padding:8px">
+            <h3 style="margin:0 0 6px">Incoming Driver Message</h3>
+            <p><strong>Route:</strong> <span id="controlRoute">-</span></p>
+            <p><strong>Subject:</strong> <span id="controlSubject">-</span></p>
+            <div id="controlBody" style="background:white;border:1px solid #6c7fa8;padding:8px;min-height:90px"></div>
+            <label style="display:block;margin-top:8px">Reply</label>
+            <textarea id="controlReply" rows="5" placeholder="Type reply to driver"></textarea>
+            <div id="replyLinkBox" style="display:none;margin-top:8px;background:white;border:1px solid #6c7fa8;padding:6px">
+              <strong>Driver reply link</strong>
+              <p style="margin:4px 0">Send/open this link back on the driver site.</p>
+              <input id="replyLink" readonly onclick="this.select()">
+            </div>
+          </div>
+          <div class="bottom-buttons">
+            <button onclick="copyText('sendLink')">COPY INCOMING</button>
+            <button onclick="document.getElementById('controlReply').value='Acknowledged. Continue safely and update control if needed.'">CANNED</button>
+            <button class="green" onclick="generateReplyLink()">SEND REPLY</button>
+            <button onclick="page('loginPage')">CLOSE</button>
+          </div>
+        </section>
+
+        <section id="optionsPage" class="page options-menu-page">
+          <div class="options-title">Options Menu</div>
+          <div class="options-grid">
+            <button onclick="lockMachine()">Lock<br><small>Suspend operation</small></button>
+            <button onclick="endTrip()">End Trip<br><small>Finish current journey</small></button>
+            <button onclick="abortTrip()">Abort Trip<br><small>Cancel started trip</small></button>
+            <button onclick="showDutyDetails()">Duty Summary<br><small>Print waybill</small></button>
+            <button onclick="tripSummary()">Trip Summary<br><small>Current trip totals</small></button>
+            <button onclick="goChecklist()">Checklist<br><small>Vehicle defects</small></button>
+            <button onclick="goMessages()">Messages<br><small>Read / reply</small></button>
+            <button onclick="testPrint()">Test Print<br><small>Printer check</small></button>
+            <button onclick="showInfo('Comms status: 0 pending, server connected')">Comms Status<br><small>Pending data</small></button>
+            <button onclick="showInfo('Inspector slip printed after passcode')">Inspector<br><small>Inspection slip</small></button>
+            <button onclick="showInfo('Incident slip printed and sent to portal')">Log Incident<br><small>Send report</small></button>
+            <button onclick="showInfo('Rebooting demo...')">Reboot<br><small>Restart machine</small></button>
+          </div>
+          <div class="options-bottom">
+            <button onclick="backTo('ticketPage')">Back</button>
+            <button class="red" onclick="logOff()">Log Off</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="status-bar" aria-label="ticket selling status display bar">
+        <div class="status-item" onclick="goMessages()">✉ <span id="msgCount">2</span></div>
+        <div class="status-item" onclick="showInfo('GPS last connected just now')">GPS <span class="ok">✓</span></div>
+        <div class="status-item" onclick="showInfo('GPRS connected to back office')">GPRS <span class="ok">✓</span></div>
+        <div class="status-item" onclick="showInfo('Smartcard reader operational')">CARD <span class="ok">✓</span></div>
+        <div class="status-item" onclick="showInfo('Printer operational')">PRN <span class="ok">✓</span></div>
+        <div class="status-item" onclick="showInfo(new Date().toLocaleTimeString('en-GB'))" id="clock">--:--</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="modal">
+    <div class="popup">
+      <div class="header"><span id="modalTitle">Information</span><button onclick="closeModal()">X</button></div>
+      <div class="popup-body" id="modalBody"></div>
+      <div class="bottom-buttons" style="padding:8px"><button onclick="closeModal()">BACK</button><button class="green" onclick="closeModal()">ACCEPT</button></div>
+    </div>
+  </div>
+
+  <div class="vimscreen" id="vim" onclick="hideVim()">
+    <div>
+      <h1>VEHICLE IN MOTION</h1>
+      <p>TAP SCREEN TO CONTINUE</p>
+      <p>Next stop: <span id="vimStop">Railway Tavern</span></p>
+      <p>Schedule: <span id="vimTime">16:05</span></p>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const stages = ['Holt','Letheringsett','Glandford','Wiveton','Cley','Blakeney','Morston','Langham'];
+    const stops = ['Railway Tavern','Holt Road','Pine Box','Bull Street','Three Swallows','Church, Blakeney','Bus Shelter'];
+    let stageIndex = 0;
+    let stopIndex = 0;
+    let destIndex = 1;
+    let selectedVehicle = '567 EGR';
+    let selectedDuty = '1037 Park and Ride weekdays';
+    let selectedTrip = '16 Inbound 15:15';
+    let category = 'standard';
+    let selectedTicket = null;
+    let basket = [];
+    let lastTransaction = null;
+
+    const ticketData = {
+      standard: [
+        ['Adult Single', 2.40, 'standard'],
+        ['Adult Return', 4.20, 'standard'],
+        ['Adult Weekly', 18.00, 'standard'],
+        ['Short Hop', 1.50, 'standard'],
+        ['Group Day', 7.50, 'standard'],
+        ['Night Single', 3.00, 'invalid']
+      ],
+      child: [
+        ['Child Single', 1.20, 'child'],
+        ['Child Return', 2.10, 'child'],
+        ['School Single', 0.90, 'child'],
+        ['Child Weekly', 9.00, 'child'],
+        ['Under 5', 0.00, 'child'],
+        ['Child Day', 3.00, 'child']
+      ],
+      period: [
+        ['Day', 5.50, 'period'],
+        ['7-Day', 20.00, 'period'],
+        ['28-Day', 65.00, 'period'],
+        ['Multi Journey', 12.00, 'period'],
+        ['Paper Weekly', 18.00, 'period'],
+        ['Off Peak Day', 4.40, 'invalid']
+      ],
+      concession: [
+        ['Conc. Pass', 0.00, 'concession'],
+        ['Companion', 0.00, 'concession'],
+        ['Out of Hours Add Fare', 0.50, 'concession'],
+        ['Manual Conc.', 0.00, 'concession'],
+        ['Punch Ticket', 0.00, 'concession'],
+        ['Authority Special', 0.00, 'concession']
+      ]
+    };
+
+    const messageStore = [
+      {
+        type: 'Driver',
+        from: 'Control',
+        subject: 'Important: Road closure',
+        body: 'Road closure reported near Market Street. Use the signed diversion and allow extra running time. Reply if you are unable to follow the diversion.',
+        important: true,
+        read: false
+      },
+      {
+        type: 'Service',
+        from: 'Depot',
+        subject: 'Running five minutes late',
+        body: 'Service 16 is currently running approximately five minutes late. Continue safely and do not leave timing points early.',
+        important: false,
+        read: false
+      },
+      {
+        type: 'Vehicle',
+        from: 'Engineering',
+        subject: 'Printer paper check requested',
+        body: 'Please check printer paper level at the next safe stop. If low, replace the roll before continuing ticket issue.',
+        important: false,
+        read: true
+      }
+    ];
+    let currentMessageType = 'Driver';
+    let selectedMessageIndex = 0;
+    let selectedComposeSubject = '';
+
+    function byId(id) {
+      return document.getElementById(id);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function money(n) {
+      return '£' + Number(n || 0).toFixed(2);
+    }
+
+    function setText(id, value) {
+      const el = byId(id);
+      if (el) el.textContent = value;
+    }
+
+    function page(id) {
+      document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
+      const target = byId(id);
+      if (!target) return;
+      target.classList.add('active');
+      const setupPages = ['loginPage','vehiclePage','checklistPage','dutyPage','tripPage'];
+      byId('screenRoot').classList.toggle('pre-sale', setupPages.includes(id));
+    }
+
+    function backTo(id) { page(id); }
+
+    function renderVehicles() {
+      const vehicles = ['123 ADV','545 BNV','56 DOU','567 EGR','570 FON','779 GKD','975 HLW'];
+      const list = byId('vehicleList');
+      list.innerHTML = '';
+      vehicles.forEach(function (v) {
+        const row = document.createElement('div');
+        row.className = 'list-row' + (v === selectedVehicle ? ' selected' : '');
+        row.innerHTML = '<span></span><span></span>';
+        row.children[0].textContent = v;
+        row.children[1].textContent = v === selectedVehicle ? 'selected' : '';
+        row.addEventListener('click', function () { selectVehicle(v); });
+        list.appendChild(row);
+      });
+    }
+
+    function selectVehicle(vehicle) {
+      selectedVehicle = vehicle;
+      renderVehicles();
+    }
+
+    function filterVehicles() {
+      const q = byId('vehicleFilter').value.toLowerCase();
+      Array.from(byId('vehicleList').children).forEach(function (row) {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? 'grid' : 'none';
+      });
+    }
+
+    function renderChecklist() {
+      const items = ['Mirrors','Wipers and washers','Speedometer/Tachograph','Driving controls','Handrails/Grabrails','Ticket machine','Smartcard reader','Printer paper'];
+      const list = byId('checkList');
+      list.innerHTML = '';
+      items.forEach(function (item) {
+        const row = document.createElement('div');
+        row.className = 'list-row';
+        row.innerHTML = '<span></span><span class="orange">□</span>';
+        row.children[0].textContent = item;
+        row.addEventListener('click', function () { toggleCheck(row); });
+        list.appendChild(row);
+      });
+    }
+
+    function renderDuties() {
+      const duties = ['1037 Park and Ride weekdays','1135 Shopper Service Mon-Fri','6706 City Green Run','Duty 46 Running Board'];
+      const list = byId('dutyList');
+      list.innerHTML = '';
+      duties.forEach(function (d) {
+        const row = document.createElement('div');
+        row.className = 'list-row' + (d === selectedDuty ? ' selected' : '');
+        row.innerHTML = '<span></span><span></span>';
+        row.children[0].textContent = d;
+        row.children[1].textContent = d === selectedDuty ? 'selected' : '';
+        row.addEventListener('click', function () { selectDuty(d); });
+        list.appendChild(row);
+      });
+    }
+
+    function selectDuty(duty) {
+      selectedDuty = duty;
+      renderDuties();
+    }
+
+    function renderTrips() {
+      updateTripPreview();
+    }
+
+    function renderTickets() {
+      document.querySelectorAll('#catStandard,#catChild,#catPeriod,#catConcession').forEach(function (b) {
+        b.classList.remove('red');
+      });
+      const activeCategoryButton = byId('cat' + category.charAt(0).toUpperCase() + category.slice(1));
+      if (activeCategoryButton) activeCategoryButton.classList.add('red');
+
+      const box = byId('tickets');
+      box.innerHTML = '';
+      ticketData[category].forEach(function (ticket) {
+        const name = ticket[0];
+        const price = ticket[1];
+        const cls = ticket[2];
+        const btn = document.createElement('button');
+        btn.className = 'ticket-btn ' + cls;
+        btn.innerHTML = '<strong></strong><br><span class="price"></span><span class="qty">+</span>';
+        btn.querySelector('strong').textContent = name;
+        btn.querySelector('.price').textContent = money(price);
+        btn.addEventListener('click', function () {
+          if (cls === 'invalid') showInfo('Ticket greyed-out: not valid at this stop, date or time.');
+          else addTicket(name, price);
+        });
+        box.appendChild(btn);
+      });
+      updateTotals();
+    }
+
+    function renderMessages() {
+      const filtered = messageStore
+        .map(function (m, i) { return Object.assign({}, m, { realIndex: i }); })
+        .filter(function (m) { return m.type === currentMessageType || currentMessageType === 'All'; });
+
+      const list = byId('messagesList');
+      list.innerHTML = '';
+      if (!filtered.length) {
+        const empty = document.createElement('div');
+        empty.className = 'list-row';
+        empty.innerHTML = '<span>No messages in this tab</span><span></span>';
+        list.appendChild(empty);
+      }
+      filtered.forEach(function (m) {
+        const row = document.createElement('div');
+        row.className = 'list-row' + (m.realIndex === selectedMessageIndex ? ' selected' : '');
+        const left = document.createElement('span');
+        const strong = document.createElement('strong');
+        strong.textContent = m.subject;
+        if (!m.read) strong.style.fontWeight = '900';
+        if (m.important) strong.style.color = '#c1121f';
+        const small = document.createElement('small');
+        small.textContent = m.from + ' • ' + (m.read ? 'Read' : 'Unread');
+        left.appendChild(strong);
+        left.appendChild(document.createElement('br'));
+        left.appendChild(small);
+        const right = document.createElement('span');
+        right.textContent = m.important ? '!' : '';
+        row.appendChild(left);
+        row.appendChild(right);
+        row.addEventListener('click', function () {
+          selectMessage(m.realIndex);
+          openMessage(m.realIndex);
+        });
+        list.appendChild(row);
+      });
+      setText('msgCount', messageStore.filter(function (m) { return !m.read; }).length);
+    }
+
+    function goVehicle() {
+      if (byId('driverNo').value !== '1234' || byId('pin').value !== '1234') {
+        showInfo('Invalid login. Use driver number 1234 and PIN 1234.');
+        return;
+      }
+      renderVehicles();
+      page('vehiclePage');
+    }
+
+    function goChecklist() { renderChecklist(); page('checklistPage'); }
+    function goDuty() { renderDuties(); page('dutyPage'); }
+    function goTrips() { renderTrips(); page('tripPage'); }
+
+    function updateTripPreview() {
+      const routeEl = byId('manualRoute');
+      const destEl = byId('manualDestination');
+      const timeEl = byId('manualTime');
+      if (!routeEl || !destEl || !timeEl) return;
+      setText('previewRoute', routeEl.value || 'Not set');
+      setText('previewDestination', destEl.value || 'Not set');
+      setText('previewTime', timeEl.value || 'Not set');
+    }
+
+    function startTrip() {
+      const route = byId('manualRoute').value.trim();
+      const dest = byId('manualDestination').value.trim();
+      const time = byId('manualTime').value;
+      const direction = byId('manualDirection').value;
+
+      if (!route || !dest || !time) {
+        showInfo('Please enter the route, destination and departure time before starting the trip.');
+        return;
+      }
+
+      selectedTrip = route + ' ' + direction + ' ' + time;
+      setText('destination', dest);
+      setText('fareStage', route);
+      setText('currentStop', 'Depart ' + time);
+      setText('vimStop', dest);
+      updateTripPreview();
+      page('ticketPage');
+      showInfo('Trip started: Route ' + escapeHtml(route) + ' to ' + escapeHtml(dest) + ' at ' + escapeHtml(time));
+    }
+
+    function openOptions() { page('optionsPage'); }
+    function goMessages() { renderMessages(); page('messagesPage'); }
+
+    function moveStage(n) {
+      stageIndex = (stageIndex + n + stages.length) % stages.length;
+      setText('fareStage', stages[stageIndex]);
+    }
+
+    function moveStop(n) {
+      stopIndex = (stopIndex + n + stops.length) % stops.length;
+      setText('currentStop', stops[stopIndex]);
+      setText('vimStop', stops[(stopIndex + 1) % stops.length]);
+    }
+
+    function moveDestination(n) {
+      destIndex = (destIndex + n + stages.length) % stages.length;
+      setText('destination', stages[destIndex]);
+    }
+
+    function openStageList() {
+      openList('Select Fare Stage', stages, function (v) {
+        setText('fareStage', v);
+        stageIndex = stages.indexOf(v);
+      });
+    }
+
+    function openStopList() {
+      openList('Select Current Stop', stops, function (v) {
+        setText('currentStop', v);
+        stopIndex = stops.indexOf(v);
+      });
+    }
+
+    function openDestinationList() {
+      openList('Select Destination', stages, function (v) {
+        setText('destination', v);
+        destIndex = stages.indexOf(v);
+      });
+    }
+
+    function setCat(c) { category = c; renderTickets(); }
+    function prevCat() {
+      const cats = ['standard','child','period','concession'];
+      category = cats[(cats.indexOf(category) + cats.length - 1) % cats.length];
+      renderTickets();
+    }
+    function nextCat() {
+      const cats = ['standard','child','period','concession'];
+      category = cats[(cats.indexOf(category) + 1) % cats.length];
+      renderTickets();
+    }
+    function addTicket(name, price) {
+      selectedTicket = { name: name, price: price };
+      basket.push({ name: name, price: price });
+      setText('selectedName', name);
+      updateTotals();
+    }
+    function updateTotals() {
+      setText('totalTickets', basket.length);
+      setText('totalValue', money(basket.reduce(function (a, b) { return a + b.price; }, 0)));
+      byId('issueBtn').className = basket.length ? 'green' : 'grey';
+    }
+    function clearBasket() {
+      basket = [];
+      selectedTicket = null;
+      setText('selectedName', 'None');
+      updateTotals();
+    }
+    function repeatTx() {
+      if (lastTransaction) {
+        basket = lastTransaction.slice();
+        updateTotals();
+        showInfo('Previous paper transaction repeated. Smartcard/QR transactions cannot be repeated.');
+      } else {
+        showInfo('No previous transaction to repeat.');
+      }
+    }
+    function punch() { showInfo('Punch recorded for a return, multi-journey, day, weekly, or other punch ticket.'); }
+    function moreTickets() { showInfo('More button: advances to the next page of tickets in the current category.'); }
+
+    function issue(method) {
+      const paymentMethod = method || 'Cash';
+      if (!basket.length) {
+        showInfo('Select at least one valid ticket first.');
+        return;
+      }
+      const total = basket.reduce(function (a, b) { return a + b.price; }, 0);
+      lastTransaction = basket.slice();
+      byId('paper').style.display = 'block';
+      const route = byId('manualRoute') ? byId('manualRoute').value : '';
+      const dest = byId('manualDestination') ? byId('manualDestination').value : byId('destination').textContent;
+      const departure = byId('manualTime') ? byId('manualTime').value : '';
+      const ticketLines = basket.map(function (t) {
+        return t.name.padEnd(20) + ' ' + money(t.price);
+      }).join('\n');
+      byId('paper').textContent = [
+        '      ticketer',
+        '--------------------------------',
+        'Ticket No: ' + Math.floor(100000 + Math.random() * 900000),
+        'Route: ' + route,
+        'Destination: ' + dest,
+        'Departure: ' + departure,
+        'Vehicle: ' + selectedVehicle,
+        'Driver: Demo Driver',
+        'Duty: ' + selectedDuty,
+        'Trip: ' + selectedTrip,
+        'From: ' + byId('fareStage').textContent,
+        'Stop: ' + byId('currentStop').textContent,
+        'To: ' + byId('destination').textContent,
+        '',
+        ticketLines,
+        '',
+        'Total: ' + money(total),
+        'Paid by: ' + paymentMethod,
+        new Date().toLocaleString('en-GB'),
+        '--------------------------------',
+        'Demo ticket - not valid for travel'
+      ].join('\n');
+      showInfo('Ticket issued. Use Annul if issued by mistake.');
+      clearBasket();
+    }
+
+    function calcChange() {
+      setText('changeFare', money(basket.reduce(function (a, b) { return a + b.price; }, 0)));
+      byId('cashTendered').value = '';
+      updateChange();
+      page('changePage');
+    }
+    function updateChange() {
+      const fare = basket.reduce(function (a, b) { return a + b.price; }, 0);
+      const paid = Number(byId('cashTendered').value || 0);
+      setText('changeDue', money(Math.max(0, paid - fare)));
+    }
+    function cashKey(v) { byId('cashTendered').value += v; updateChange(); }
+    function cashClear() { byId('cashTendered').value = ''; updateChange(); }
+    function noteIssued(n) {
+      const old = Number(byId('cashTendered').value || 0);
+      byId('cashTendered').value = Math.max(0, old - n).toFixed(2);
+      updateChange();
+    }
+    function creditVoucher() { showInfo('Credit voucher issued for remaining change. This is optional and depends on configuration.'); }
+
+    function viewCard() { page('cardPage'); }
+    function cardAccepted(msg) {
+      byId('cardPanel').innerHTML = '<h1 style="color:green">✓ CARD ACCEPTED</h1><p>' + escapeHtml(msg) + '</p>';
+      showInfo(msg);
+    }
+    function productSelect() {
+      byId('cardPanel').innerHTML = '<h2>Please choose product</h2><div class="list-row selected"><span>7-Day Pass</span><span>Valid</span></div><div class="list-row"><span>ePurse</span><span>£12.50</span></div>';
+    }
+    function topUp() {
+      byId('cardPanel').innerHTML = '<h2>Top Up</h2><div class="list-row selected"><span>Recharge £5</span><span>£5.00</span></div><div class="list-row"><span>Recharge £10</span><span>£10.00</span></div><button class="green" onclick="showInfo(\'Present EMV card, then swap back to passenger smartcard.\')">CONTACTLESS</button>';
+    }
+
+    function annulScreen() {
+      showInfo('Annul flow: select the recent transaction, press Annul, choose tickets to annul, then print the annulled ticket. Smartcard tickets require the card to be placed back on the reader.');
+    }
+    function endTrip() { showInfo('Trip summary printed. Select another unstarted trip or New Trip for the return journey.'); }
+    function abortTrip() { showInfo('Trip aborted. It can be restarted later using the same journey identifiers.'); }
+    function logOff() {
+      showInfo('Duty Summary / Driver Waybill printed. If using driver card, re-present card to write totals back.');
+      page('loginPage');
+    }
+    function showDutyDetails() { showInfo('Duty Summary: ticket breakdown, cash total, card total, annuls, zero-value tickets, printed date/time, vehicle and duty number.'); }
+    function tripSummary() { showInfo('Trip Summary: tickets issued and transaction value for the current trip.'); }
+    function testPrint() {
+      byId('paper').style.display = 'block';
+      byId('paper').textContent = 'TEST PRINT\nPrinter working correctly\n' + new Date().toLocaleString('en-GB');
+    }
+    function lockMachine() { showInfo('<h2>Activity Suspended</h2><p>Press Resume and enter passcode or use driver card to continue.</p>'); }
+    function newDuty() {
+      const d = prompt('Enter new duty number', '2001');
+      if (d) {
+        selectedDuty = 'Duty ' + d;
+        renderDuties();
+      }
+    }
+    function adHocTrip() {
+      byId('manualRoute').value = '';
+      byId('manualDestination').value = '';
+      byId('manualTime').value = '';
+      updateTripPreview();
+      showInfo('Ad Hoc trip mode: enter route, destination and time manually.');
+    }
+
+    function toggleCheck(el) {
+      const s = el.querySelector('span:last-child');
+      s.textContent = s.textContent === '✓' ? '✗' : '✓';
+      s.style.color = s.textContent === '✓' ? 'green' : 'red';
+    }
+    function passAllOthers() {
+      Array.from(byId('checkList').children).forEach(function (r) {
+        const s = r.querySelector('span:last-child');
+        if (s.textContent === '□') {
+          s.textContent = '✓';
+          s.style.color = 'green';
+        }
+      });
+    }
+    function openDefects() { showInfo('Select a failed component, choose Defects, add notes, and mark the position on the bus pictogram if the fault is positional.'); }
+    function showKeyboard(id) {
+      const el = byId(id);
+      if (!el) return;
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function selectMessage(index) {
+      selectedMessageIndex = index;
+      renderMessages();
+    }
+    function openSelectedMessage() { openMessage(selectedMessageIndex); }
+    function openMessage(index) {
+      selectedMessageIndex = index;
+      const msg = messageStore[index];
+      if (!msg) return;
+      msg.read = true;
+      setText('readMsgTitle', msg.important ? 'IMPORTANT MESSAGE' : 'MESSAGE');
+      setText('readMsgFrom', msg.from);
+      setText('readMsgSubject', msg.subject);
+      setText('readMsgBody', msg.body);
+      setText('msgCount', messageStore.filter(function (m) { return !m.read; }).length);
+      page('readMessagePage');
+    }
+    function markReadAndBack() {
+      if (messageStore[selectedMessageIndex]) messageStore[selectedMessageIndex].read = true;
+      setText('msgCount', messageStore.filter(function (m) { return !m.read; }).length);
+      goMessages();
+    }
+    function composeMessage() {
+      selectedComposeSubject = '';
+      setText('composeSubject', 'None');
+      byId('composeBody').value = '';
+      byId('sendLinkBox').style.display = 'none';
+      page('composeMessagePage');
+    }
+    function selectSubject(subject) {
+      selectedComposeSubject = subject;
+      setText('composeSubject', subject);
+      Array.from(byId('subjectButtons').querySelectorAll('button')).forEach(function (b) { b.classList.remove('orange'); });
+      const btn = Array.from(byId('subjectButtons').querySelectorAll('button')).find(function (b) {
+        return b.textContent.trim().toLowerCase().startsWith(subject.split(' ')[0].toLowerCase());
+      });
+      if (btn) btn.classList.add('orange');
+    }
+    function clearCompose() {
+      selectedComposeSubject = '';
+      setText('composeSubject', 'None');
+      byId('composeBody').value = '';
+      byId('sendLinkBox').style.display = 'none';
+      Array.from(byId('subjectButtons').querySelectorAll('button')).forEach(function (b) { b.classList.remove('orange'); });
+    }
+    function cannedReply() {
+      byId('composeBody').value = 'Acknowledged. I will update control if the situation changes.';
+    }
+
+    function encodePayload(obj) {
+      return btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+    }
+    function decodePayload(text) {
+      return JSON.parse(decodeURIComponent(escape(atob(text))));
+    }
+    function makeUrl(mode, payload) {
+      return location.origin + location.pathname + '#mode=' + encodeURIComponent(mode) + '&data=' + encodePayload(payload);
+    }
+    function copyText(id) {
+      const el = byId(id);
+      if (!el || !el.value) return;
+      el.select();
+      document.execCommand('copy');
+      showInfo('Link copied.');
+    }
+    function sendComposedMessage() {
+      if (!selectedComposeSubject) {
+        showInfo('Select a subject / reason before sending the message.');
+        return;
+      }
+      if (!byId('composeBody').value.trim()) {
+        showInfo('Type a message before sending.');
+        return;
+      }
+      const payload = {
+        from: 'Driver',
+        route: byId('manualRoute') ? byId('manualRoute').value : byId('fareStage').textContent,
+        trip: selectedTrip,
+        subject: selectedComposeSubject,
+        body: byId('composeBody').value.trim(),
+        time: new Date().toLocaleString('en-GB')
+      };
+      const link = makeUrl('control', payload);
+      byId('sendLink').value = link;
+      byId('sendLinkBox').style.display = 'block';
+      messageStore.unshift({
+        type: 'Driver',
+        from: 'You',
+        subject: selectedComposeSubject,
+        body: byId('composeBody').value.trim() + '\n\nGenerated control link:\n' + link,
+        important: false,
+        read: true
+      });
+      currentMessageType = 'Driver';
+      showInfo('No-server message link created. Copy/open the generated Control-room link on the other site/device.');
+    }
+    function loadFromHash() {
+      const hash = location.hash.slice(1);
+      if (!hash) return;
+      const params = new URLSearchParams(hash);
+      const mode = params.get('mode');
+      const data = params.get('data');
+      if (!mode || !data) return;
+      try {
+        const payload = decodePayload(data);
+        if (mode === 'control') {
+          setText('controlRoute', payload.route || '-');
+          setText('controlSubject', payload.subject || '-');
+          setText('controlBody', payload.body || '');
+          byId('controlReply').value = '';
+          byId('replyLinkBox').style.display = 'none';
+          page('controlRoomPage');
+        }
+        if (mode === 'driverReply') {
+          messageStore.unshift({
+            type: 'Driver',
+            from: 'Control',
+            subject: 'RE: ' + (payload.subject || 'Message'),
+            body: payload.reply || '',
+            important: false,
+            read: false
+          });
+          setText('msgCount', messageStore.filter(function (m) { return !m.read; }).length);
+          currentMessageType = 'Driver';
+          goMessages();
+          showInfo('Reply received from Control link.');
+        }
+      } catch (e) {
+        showInfo('Could not read message link.');
+      }
+    }
+    function generateReplyLink() {
+      const originalSubject = byId('controlSubject').textContent || 'Message';
+      if (!byId('controlReply').value.trim()) {
+        showInfo('Type a reply before sending.');
+        return;
+      }
+      const payload = {
+        from: 'Control',
+        subject: originalSubject,
+        reply: byId('controlReply').value.trim(),
+        time: new Date().toLocaleString('en-GB')
+      };
+      byId('replyLink').value = makeUrl('driverReply', payload);
+      byId('replyLinkBox').style.display = 'block';
+      showInfo('Reply link created. Send/open it back on the driver site.');
+    }
+    function replyMessage() {
+      const msg = messageStore[selectedMessageIndex];
+      selectedComposeSubject = msg ? 'RE: ' + msg.subject : 'Reply';
+      setText('composeSubject', selectedComposeSubject);
+      byId('composeBody').value = '';
+      byId('sendLinkBox').style.display = 'none';
+      page('composeMessagePage');
+    }
+    function messageTab(type) {
+      currentMessageType = type;
+      renderMessages();
+    }
+
+    function showInfo(html) {
+      setText('modalTitle', 'Information');
+      byId('modalBody').innerHTML = html;
+      byId('modal').classList.add('show');
+    }
+    function closeModal() {
+      byId('modal').classList.remove('show');
+    }
+    function openList(title, arr, cb) {
+      setText('modalTitle', title);
+      const body = byId('modalBody');
+      body.innerHTML = '';
+      const input = document.createElement('input');
+      input.placeholder = 'Filter list';
+      const list = document.createElement('div');
+      list.id = 'modalList';
+      arr.forEach(function (x) {
+        const row = document.createElement('div');
+        row.className = 'list-row';
+        row.innerHTML = '<span></span><span></span>';
+        row.children[0].textContent = x;
+        row.addEventListener('click', function () {
+          cb(x);
+          closeModal();
+        });
+        list.appendChild(row);
+      });
+      input.addEventListener('input', function () { filterModal(input); });
+      body.appendChild(input);
+      body.appendChild(list);
+      byId('modal').classList.add('show');
+    }
+    function filterModal(input) {
+      Array.from(document.querySelectorAll('#modalList .list-row')).forEach(function (r) {
+        r.style.display = r.textContent.toLowerCase().includes(input.value.toLowerCase()) ? 'grid' : 'none';
+      });
+    }
+    function tick() {
+      setText('clock', new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }));
+    }
+    function hideVim() {
+      byId('vim').classList.remove('show');
+    }
+
+    function assertTest(name, condition) {
+      if (!condition) throw new Error('Test failed: ' + name);
+      return '✓ ' + name;
+    }
+    function runStartupTests() {
+      const results = [];
+      results.push(assertTest('ticket data loaded', ticketData.standard.length > 0));
+      results.push(assertTest('login fields default to 1234', byId('driverNo').value === '1234' && byId('pin').value === '1234'));
+      const encoded = encodePayload({ subject: 'Test', body: 'Hello' });
+      results.push(assertTest('message link encoding round-trip', decodePayload(encoded).body === 'Hello'));
+      updateTripPreview();
+      results.push(assertTest('trip preview updates', byId('previewRoute').textContent === byId('manualRoute').value));
+      byId('testOutput').textContent = results.join('\n');
+    }
+
+    renderTickets();
+    renderMessages();
+    tick();
+    setInterval(tick, 1000);
+    setInterval(function () {
+      const ticketPageActive = byId('ticketPage').classList.contains('active');
+      if (Math.random() < 0.12 && ticketPageActive) byId('vim').classList.add('show');
+    }, 10000);
+    window.addEventListener('hashchange', loadFromHash);
+    runStartupTests();
+    loadFromHash();
+  </script>
+</body>
+</html>
