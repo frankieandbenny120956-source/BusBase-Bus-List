@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at center, #a855f7 0%, #581c87 75%);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game {
+  width: 95%;
+  max-width: 580px;
+  background: rgba(0,0,0,0.35);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 28px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0,0,0,.45);
+}
+
+h1 {
+  font-size: 42px;
+  margin: 0 0 10px;
+}
+
+.subtitle {
+  color: #f3e8ff;
+  margin-bottom: 20px;
+}
+
+.players {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.player-box {
+  background: rgba(255,255,255,0.15);
+  padding: 12px;
+  border-radius: 16px;
+  width: 230px;
+}
+
+.player-box label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.player-box input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.icon-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 999px;
+  background: #6d28d9;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.icon-menu {
+  display: none;
+  margin-top: 10px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 14px;
+  padding: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.icon-menu.show {
+  display: grid;
+}
+
+.icon-choice {
+  border: none;
+  background: white;
+  color: #111;
+  border-radius: 10px;
+  font-size: 24px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.icon-choice:hover {
+  transform: scale(1.08);
+}
+
+.status {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 25px auto;
+  max-width: 360px;
+}
+
+.cell {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: white;
+  color: #111;
+  border: none;
+  border-radius: 18px;
+  font-size: 58px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,.35);
+  transition: 0.2s;
+}
+
+.cell:hover {
+  transform: scale(1.04);
+  background: #f3e8ff;
+}
+
+.player1 {
+  color: #22c55e;
+}
+
+.player2 {
+  color: #ef4444;
+}
+
+.reset {
+  border: none;
+  padding: 14px 30px;
+  border-radius: 999px;
+  background: #6d28d9;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.reset:hover {
+  transform: scale(1.06);
+}
+
+.popup {
+  position: fixed;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: white;
+  color: #111;
+  padding: 16px 28px;
+  border-radius: 14px;
+  font-size: 20px;
+  font-weight: bold;
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  transition: 0.25s;
+  z-index: 999;
+}
+
+.popup.show {
+  transform: translateX(-50%) scale(1);
+}
+</style>
+</head>
+
+<body>
+
+<div class="popup" id="popup"></div>
+
+<div class="game">
+  <h1>🎮 Tic Tac Toe</h1>
+  <p class="subtitle">Choose your names, pick your icons, and play.</p>
+
+  <div class="players">
+    <div class="player-box">
+      <label>Player 1 Nickname</label>
+      <input id="player1Name" type="text" placeholder="Enter nickname" oninput="updateStatus()">
+
+      <button class="icon-button" onclick="toggleMenu('menu1')">
+        Player 1 Icon: <span id="player1IconDisplay">X</span>
+      </button>
+
+      <div class="icon-menu" id="menu1">
+        <button class="icon-choice" onclick="setIcon(1, 'X')">X</button>
+        <button class="icon-choice" onclick="setIcon(1, '🔥')">🔥</button>
+        <button class="icon-choice" onclick="setIcon(1, '⭐')">⭐</button>
+        <button class="icon-choice" onclick="setIcon(1, '🐱')">🐱</button>
+        <button class="icon-choice" onclick="setIcon(1, '⚡')">⚡</button>
+        <button class="icon-choice" onclick="setIcon(1, '🍕')">🍕</button>
+        <button class="icon-choice" onclick="setIcon(1, '👑')">👑</button>
+        <button class="icon-choice" onclick="setIcon(1, '💎')">💎</button>
+      </div>
+    </div>
+
+    <div class="player-box">
+      <label>Player 2 Nickname</label>
+      <input id="player2Name" type="text" placeholder="Enter nickname" oninput="updateStatus()">
+
+      <button class="icon-button" onclick="toggleMenu('menu2')">
+        Player 2 Icon: <span id="player2IconDisplay">O</span>
+      </button>
+
+      <div class="icon-menu" id="menu2">
+        <button class="icon-choice" onclick="setIcon(2, 'O')">O</button>
+        <button class="icon-choice" onclick="setIcon(2, '🔥')">🔥</button>
+        <button class="icon-choice" onclick="setIcon(2, '⭐')">⭐</button>
+        <button class="icon-choice" onclick="setIcon(2, '🐶')">🐶</button>
+        <button class="icon-choice" onclick="setIcon(2, '🌙')">🌙</button>
+        <button class="icon-choice" onclick="setIcon(2, '🎯')">🎯</button>
+        <button class="icon-choice" onclick="setIcon(2, '👑')">👑</button>
+        <button class="icon-choice" onclick="setIcon(2, '💎')">💎</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="status" id="status">Player 1's turn</div>
+
+  <div class="board">
+    <button class="cell" onclick="playMove(0)"></button>
+    <button class="cell" onclick="playMove(1)"></button>
+    <button class="cell" onclick="playMove(2)"></button>
+    <button class="cell" onclick="playMove(3)"></button>
+    <button class="cell" onclick="playMove(4)"></button>
+    <button class="cell" onclick="playMove(5)"></button>
+    <button class="cell" onclick="playMove(6)"></button>
+    <button class="cell" onclick="playMove(7)"></button>
+    <button class="cell" onclick="playMove(8)"></button>
+  </div>
+
+  <button class="reset" onclick="resetGame()">Reset Game</button>
+</div>
+
+<script>
+let board = ["", "", "", "", "", "", "", "", ""];
+let currentPlayer = 1;
+let gameOver = false;
+
+let player1Icon = "X";
+let player2Icon = "O";
+
+const cells = document.querySelectorAll(".cell");
+const statusText = document.getElementById("status");
+const popup = document.getElementById("popup");
+
+const winningCombos = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6]
+];
+
+function getPlayerName(player) {
+  const input = player === 1
+    ? document.getElementById("player1Name").value
+    : document.getElementById("player2Name").value;
+
+  return input.trim() || "Player " + player;
+}
+
+function getCurrentIcon() {
+  return currentPlayer === 1 ? player1Icon : player2Icon;
+}
+
+function toggleMenu(menuId) {
+  document.getElementById(menuId).classList.toggle("show");
+}
+
+function setIcon(player, icon) {
+  if (player === 1) {
+    player1Icon = icon;
+    document.getElementById("player1IconDisplay").textContent = icon;
+    document.getElementById("menu1").classList.remove("show");
+  } else {
+    player2Icon = icon;
+    document.getElementById("player2IconDisplay").textContent = icon;
+    document.getElementById("menu2").classList.remove("show");
+  }
+
+  resetGame();
+}
+
+function updateStatus() {
+  if (!gameOver) {
+    statusText.textContent = getPlayerName(currentPlayer) + "'s turn";
+  }
+}
+
+function playMove(index) {
+  if (board[index] !== "" || gameOver) {
+    return;
+  }
+
+  const icon = getCurrentIcon();
+
+  board[index] = currentPlayer;
+  cells[index].textContent = icon;
+  cells[index].classList.add(currentPlayer === 1 ? "player1" : "player2");
+
+  if (checkWinner()) {
+    const winnerName = getPlayerName(currentPlayer);
+    statusText.textContent = winnerName + " wins!";
+    showPopup(icon + " " + winnerName + " wins!");
+    gameOver = true;
+    return;
+  }
+
+  if (board.every(cell => cell !== "")) {
+    statusText.textContent = "It's a draw!";
+    showPopup("It's a draw!");
+    gameOver = true;
+    return;
+  }
+
+  currentPlayer = currentPlayer === 1 ? 2 : 1;
+  updateStatus();
+}
+
+function checkWinner() {
+  return winningCombos.some(combo => {
+    return combo.every(index => board[index] === currentPlayer);
+  });
+}
+
+function showPopup(message) {
+  popup.textContent = message;
+  popup.classList.add("show");
+
+  setTimeout(() => {
+    popup.classList.remove("show");
+  }, 1800);
+}
+
+function resetGame() {
+  board = ["", "", "", "", "", "", "", "", ""];
+  currentPlayer = 1;
+  gameOver = false;
+
+  cells.forEach(cell => {
+    cell.textContent = "";
+    cell.classList.remove("player1", "player2");
+  });
+
+  updateStatus();
+}
+</script>
+
+</body>
+</html>
