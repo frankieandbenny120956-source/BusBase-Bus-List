@@ -14,7 +14,7 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: Arial, sans-serif;
-  background: radial-gradient(circle at center, #60a5fa 0%, #1e3a8a 75%);
+  background: radial-gradient(circle at center, #a855f7 0%, #581c87 75%);
   color: white;
   display: flex;
   justify-content: center;
@@ -23,7 +23,7 @@ body {
 
 .game {
   width: 95%;
-  max-width: 520px;
+  max-width: 560px;
   background: rgba(0, 0, 0, 0.35);
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 28px;
@@ -38,7 +38,7 @@ h1 {
 }
 
 .subtitle {
-  color: #dbeafe;
+  color: #f3e8ff;
   margin-bottom: 25px;
 }
 
@@ -54,15 +54,53 @@ h1 {
 .card {
   width: 150px;
   height: 215px;
+  margin: 0 auto;
+}
+
+.playing-card {
+  width: 100%;
+  height: 100%;
   background: white;
-  color: #111;
   border-radius: 16px;
   border: 3px solid #eee;
+  position: relative;
   box-shadow: 0 16px 30px rgba(0,0,0,.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 64px;
+  color: #111;
+}
+
+.playing-card.red {
+  color: #dc2626;
+}
+
+.playing-card.black {
+  color: #111;
+}
+
+.corner {
+  position: absolute;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+}
+
+.corner.top {
+  top: 10px;
+  left: 10px;
+}
+
+.corner.bottom {
+  bottom: 10px;
+  right: 10px;
+  transform: rotate(180deg);
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 78px;
   font-weight: bold;
 }
 
@@ -72,7 +110,7 @@ h1 {
   height: 215px;
   border-radius: 16px;
   cursor: pointer;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
   border: 3px solid #fff;
   box-shadow: 0 16px 30px rgba(0,0,0,.45);
   display: flex;
@@ -114,6 +152,9 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  padding: 10px;
+  line-height: 1.2;
 }
 
 .buttons {
@@ -151,7 +192,7 @@ button:hover {
 }
 
 .reset {
-  background: #1d4ed8;
+  background: #6d28d9;
   margin-top: 15px;
 }
 
@@ -186,10 +227,14 @@ button:hover {
   <p class="subtitle">Guess if the next card will be higher or lower.</p>
 
   <div class="table">
-    <div class="card" id="card">?</div>
+    <div class="card" id="card">
+      <div class="playing-card">
+        <div class="center">?</div>
+      </div>
+    </div>
 
     <div class="deck" id="deck">
-      <div class="deck-pattern">DRAW</div>
+      <div class="deck-pattern">PICK A CARD</div>
     </div>
   </div>
 
@@ -222,15 +267,40 @@ const cards = [
   { name: "K", value: 13 }
 ];
 
+const suits = ["♠", "♥", "♦", "♣"];
+
 let currentCard = null;
 let playerGuess = null;
 
 function randomCard() {
-  return cards[Math.floor(Math.random() * cards.length)];
+  const card = cards[Math.floor(Math.random() * cards.length)];
+  const suit = suits[Math.floor(Math.random() * suits.length)];
+
+  return {
+    name: card.name,
+    value: card.value,
+    suit: suit
+  };
 }
 
 function showCard(card) {
-  document.getElementById("card").textContent = card.name;
+  const isRed = card.suit === "♥" || card.suit === "♦";
+
+  document.getElementById("card").innerHTML = `
+    <div class="playing-card ${isRed ? "red" : "black"}">
+      <div class="corner top">
+        ${card.name}<br>${card.suit}
+      </div>
+
+      <div class="center">
+        ${card.suit}
+      </div>
+
+      <div class="corner bottom">
+        ${card.name}<br>${card.suit}
+      </div>
+    </div>
+  `;
 }
 
 function choose(choice) {
@@ -305,7 +375,12 @@ function resetGame() {
   currentCard = null;
   playerGuess = null;
 
-  document.getElementById("card").textContent = "?";
+  document.getElementById("card").innerHTML = `
+    <div class="playing-card">
+      <div class="center">?</div>
+    </div>
+  `;
+
   document.getElementById("message").textContent =
     "Click the deck to start.";
 }
