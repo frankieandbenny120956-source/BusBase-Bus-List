@@ -1,26 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BusBase Office Control</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BusBase Control Room</title>
   <style>
     :root {
-      --bg: #07111f;
-      --panel: #0f1d33;
-      --panel-2: #13243e;
-      --blue: #0054c8;
-      --blue-dark: #002b77;
-      --cyan: #38bdf8;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --card: #f8fafc;
-      --card-text: #0f172a;
-      --danger: #dc2626;
-      --success: #16a34a;
+      --bg: #e8eef7;
+      --ink: #101827;
+      --muted: #64748b;
+      --blue: #004aad;
+      --blue2: #0068e8;
+      --navy: #092451;
+      --panel: #ffffff;
+      --line: #cbd5e1;
+      --danger: #c1121f;
+      --success: #168a2f;
       --warning: #f59e0b;
-      --border: rgba(148, 163, 184, .28);
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --shadow: 0 14px 35px rgba(15, 23, 42, .16);
     }
 
     * { box-sizing: border-box; }
@@ -29,23 +26,20 @@
       margin: 0;
       min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
       background:
-        radial-gradient(circle at top left, rgba(0, 84, 200, .32), transparent 34%),
-        linear-gradient(135deg, #050b14 0%, #07111f 45%, #101827 100%);
-      color: var(--text);
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      background: linear-gradient(90deg, var(--blue-dark), var(--blue));
-      border-bottom: 1px solid rgba(255,255,255,.16);
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+        linear-gradient(180deg, #dbeafe 0, #eef4fb 240px, var(--bg) 100%);
     }
 
     .topbar {
-      max-width: 1180px;
+      background: var(--navy);
+      color: white;
+      border-bottom: 6px solid var(--blue2);
+      box-shadow: 0 8px 22px rgba(0,0,0,.24);
+    }
+
+    .topbar-inner {
+      max-width: 1240px;
       margin: 0 auto;
       padding: 14px 18px;
       display: flex;
@@ -59,329 +53,433 @@
       align-items: center;
       gap: 12px;
       font-weight: 900;
-      letter-spacing: .3px;
-      font-size: 20px;
-    }
-
-    .brand-mark {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      background: rgba(255,255,255,.16);
-      border: 1px solid rgba(255,255,255,.22);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
-    }
-
-    .top-pill {
-      padding: 8px 12px;
-      background: rgba(255,255,255,.14);
-      border: 1px solid rgba(255,255,255,.22);
-      border-radius: 999px;
-      color: #e0f2fe;
-      font-size: 13px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    main.shell {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 24px 18px 42px;
-    }
-
-    .login, .security, .app {
-      width: 100%;
-    }
-
-    .login, .security {
-      max-width: 460px;
-      margin: 42px auto;
-      padding: 24px;
-      background: rgba(15, 29, 51, .94);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-    }
-
-    .login h2, .security h2, .app h2, .direct-message-box h3 {
-      margin: 0 0 8px;
+      font-size: 22px;
       letter-spacing: .2px;
     }
 
-    .login p, .security p, .direct-message-box p, .meta, .muted {
-      color: var(--muted);
-    }
-
-    input, textarea, button {
-      width: 100%;
-      padding: 12px 13px;
-      margin-top: 10px;
-      font-size: 15px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-sizing: border-box;
-      outline: none;
-    }
-
-    input, textarea {
-      background: rgba(255,255,255,.96);
-      color: #0f172a;
-    }
-
-    input:focus, textarea:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 0 3px rgba(56,189,248,.20);
-    }
-
-    textarea { resize: vertical; min-height: 92px; }
-
-    button {
-      border: 0;
-      background: linear-gradient(180deg, #1d6ff2, #004eb8);
-      color: white;
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 9px;
+      background: #facc15;
+      color: #07111f;
+      display: grid;
+      place-items: center;
       font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 10px 24px rgba(0, 84, 200, .28);
-      transition: transform .12s ease, filter .12s ease;
+      border: 3px solid white;
     }
 
-    button:hover { transform: translateY(-1px); filter: brightness(1.06); }
-    button:active { transform: translateY(0); }
+    .status-pill {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
 
-    button.red { background: linear-gradient(180deg, #ef4444, #b91c1c); }
-    button.grey { background: linear-gradient(180deg, #64748b, #334155); }
-    button.small-btn { width: auto; min-width: 130px; padding: 10px 14px; margin-top: 0; }
+    .shell {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px 18px 46px;
+    }
 
     .hidden { display: none !important; }
 
-    .app {
-      display: grid;
-      gap: 18px;
+    .auth-card {
+      max-width: 440px;
+      margin: 52px auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
-    .dashboard-head {
+    .auth-head {
+      background: var(--navy);
+      color: white;
+      padding: 18px 20px;
+    }
+
+    .auth-head h2 { margin: 0 0 6px; }
+    .auth-head p { margin: 0; color: #cbd5e1; }
+
+    .auth-body { padding: 20px; }
+
+    input, textarea, select, button {
+      width: 100%;
+      font-size: 15px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      padding: 11px 12px;
+      margin-top: 10px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--blue2);
+      box-shadow: 0 0 0 3px rgba(0,104,232,.14);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      background: var(--blue);
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(0,74,173,.24);
+    }
+
+    button:hover { filter: brightness(1.06); }
+    button:active { transform: translateY(1px); }
+
+    button.secondary {
+      background: #475569;
+      box-shadow: none;
+    }
+
+    button.red {
+      background: var(--danger);
+      box-shadow: none;
+    }
+
+    button.green {
+      background: var(--success);
+    }
+
+    button.light {
+      background: #e5e7eb;
+      color: #0f172a;
+      box-shadow: none;
+      border: 1px solid #cbd5e1;
+    }
+
+    .error { color: var(--danger); font-weight: 800; }
+    .success { color: var(--success); font-weight: 800; }
+    .muted { color: var(--muted); }
+
+    .dashboard {
+      display: grid;
+      gap: 16px;
+    }
+
+    .dash-head {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 16px;
+      gap: 14px;
       align-items: center;
-      padding: 18px;
-      background: rgba(15, 29, 51, .88);
-      border: 1px solid var(--border);
-      border-radius: 22px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
       box-shadow: var(--shadow);
+      padding: 18px;
     }
 
-    .dashboard-head h2 { font-size: 24px; }
-    #loggedInAs { margin: 6px 0 0; }
+    .dash-head h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .dash-head p { margin: 6px 0 0; }
+
+    .logout-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .small-btn {
+      width: auto;
+      min-width: 120px;
+      margin-top: 0;
+      padding: 10px 14px;
+    }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
     }
 
     .stat {
-      background: rgba(19, 36, 62, .90);
-      border: 1px solid var(--border);
-      border-radius: 18px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
       padding: 14px;
+      box-shadow: 0 8px 22px rgba(15,23,42,.08);
     }
 
     .stat span {
       display: block;
       color: var(--muted);
       font-size: 12px;
+      font-weight: 900;
       text-transform: uppercase;
-      font-weight: 800;
-      letter-spacing: .5px;
+      letter-spacing: .4px;
     }
 
     .stat strong {
       display: block;
       margin-top: 6px;
-      font-size: 24px;
+      font-size: 26px;
+      color: var(--navy);
     }
 
     .grid {
       display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 18px;
+      grid-template-columns: 390px 1fr;
+      gap: 16px;
       align-items: start;
     }
 
-    .panel-card, .direct-message-box, .inbox-panel {
-      background: rgba(15, 29, 51, .90);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-    }
-
-    .direct-message-box {
-      padding: 18px;
-      margin: 0;
-      position: sticky;
-      top: 88px;
-    }
-
-    .direct-message-box h3::before {
-      content: '✉ ';
-    }
-
-    .split {
+    .left-stack {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
+      gap: 16px;
+      position: sticky;
+      top: 86px;
     }
 
-    .inbox-panel {
-      min-height: 420px;
+    .card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
       overflow: hidden;
     }
 
-    .inbox-title {
+    .card-head {
+      padding: 14px 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 12px;
-      padding: 16px 18px;
-      background: rgba(0, 43, 119, .72);
-      border-bottom: 1px solid var(--border);
     }
 
-    .inbox-title h3 { margin: 0; }
+    .card-head h3 { margin: 0; }
 
-    #messages {
-      padding: 14px;
+    .card-body { padding: 16px; }
+
+    .tabs {
       display: grid;
-      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tabs button {
+      margin-top: 0;
+      background: #e2e8f0;
+      color: #0f172a;
+      box-shadow: none;
+    }
+
+    .tabs button.active {
+      background: var(--blue);
+      color: white;
+    }
+
+    .message-list {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      max-height: 720px;
+      overflow: auto;
     }
 
     .message {
-      background: var(--card);
-      color: var(--card-text);
-      padding: 16px;
-      border-radius: 18px;
-      border: 1px solid rgba(15,23,42,.08);
+      background: #ffffff;
+      border: 1px solid var(--line);
       border-left: 7px solid var(--blue);
-      box-shadow: 0 12px 30px rgba(0,0,0,.14);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, .08);
     }
 
     .message.unread { border-left-color: var(--danger); }
+    .message.replied { border-left-color: var(--success); }
 
     .message h3 {
       margin: 0 0 8px;
       font-size: 18px;
-      color: #0f172a;
+      color: var(--navy);
     }
 
     .message p { margin: 6px 0; }
+    .message-body {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 9px;
+      white-space: pre-wrap;
+    }
 
     .meta {
+      color: var(--muted);
       font-size: 13px;
-      color: #64748b;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .reply-box {
       margin-top: 12px;
-      background: #e8eef7;
       padding: 12px;
       border-radius: 14px;
-      border: 1px solid #cbd5e1;
+      background: #eef4ff;
+      border: 1px solid #bfdbfe;
     }
 
-    .reply-box button { margin-top: 8px; }
+    .reply-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
 
-    .error { color: #fecaca; font-weight: 700; }
-    .success { color: #86efac; font-weight: 700; }
+    .banner {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      font-weight: 800;
+      margin-top: 10px;
+    }
 
-    @media (max-width: 860px) {
-      .topbar, .dashboard-head { grid-template-columns: 1fr; }
-      .grid { grid-template-columns: 1fr; }
-      .direct-message-box { position: static; }
-      .stats { grid-template-columns: 1fr; }
-      button.small-btn { width: 100%; }
+    @media (max-width: 900px) {
+      .dash-head, .grid, .stats { grid-template-columns: 1fr; }
+      .left-stack { position: static; }
+      .logout-row { flex-direction: column; align-items: stretch; }
+      .small-btn { width: 100%; }
     }
   </style>
 </head>
 <body>
-<header>
-  <div class="topbar">
-    <div class="brand"><span class="brand-mark">BB</span><span>BusBase Office Control</span></div>
-    <div class="top-pill">Live Control Room</div>
-  </div>
-</header>
-
-<main class="shell">
-<section class="login" id="loginBox">
-  <h2>Office Login</h2>
-  <p>Sign in with your office email and password.</p>
-  <input id="email" type="email" placeholder="Office email" value="office@busbase.co.uk">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <p id="loginError" class="error"></p>
-</section>
-
-<section class="security hidden" id="securityBox">
-  <h2>Security Check</h2>
-  <p>Enter your unique office number and password code.</p>
-  <input id="staffId" placeholder="Unique number">
-  <input id="securityCode" type="password" placeholder="Password code">
-  <button onclick="verifySecurityCode()">Continue</button>
-  <button class="grey" onclick="logout()">Cancel / Logout</button>
-  <p id="securityError" class="error"></p>
-</section>
-
-<section class="app hidden" id="appBox">
-  <div class="dashboard-head">
-    <div>
-      <h2>Driver Communications</h2>
-      <p class="success" id="loggedInAs"></p>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><div class="logo">BB</div><div>BusBase Control Room</div></div>
+      <div class="status-pill">Live Driver Communications</div>
     </div>
-    <button class="red small-btn" onclick="logout()">Logout</button>
-  </div>
+  </header>
 
-  <div class="stats">
-    <div class="stat"><span>Status</span><strong>Online</strong></div>
-    <div class="stat"><span>Inbox</span><strong id="inboxCount">0</strong></div>
-    <div class="stat"><span>Unread</span><strong id="unreadCount">0</strong></div>
-  </div>
-
-  <div class="grid">
-    <div class="direct-message-box">
-      <h3>Send Message to Driver</h3>
-      <p>Send a message directly to any driver number without waiting for an incoming message.</p>
-      <div class="split">
-        <input id="directDriverId" placeholder="Driver number, e.g. 1234">
-        <input id="directSubject" placeholder="Subject, e.g. Road closure">
+  <main class="shell">
+    <section class="auth-card" id="loginBox">
+      <div class="auth-head">
+        <h2>Office Login</h2>
+        <p>Sign in with your office email and password.</p>
       </div>
-      <textarea id="directBody" rows="4" placeholder="Type message to send to the driver"></textarea>
-      <button onclick="sendDirectToDriver()">Send to Driver</button>
-      <p id="directStatus" class="success"></p>
-    </div>
-
-    <div class="inbox-panel">
-      <div class="inbox-title">
-        <h3>Live Driver Inbox</h3>
-        <span class="top-pill">Auto refresh</span>
+      <div class="auth-body">
+        <input id="email" type="email" placeholder="Office email" value="office@busbase.co.uk" />
+        <input id="password" type="password" placeholder="Password" />
+        <button onclick="login()">Login</button>
+        <p id="loginError" class="error"></p>
       </div>
-      <div id="messages"></div>
-    </div>
-  </div>
-</section>
-</main>
+    </section>
+
+    <section class="auth-card hidden" id="securityBox">
+      <div class="auth-head">
+        <h2>Security Check</h2>
+        <p>Enter your unique office number and password code.</p>
+      </div>
+      <div class="auth-body">
+        <input id="staffId" placeholder="Unique number" />
+        <input id="securityCode" type="password" placeholder="Password code" />
+        <button onclick="verifySecurityCode()">Continue</button>
+        <button class="secondary" onclick="logout()">Cancel / Logout</button>
+        <p id="securityError" class="error"></p>
+      </div>
+    </section>
+
+    <section class="dashboard hidden" id="appBox">
+      <div class="dash-head">
+        <div>
+          <h1>Control Room Dashboard</h1>
+          <p class="success" id="loggedInAs"></p>
+        </div>
+        <div class="logout-row">
+          <button class="light small-btn" onclick="refreshInbox()">Refresh</button>
+          <button class="red small-btn" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span>Status</span><strong>Online</strong></div>
+        <div class="stat"><span>Messages</span><strong id="inboxCount">0</strong></div>
+        <div class="stat"><span>Unread</span><strong id="unreadCount">0</strong></div>
+        <div class="stat"><span>Broadcasts</span><strong id="broadcastCount">0</strong></div>
+      </div>
+
+      <div class="grid">
+        <aside class="left-stack">
+          <div class="card">
+            <div class="card-head">
+              <h3>Send Message</h3>
+            </div>
+            <div class="card-body">
+              <div class="tabs">
+                <button id="tabSingle" class="active" onclick="setSendMode('single')">Single Driver</button>
+                <button id="tabBroadcast" onclick="setSendMode('broadcast')">All Drivers</button>
+              </div>
+
+              <div id="singleDriverFields">
+                <input id="directDriverId" placeholder="Driver number, e.g. 1234" />
+              </div>
+
+              <input id="directSubject" placeholder="Subject, e.g. Road closure" />
+              <textarea id="directBody" placeholder="Type message"></textarea>
+
+              <select id="priority">
+                <option value="normal">Normal priority</option>
+                <option value="important">Important</option>
+                <option value="emergency">Emergency</option>
+              </select>
+
+              <button class="green" onclick="sendControlMessage()">Send Message</button>
+              <p id="directStatus" class="success"></p>
+
+              <div class="banner">
+                Broadcast messages are written to the <strong>broadcasts</strong> collection for all ETMs to read.
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>Quick Messages</h3></div>
+            <div class="card-body">
+              <button class="light" onclick="quickMessage('Road closure', 'Please follow the diversion and update control if delayed.')">Road closure</button>
+              <button class="light" onclick="quickMessage('Running late', 'Please advise your current location and expected delay.')">Running late</button>
+              <button class="light" onclick="quickMessage('Return to depot', 'Return to depot when safe to do so and await instructions.')">Return to depot</button>
+            </div>
+          </div>
+        </aside>
+
+        <section class="card">
+          <div class="card-head">
+            <h3>Live Driver Inbox</h3>
+            <span class="status-pill">Auto refresh</span>
+          </div>
+          <div class="message-list" id="messages"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
   import {
     getAuth,
     signInWithEmailAndPassword,
     onAuthStateChanged,
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
   import {
     getFirestore,
     collection,
@@ -410,15 +508,30 @@
 
   let unsubscribeMessages = null;
   let verifiedOfficeUser = null;
+  let sendMode = "single";
+  let latestMessages = [];
 
   function showOnly(sectionId) {
-    document.getElementById("loginBox").classList.add("hidden");
-    document.getElementById("securityBox").classList.add("hidden");
-    document.getElementById("appBox").classList.add("hidden");
+    ["loginBox", "securityBox", "appBox"].forEach(id => {
+      document.getElementById(id).classList.add("hidden");
+    });
+    if (sectionId) document.getElementById(sectionId).classList.remove("hidden");
+  }
 
-    if (sectionId) {
-      document.getElementById(sectionId).classList.remove("hidden");
+  function getProfileValue(profile, keys) {
+    for (const key of keys) {
+      if (profile[key] !== undefined && profile[key] !== null) return profile[key];
     }
+    return "";
+  }
+
+  async function findOfficeProfile(uid) {
+    const names = ["officeUsers", "officeusers"];
+    for (const name of names) {
+      const snap = await getDoc(doc(db, name, uid));
+      if (snap.exists()) return snap.data();
+    }
+    return null;
   }
 
   window.login = async function () {
@@ -429,21 +542,21 @@
       document.getElementById("loginError").textContent = "";
       await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
-      document.getElementById("loginError").textContent = err.message;
+      document.getElementById("loginError").textContent = "Login failed: " + err.code;
     }
   };
 
   window.verifySecurityCode = async function () {
     const user = auth.currentUser;
-    const staffId = document.getElementById("staffId").value.trim();
-    const securityCode = document.getElementById("securityCode").value.trim();
+    const staffIdEntered = document.getElementById("staffId").value.trim();
+    const codeEntered = document.getElementById("securityCode").value.trim();
 
     if (!user) {
       showOnly("loginBox");
       return;
     }
 
-    if (!staffId || !securityCode) {
+    if (!staffIdEntered || !codeEntered) {
       document.getElementById("securityError").textContent = "Enter your unique number and password code.";
       return;
     }
@@ -451,36 +564,29 @@
     try {
       document.getElementById("securityError").textContent = "";
 
-      let profileSnap = await getDoc(doc(db, "officeUsers", user.uid));
-
-      // Backwards-compatible fallback in case the collection was created as officeusers.
-      if (!profileSnap.exists()) {
-        profileSnap = await getDoc(doc(db, "officeusers", user.uid));
-      }
-
-      if (!profileSnap.exists()) {
-        document.getElementById("securityError").textContent =
-          "No office profile found. Create a document in officeUsers using this UID: " + user.uid;
+      const profile = await findOfficeProfile(user.uid);
+      if (!profile) {
+        document.getElementById("securityError").textContent = "No office setup found for this account.";
         return;
       }
 
-      const profile = profileSnap.data();
+      const active = getProfileValue(profile, ["active"]);
+      const role = String(getProfileValue(profile, ["role", "Role"])).toLowerCase();
+      const staffId = String(getProfileValue(profile, ["staffId", "staffid", "Unique Number", "uniqueNumber"]));
+      const code = String(getProfileValue(profile, ["code", "Security Code", "securityCode"]));
+      const name = String(getProfileValue(profile, ["name", "Name"]) || "Office User");
 
-      const savedStaffId = profile.staffId || profile.staffid || profile["Unique Number"] || profile["uniqueNumber"];
-      const savedCode = profile.code || profile["Security Code"] || profile.securityCode || profile.passwordCode;
-      const role = String(profile.role || "office").toLowerCase();
-
-      if (profile.active !== true) {
+      if (active !== true) {
         document.getElementById("securityError").textContent = "This office account is inactive.";
         return;
       }
 
-      if (role !== "office") {
+      if (role && role !== "office" && role !== "controller" && role !== "manager") {
         document.getElementById("securityError").textContent = "Access denied. This account is not an office user.";
         return;
       }
 
-      if (String(savedStaffId) !== staffId || String(savedCode) !== securityCode) {
+      if (staffId !== staffIdEntered || code !== codeEntered) {
         document.getElementById("securityError").textContent = "Invalid unique number or password code.";
         return;
       }
@@ -488,8 +594,8 @@
       verifiedOfficeUser = {
         uid: user.uid,
         email: user.email,
-        name: profile.name || "Office User",
-        staffId: savedStaffId
+        name,
+        staffId
       };
 
       document.getElementById("loggedInAs").textContent =
@@ -509,6 +615,7 @@
     }
 
     verifiedOfficeUser = null;
+    latestMessages = [];
     document.getElementById("password").value = "";
     document.getElementById("staffId").value = "";
     document.getElementById("securityCode").value = "";
@@ -517,84 +624,116 @@
     document.getElementById("directSubject").value = "";
     document.getElementById("directBody").value = "";
     document.getElementById("directStatus").textContent = "";
+
     await signOut(auth);
   };
 
   onAuthStateChanged(auth, user => {
     if (user) {
-      if (!verifiedOfficeUser) {
-        showOnly("securityBox");
-      }
+      if (!verifiedOfficeUser) showOnly("securityBox");
     } else {
       verifiedOfficeUser = null;
       showOnly("loginBox");
     }
   });
 
-  function startInbox() {
-    if (unsubscribeMessages) {
-      unsubscribeMessages();
-      unsubscribeMessages = null;
-    }
+  window.setSendMode = function(mode) {
+    sendMode = mode;
+    document.getElementById("tabSingle").classList.toggle("active", mode === "single");
+    document.getElementById("tabBroadcast").classList.toggle("active", mode === "broadcast");
+    document.getElementById("singleDriverFields").classList.toggle("hidden", mode === "broadcast");
+    document.getElementById("directStatus").textContent = "";
+  };
 
-    const q = query(
-      collection(db, "messages"),
-      orderBy("createdAt", "desc")
-    );
+  window.quickMessage = function(subject, body) {
+    document.getElementById("directSubject").value = subject;
+    document.getElementById("directBody").value = body;
+  };
+
+  window.refreshInbox = function() {
+    renderMessages(latestMessages);
+  };
+
+  function startInbox() {
+    if (unsubscribeMessages) unsubscribeMessages();
+
+    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
 
     unsubscribeMessages = onSnapshot(q, snapshot => {
-      const box = document.getElementById("messages");
-      box.innerHTML = "";
+      latestMessages = [];
 
       snapshot.forEach(documentSnap => {
-        const message = documentSnap.data();
-        const messageId = documentSnap.id;
-
-        const div = document.createElement("div");
-        div.className = "message " + (message.status === "unread" ? "unread" : "");
-
-        div.innerHTML = `
-          <h3>${escapeHtml(message.subject || "No subject")}</h3>
-          <p><strong>From:</strong> ${escapeHtml(message.driverName || message.senderName || message.from || "Driver")}</p>
-          <p><strong>Driver ID:</strong> ${escapeHtml(message.driverId || "Unknown")}</p>
-          <p><strong>Route:</strong> ${escapeHtml(message.route || "Unknown")}</p>
-          <p>${escapeHtml(message.body || "")}</p>
-          <p class="meta">Status: ${escapeHtml(message.status || "unknown")}</p>
-
-          <div class="reply-box">
-            <textarea id="reply-${messageId}" placeholder="Type reply to driver"></textarea>
-            <button onclick="replyToDriver('${messageId}', '${escapeHtml(message.driverId || "1234")}')">
-              Send Reply
-            </button>
-            <button onclick="markRead('${messageId}')">
-              Mark Read
-            </button>
-          </div>
-        `;
-
-        box.appendChild(div);
+        latestMessages.push({
+          id: documentSnap.id,
+          data: documentSnap.data()
+        });
       });
+
+      renderMessages(latestMessages);
     }, err => {
       document.getElementById("messages").innerHTML =
         '<p class="error">Could not load messages: ' + escapeHtml(err.message) + '</p>';
     });
   }
 
-  window.sendDirectToDriver = async function () {
+  function renderMessages(items) {
+    const box = document.getElementById("messages");
+    box.innerHTML = "";
+
+    document.getElementById("inboxCount").textContent = items.length;
+    document.getElementById("unreadCount").textContent =
+      items.filter(item => item.data.status === "unread").length;
+
+    if (!items.length) {
+      box.innerHTML = '<div class="message"><h3>No driver messages</h3><p class="muted">Incoming driver messages will appear here.</p></div>';
+      return;
+    }
+
+    items.forEach(item => {
+      const message = item.data;
+      const messageId = item.id;
+      const statusClass = message.status === "replied" ? "replied" : (message.status === "unread" ? "unread" : "");
+
+      const div = document.createElement("div");
+      div.className = "message " + statusClass;
+
+      div.innerHTML = `
+        <h3>${escapeHtml(message.subject || "No subject")}</h3>
+        <p><strong>From:</strong> ${escapeHtml(message.driverName || message.senderName || message.from || "Driver")}</p>
+        <p><strong>Driver ID:</strong> ${escapeHtml(message.driverId || "Unknown")}</p>
+        <p><strong>Route:</strong> ${escapeHtml(message.route || "Unknown")}</p>
+        <div class="message-body">${escapeHtml(message.body || "")}</div>
+        <p class="meta">Status: ${escapeHtml(message.status || "unknown")}</p>
+
+        <div class="reply-box">
+          <textarea id="reply-${messageId}" placeholder="Type reply to driver"></textarea>
+          <div class="reply-actions">
+            <button onclick="replyToDriver('${messageId}', '${escapeHtml(message.driverId || "1234")}')">Reply</button>
+            <button class="light" onclick="markRead('${messageId}')">Mark Read</button>
+          </div>
+        </div>
+      `;
+
+      box.appendChild(div);
+    });
+  }
+
+  window.sendControlMessage = async function () {
     if (!verifiedOfficeUser) {
-      alert("You must complete the security check first.");
+      alert("Complete the security check first.");
       return;
     }
 
     const driverId = document.getElementById("directDriverId").value.trim();
-    const subject = document.getElementById("directSubject").value.trim() || "Message from Office";
+    const subject = document.getElementById("directSubject").value.trim() || "Message from Control";
     const body = document.getElementById("directBody").value.trim();
+    const priority = document.getElementById("priority").value;
     const status = document.getElementById("directStatus");
 
     status.textContent = "";
     status.className = "success";
 
-    if (!driverId) {
+    if (sendMode === "single" && !driverId) {
       status.className = "error";
       status.textContent = "Enter a driver number.";
       return;
@@ -607,21 +746,42 @@
     }
 
     try {
-      await addDoc(collection(db, "replies"), {
-        messageId: null,
-        driverId,
-        from: verifiedOfficeUser.name,
-        senderName: verifiedOfficeUser.name,
-        officeUid: verifiedOfficeUser.uid,
-        officeStaffId: verifiedOfficeUser.staffId,
-        subject,
-        body: subject + ": " + body,
-        direct: true,
-        createdAt: serverTimestamp()
-      });
+      if (sendMode === "broadcast") {
+        await addDoc(collection(db, "broadcasts"), {
+          from: verifiedOfficeUser.name,
+          senderName: verifiedOfficeUser.name,
+          officeUid: verifiedOfficeUser.uid,
+          officeStaffId: verifiedOfficeUser.staffId,
+          subject,
+          body,
+          priority,
+          target: "all",
+          createdAt: serverTimestamp()
+        });
 
+        status.textContent = "Broadcast sent to all drivers.";
+        document.getElementById("broadcastCount").textContent =
+          Number(document.getElementById("broadcastCount").textContent || 0) + 1;
+      } else {
+        await addDoc(collection(db, "replies"), {
+          messageId: null,
+          driverId,
+          from: verifiedOfficeUser.name,
+          senderName: verifiedOfficeUser.name,
+          officeUid: verifiedOfficeUser.uid,
+          officeStaffId: verifiedOfficeUser.staffId,
+          subject,
+          body,
+          priority,
+          direct: true,
+          createdAt: serverTimestamp()
+        });
+
+        status.textContent = "Message sent to driver " + driverId + ".";
+      }
+
+      document.getElementById("directSubject").value = "";
       document.getElementById("directBody").value = "";
-      status.textContent = "Message sent to driver " + driverId + ".";
     } catch (err) {
       status.className = "error";
       status.textContent = err.message;
@@ -630,7 +790,7 @@
 
   window.replyToDriver = async function (messageId, driverId) {
     if (!verifiedOfficeUser) {
-      alert("You must complete the security check first.");
+      alert("Complete the security check first.");
       return;
     }
 
@@ -646,6 +806,7 @@
       messageId,
       driverId,
       from: verifiedOfficeUser.name,
+      senderName: verifiedOfficeUser.name,
       officeUid: verifiedOfficeUser.uid,
       officeStaffId: verifiedOfficeUser.staffId,
       body,
@@ -659,12 +820,11 @@
     });
 
     textarea.value = "";
-    alert("Reply sent.");
   };
 
   window.markRead = async function (messageId) {
     if (!verifiedOfficeUser) {
-      alert("You must complete the security check first.");
+      alert("Complete the security check first.");
       return;
     }
 
@@ -684,6 +844,5 @@
       .replaceAll("'", "&#039;");
   }
 </script>
-
 </body>
 </html>
