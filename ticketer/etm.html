@@ -1312,12 +1312,16 @@ renderMessages();
   </script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-lite.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-lite.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBBCqx9D1r5U9mWJYKEY_dtCdyk132xGog",
@@ -1332,14 +1336,45 @@ const firebaseConfig = {
   const db = getFirestore(app);
 
   window.sendToOffice = async function(subject, body, route) {
-    const docRef = await addDoc(collection(db, "messages"), {
-      from: "Driver 1234",
-      driverId: "1234",
-      route: route || "Unknown",
-      subject: subject,
-      body: body,
-      status: "unread",
-      createdAt: serverTimestamp()
+let seenReplies = new Set();
+
+window.checkOfficeReplies = async function() {
+  const q = query(
+    collection(db, "replies"),
+    where("driverId", "==", "1234"),
+    orderBy("createdAt", "desc")
+  );
+
+  const snapshot = await getDocs(q);
+
+  snapshot.forEach(docSnap => {
+    if (seenReplies.has(docSnap.id)) return;
+
+    seenReplies.add(docSnap.id);
+
+    const reply = docSnap.data();
+
+    alert("Office reply: " + reply.body);
+
+    if (window.messageStore) {
+      window.messageStore.unshift({
+        type: "Driver",
+        from: "Office",
+        subject: "Reply from Office",
+        body: reply.body,
+        important: false,
+        read: false
+      });
+
+      if (typeof window.renderMessages === "function") {
+        window.renderMessages();
+      }
+    }
+  });
+};
+
+setInterval(window.checkOfficeReplies, 5000);
+window.checkOfficeReplies();
     });
 
     console.log("Message sent with ID:", docRef.id);
