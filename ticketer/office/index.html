@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BusBase Control Room</title>
+  <title>BusBase Command Centre</title>
   <style>
     :root {
-      --bg: #e8eef7;
-      --ink: #101827;
-      --muted: #64748b;
-      --blue: #004aad;
-      --blue2: #0068e8;
-      --navy: #092451;
-      --panel: #ffffff;
-      --line: #cbd5e1;
-      --danger: #c1121f;
-      --success: #168a2f;
-      --warning: #f59e0b;
-      --shadow: 0 14px 35px rgba(15, 23, 42, .16);
+      --ink: #111827;
+      --muted: #6b7280;
+      --bg: #f3f4f6;
+      --rail: #111827;
+      --rail-2: #1f2937;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --red: #dc2626;
+      --amber: #f59e0b;
+      --card: #ffffff;
+      --line: #d1d5db;
+      --soft: #eef2ff;
+      --shadow: 0 12px 30px rgba(15, 23, 42, .12);
     }
 
     * { box-sizing: border-box; }
@@ -26,358 +27,411 @@
       margin: 0;
       min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
       color: var(--ink);
-      background:
-        linear-gradient(180deg, #dbeafe 0, #eef4fb 240px, var(--bg) 100%);
-    }
-
-    .topbar {
-      background: var(--navy);
-      color: white;
-      border-bottom: 6px solid var(--blue2);
-      box-shadow: 0 8px 22px rgba(0,0,0,.24);
-    }
-
-    .topbar-inner {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 900;
-      font-size: 22px;
-      letter-spacing: .2px;
-    }
-
-    .logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 9px;
-      background: #facc15;
-      color: #07111f;
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      border: 3px solid white;
-    }
-
-    .status-pill {
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.25);
-      border-radius: 999px;
-      padding: 8px 13px;
-      font-size: 13px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .shell {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 24px 18px 46px;
     }
 
     .hidden { display: none !important; }
 
-    .auth-card {
-      max-width: 440px;
-      margin: 52px auto;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 250px 1fr;
     }
 
-    .auth-head {
-      background: var(--navy);
+    .rail {
+      background: linear-gradient(180deg, var(--rail), var(--rail-2));
       color: white;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .rail-brand {
+      display: grid;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.15);
+      padding-bottom: 18px;
+    }
+
+    .logo {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 900;
+      background: #facc15;
+      color: #111827;
+      border: 3px solid white;
+    }
+
+    .rail-brand h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.05;
+    }
+
+    .rail-brand p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
+    .rail-card {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .rail-card strong {
+      display: block;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+
+    .rail-card span {
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .rail-spacer { flex: 1; }
+
+    .content {
+      padding: 22px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 18px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .page-title {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
       padding: 18px 20px;
     }
 
-    .auth-head h2 { margin: 0 0 6px; }
-    .auth-head p { margin: 0; color: #cbd5e1; }
-
-    .auth-body { padding: 20px; }
-
-    input, textarea, select, button {
-      width: 100%;
-      font-size: 15px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      padding: 11px 12px;
-      margin-top: 10px;
-      outline: none;
-      font-family: inherit;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--blue2);
-      box-shadow: 0 0 0 3px rgba(0,104,232,.14);
-    }
-
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
-    button {
-      border: 0;
-      background: var(--blue);
-      color: white;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 8px 18px rgba(0,74,173,.24);
-    }
-
-    button:hover { filter: brightness(1.06); }
-    button:active { transform: translateY(1px); }
-
-    button.secondary {
-      background: #475569;
-      box-shadow: none;
-    }
-
-    button.red {
-      background: var(--danger);
-      box-shadow: none;
-    }
-
-    button.green {
-      background: var(--success);
-    }
-
-    button.light {
-      background: #e5e7eb;
-      color: #0f172a;
-      box-shadow: none;
-      border: 1px solid #cbd5e1;
-    }
-
-    .error { color: var(--danger); font-weight: 800; }
-    .success { color: var(--success); font-weight: 800; }
-    .muted { color: var(--muted); }
-
-    .dashboard {
-      display: grid;
-      gap: 16px;
-    }
-
-    .dash-head {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 14px;
-      align-items: center;
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 18px;
-    }
-
-    .dash-head h1 {
+    .page-title h2 {
       margin: 0;
       font-size: 28px;
     }
 
-    .dash-head p { margin: 6px 0 0; }
-
-    .logout-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .small-btn {
-      width: auto;
-      min-width: 120px;
-      margin-top: 0;
-      padding: 10px 14px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    .stat {
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
-      box-shadow: 0 8px 22px rgba(15,23,42,.08);
-    }
-
-    .stat span {
-      display: block;
+    .page-title p {
+      margin: 5px 0 0;
       color: var(--muted);
+      font-weight: 700;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    button {
+      border: 0;
+      border-radius: 13px;
+      padding: 11px 14px;
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+      color: white;
+      background: var(--blue);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, .22);
+    }
+
+    button:hover { filter: brightness(1.05); }
+    button:active { transform: translateY(1px); }
+
+    button.red { background: var(--red); box-shadow: none; }
+    button.green { background: var(--green); }
+    button.grey { background: #4b5563; box-shadow: none; }
+    button.light {
+      background: #e5e7eb;
+      color: #111827;
+      border: 1px solid #d1d5db;
+      box-shadow: none;
+    }
+
+    .auth-wrap {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.22), transparent 30%),
+        linear-gradient(135deg, #111827, #1f2937);
+    }
+
+    .auth-card {
+      width: min(440px, 100%);
+      background: white;
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 22px 70px rgba(0,0,0,.35);
+    }
+
+    .auth-head {
+      background: #111827;
+      color: white;
+      padding: 24px;
+    }
+
+    .auth-head h2 {
+      margin: 0 0 6px;
+      font-size: 28px;
+    }
+
+    .auth-head p {
+      margin: 0;
+      color: #cbd5e1;
+    }
+
+    .auth-body {
+      padding: 22px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
       font-size: 12px;
       font-weight: 900;
+      color: var(--muted);
       text-transform: uppercase;
       letter-spacing: .4px;
     }
 
-    .stat strong {
-      display: block;
-      margin-top: 6px;
-      font-size: 26px;
-      color: var(--navy);
+    input, textarea, select {
+      width: 100%;
+      margin-top: 7px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 12px;
+      font-size: 15px;
+      outline: none;
+      background: white;
+      color: var(--ink);
+      font-family: inherit;
     }
 
-    .grid {
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+    }
+
+    .error { color: var(--red); font-weight: 900; }
+    .success { color: var(--green); font-weight: 900; }
+    .muted { color: var(--muted); }
+
+    .workspace {
       display: grid;
-      grid-template-columns: 390px 1fr;
-      gap: 16px;
+      grid-template-columns: 1.05fr 1.8fr;
+      gap: 18px;
       align-items: start;
     }
 
-    .left-stack {
+    .column {
       display: grid;
-      gap: 16px;
-      position: sticky;
-      top: 86px;
+      gap: 18px;
     }
 
-    .card {
-      background: white;
+    .panel {
+      background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 22px;
       box-shadow: var(--shadow);
       overflow: hidden;
     }
 
-    .card-head {
-      padding: 14px 16px;
-      background: #f8fafc;
+    .panel-head {
+      padding: 15px 18px;
+      background: #f9fafb;
       border-bottom: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
+      gap: 10px;
       align-items: center;
-      gap: 12px;
     }
 
-    .card-head h3 { margin: 0; }
+    .panel-head h3 {
+      margin: 0;
+      font-size: 18px;
+    }
 
-    .card-body { padding: 16px; }
+    .panel-body { padding: 18px; }
 
-    .tabs {
+    .mode-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-bottom: 8px;
+      background: #f3f4f6;
+      border: 1px solid var(--line);
+      padding: 6px;
+      border-radius: 16px;
+      margin-bottom: 12px;
     }
 
-    .tabs button {
-      margin-top: 0;
-      background: #e2e8f0;
-      color: #0f172a;
+    .mode-grid button {
+      margin: 0;
       box-shadow: none;
+      background: transparent;
+      color: #374151;
     }
 
-    .tabs button.active {
+    .mode-grid button.active {
       background: var(--blue);
       color: white;
     }
 
-    .message-list {
+    .quick-actions {
       display: grid;
-      gap: 10px;
-      padding: 14px;
-      max-height: 720px;
+      gap: 8px;
+    }
+
+    .quick-actions button {
+      text-align: left;
+    }
+
+    .message-board {
+      display: grid;
+      gap: 12px;
+      padding: 15px;
+      max-height: calc(100vh - 190px);
       overflow: auto;
     }
 
     .message {
-      background: #ffffff;
       border: 1px solid var(--line);
-      border-left: 7px solid var(--blue);
-      border-radius: 16px;
-      padding: 14px;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, .08);
+      border-radius: 18px;
+      background: white;
+      padding: 15px;
+      border-left: 9px solid var(--blue);
+      box-shadow: 0 8px 20px rgba(15,23,42,.08);
     }
 
-    .message.unread { border-left-color: var(--danger); }
-    .message.replied { border-left-color: var(--success); }
+    .message.unread { border-left-color: var(--red); }
+    .message.replied { border-left-color: var(--green); }
 
     .message h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
-      color: var(--navy);
+      margin: 0 0 10px;
+      font-size: 20px;
     }
 
-    .message p { margin: 6px 0; }
-    .message-body {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 9px;
-      white-space: pre-wrap;
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
-    .meta {
-      color: var(--muted);
+    .chip {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      padding: 6px 10px;
       font-size: 13px;
       font-weight: 800;
+      color: #374151;
+    }
+
+    .message-body {
+      white-space: pre-wrap;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 12px;
+      margin: 10px 0;
     }
 
     .reply-box {
       margin-top: 12px;
       padding: 12px;
-      border-radius: 14px;
-      background: #eef4ff;
-      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      background: var(--soft);
+      border: 1px solid #c7d2fe;
     }
 
     .reply-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
+      margin-top: 8px;
     }
 
-    .banner {
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      color: #1e3a8a;
-      font-weight: 800;
-      margin-top: 10px;
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
     }
 
-    @media (max-width: 900px) {
-      .dash-head, .grid, .stats { grid-template-columns: 1fr; }
-      .left-stack { position: static; }
-      .logout-row { flex-direction: column; align-items: stretch; }
-      .small-btn { width: 100%; }
+    .mini {
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .mini span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .mini strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 30px;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .rail {
+        position: static;
+        height: auto;
+      }
+      .workspace, .topbar { grid-template-columns: 1fr; }
+      .top-actions { justify-content: stretch; }
+      .top-actions button { width: 100%; }
+      .message-board { max-height: none; }
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand"><div class="logo">BB</div><div>BusBase Control Room</div></div>
-      <div class="status-pill">Live Driver Communications</div>
-    </div>
-  </header>
-
-  <main class="shell">
+  <section class="auth-wrap" id="authRoot">
     <section class="auth-card" id="loginBox">
       <div class="auth-head">
-        <h2>Office Login</h2>
-        <p>Sign in with your office email and password.</p>
+        <h2>BusBase Office</h2>
+        <p>Control room sign-in</p>
       </div>
       <div class="auth-body">
-        <input id="email" type="email" placeholder="Office email" value="office@busbase.co.uk" />
+        <label>Email</label>
+        <input id="email" type="email" placeholder="office@busbase.co.uk" value="office@busbase.co.uk" />
+        <label>Password</label>
         <input id="password" type="password" placeholder="Password" />
         <button onclick="login()">Login</button>
         <p id="loginError" class="error"></p>
@@ -387,90 +441,123 @@
     <section class="auth-card hidden" id="securityBox">
       <div class="auth-head">
         <h2>Security Check</h2>
-        <p>Enter your unique office number and password code.</p>
+        <p>Enter your unique office number and code</p>
       </div>
       <div class="auth-body">
-        <input id="staffId" placeholder="Unique number" />
-        <input id="securityCode" type="password" placeholder="Password code" />
-        <button onclick="verifySecurityCode()">Continue</button>
-        <button class="secondary" onclick="logout()">Cancel / Logout</button>
+        <label>Unique number</label>
+        <input id="staffId" placeholder="Example: 9001" />
+        <label>Password code</label>
+        <input id="securityCode" type="password" placeholder="Example: 48260" />
+        <button onclick="verifySecurityCode()">Open Control Room</button>
+        <button class="grey" onclick="logout()">Cancel / Logout</button>
         <p id="securityError" class="error"></p>
       </div>
     </section>
+  </section>
 
-    <section class="dashboard hidden" id="appBox">
-      <div class="dash-head">
-        <div>
-          <h1>Control Room Dashboard</h1>
-          <p class="success" id="loggedInAs"></p>
+  <section class="layout hidden" id="appBox">
+    <aside class="rail">
+      <div class="rail-brand">
+        <div class="logo">BB</div>
+        <h1>Control<br>Centre</h1>
+        <p id="loggedInAs">Not signed in</p>
+      </div>
+
+      <div class="rail-card">
+        <strong>System</strong>
+        <span>Online</span>
+      </div>
+
+      <div class="rail-card">
+        <strong>Inbox</strong>
+        <span id="inboxCount">0</span>
+      </div>
+
+      <div class="rail-card">
+        <strong>Unread</strong>
+        <span id="unreadCount">0</span>
+      </div>
+
+      <div class="rail-card">
+        <strong>Broadcasts</strong>
+        <span id="broadcastCount">0</span>
+      </div>
+
+      <div class="rail-spacer"></div>
+      <button class="grey" onclick="refreshInbox()">Refresh</button>
+      <button class="red" onclick="deleteAllMessages()">Delete All</button>
+      <button class="red" onclick="logout()">Logout</button>
+    </aside>
+
+    <main class="content">
+      <div class="topbar">
+        <div class="page-title">
+          <h2>Driver Communications</h2>
+          <p>Send direct messages, broadcasts, and manage incoming driver reports.</p>
         </div>
-        <div class="logout-row">
-          <button class="light small-btn" onclick="refreshInbox()">Refresh</button>
-          <button class="red small-btn" onclick="logout()">Logout</button>
+        <div class="top-actions">
+          <button class="green" onclick="sendControlMessage()">Send Current Message</button>
         </div>
       </div>
 
-      <div class="stats">
-        <div class="stat"><span>Status</span><strong>Online</strong></div>
-        <div class="stat"><span>Messages</span><strong id="inboxCount">0</strong></div>
-        <div class="stat"><span>Unread</span><strong id="unreadCount">0</strong></div>
-        <div class="stat"><span>Broadcasts</span><strong id="broadcastCount">0</strong></div>
-      </div>
-
-      <div class="grid">
-        <aside class="left-stack">
-          <div class="card">
-            <div class="card-head">
-              <h3>Send Message</h3>
+      <div class="workspace">
+        <div class="column">
+          <section class="panel">
+            <div class="panel-head">
+              <h3>Compose</h3>
             </div>
-            <div class="card-body">
-              <div class="tabs">
+            <div class="panel-body">
+              <div class="mode-grid">
                 <button id="tabSingle" class="active" onclick="setSendMode('single')">Single Driver</button>
                 <button id="tabBroadcast" onclick="setSendMode('broadcast')">All Drivers</button>
               </div>
 
               <div id="singleDriverFields">
-                <input id="directDriverId" placeholder="Driver number, e.g. 1234" />
+                <label>Driver number</label>
+                <input id="directDriverId" placeholder="Example: 1234" />
               </div>
 
-              <input id="directSubject" placeholder="Subject, e.g. Road closure" />
-              <textarea id="directBody" placeholder="Type message"></textarea>
+              <label>Subject</label>
+              <input id="directSubject" placeholder="Example: Road closure" />
 
+              <label>Priority</label>
               <select id="priority">
-                <option value="normal">Normal priority</option>
+                <option value="normal">Normal</option>
                 <option value="important">Important</option>
                 <option value="emergency">Emergency</option>
               </select>
 
+              <label>Message</label>
+              <textarea id="directBody" placeholder="Type message here"></textarea>
+
               <button class="green" onclick="sendControlMessage()">Send Message</button>
               <p id="directStatus" class="success"></p>
-
-              <div class="banner">
-                Broadcast messages are written to the <strong>broadcasts</strong> collection for all ETMs to read.
-              </div>
             </div>
-          </div>
+          </section>
 
-          <div class="card">
-            <div class="card-head"><h3>Quick Messages</h3></div>
-            <div class="card-body">
+          <section class="panel">
+            <div class="panel-head">
+              <h3>Templates</h3>
+            </div>
+            <div class="panel-body quick-actions">
               <button class="light" onclick="quickMessage('Road closure', 'Please follow the diversion and update control if delayed.')">Road closure</button>
               <button class="light" onclick="quickMessage('Running late', 'Please advise your current location and expected delay.')">Running late</button>
               <button class="light" onclick="quickMessage('Return to depot', 'Return to depot when safe to do so and await instructions.')">Return to depot</button>
+              <button class="light" onclick="quickMessage('Passenger incident', 'Please confirm if assistance is required and update control when safe.')">Passenger incident</button>
             </div>
-          </div>
-        </aside>
+          </section>
+        </div>
 
-        <section class="card">
-          <div class="card-head">
-            <h3>Live Driver Inbox</h3>
-            <span class="status-pill">Auto refresh</span>
+        <section class="panel">
+          <div class="panel-head">
+            <h3>Message Board</h3>
+            <button class="red" style="width:auto;margin:0" onclick="deleteAllMessages()">Delete All Messages</button>
           </div>
-          <div class="message-list" id="messages"></div>
+          <div class="message-board" id="messages"></div>
         </section>
       </div>
-    </section>
-  </main>
+    </main>
+  </section>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -490,6 +577,8 @@
     updateDoc,
     doc,
     getDoc,
+    getDocs,
+    deleteDoc,
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -512,10 +601,18 @@
   let latestMessages = [];
 
   function showOnly(sectionId) {
-    ["loginBox", "securityBox", "appBox"].forEach(id => {
-      document.getElementById(id).classList.add("hidden");
-    });
-    if (sectionId) document.getElementById(sectionId).classList.remove("hidden");
+    document.getElementById("authRoot").classList.toggle("hidden", sectionId === "appBox");
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("securityBox").classList.add("hidden");
+    document.getElementById("appBox").classList.add("hidden");
+
+    if (sectionId === "loginBox" || sectionId === "securityBox") {
+      document.getElementById("authRoot").classList.remove("hidden");
+    }
+
+    if (sectionId) {
+      document.getElementById(sectionId).classList.remove("hidden");
+    }
   }
 
   function getProfileValue(profile, keys) {
@@ -599,7 +696,7 @@
       };
 
       document.getElementById("loggedInAs").textContent =
-        "Logged in as " + verifiedOfficeUser.name + " (" + verifiedOfficeUser.staffId + ")";
+        verifiedOfficeUser.name + " (" + verifiedOfficeUser.staffId + ")";
 
       showOnly("appBox");
       startInbox();
@@ -685,7 +782,7 @@
       items.filter(item => item.data.status === "unread").length;
 
     if (!items.length) {
-      box.innerHTML = '<div class="message"><h3>No driver messages</h3><p class="muted">Incoming driver messages will appear here.</p></div>';
+      box.innerHTML = '<div class="message"><h3>No messages</h3><p class="muted">Driver messages will appear here.</p></div>';
       return;
     }
 
@@ -699,13 +796,16 @@
 
       div.innerHTML = `
         <h3>${escapeHtml(message.subject || "No subject")}</h3>
-        <p><strong>From:</strong> ${escapeHtml(message.driverName || message.senderName || message.from || "Driver")}</p>
-        <p><strong>Driver ID:</strong> ${escapeHtml(message.driverId || "Unknown")}</p>
-        <p><strong>Route:</strong> ${escapeHtml(message.route || "Unknown")}</p>
+        <div class="chips">
+          <span class="chip">From: ${escapeHtml(message.driverName || message.senderName || message.from || "Driver")}</span>
+          <span class="chip">Driver: ${escapeHtml(message.driverId || "Unknown")}</span>
+          <span class="chip">Route: ${escapeHtml(message.route || "Unknown")}</span>
+          <span class="chip">Status: ${escapeHtml(message.status || "unknown")}</span>
+        </div>
         <div class="message-body">${escapeHtml(message.body || "")}</div>
-        <p class="meta">Status: ${escapeHtml(message.status || "unknown")}</p>
 
         <div class="reply-box">
+          <label>Reply</label>
           <textarea id="reply-${messageId}" placeholder="Type reply to driver"></textarea>
           <div class="reply-actions">
             <button onclick="replyToDriver('${messageId}', '${escapeHtml(message.driverId || "1234")}')">Reply</button>
@@ -785,6 +885,32 @@
     } catch (err) {
       status.className = "error";
       status.textContent = err.message;
+    }
+  };
+
+  window.deleteAllMessages = async function () {
+    if (!verifiedOfficeUser) {
+      alert("Complete the security check first.");
+      return;
+    }
+
+    const confirmed = confirm("Delete all inbox messages, replies and broadcasts? This cannot be undone.");
+    if (!confirmed) return;
+
+    try {
+      const names = ["messages", "replies", "broadcasts"];
+
+      for (const name of names) {
+        const snapshot = await getDocs(collection(db, name));
+        for (const item of snapshot.docs) {
+          await deleteDoc(doc(db, name, item.id));
+        }
+      }
+
+      document.getElementById("broadcastCount").textContent = "0";
+      alert("All messages deleted.");
+    } catch (err) {
+      alert("Delete failed: " + err.message);
     }
   };
 
