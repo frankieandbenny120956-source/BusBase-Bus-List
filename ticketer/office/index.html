@@ -19,7 +19,7 @@
       font-weight: bold;
     }
 
-    .login, .app {
+    .login, .security, .app {
       max-width: 900px;
       margin: 30px auto;
       padding: 20px;
@@ -34,6 +34,7 @@
       font-size: 16px;
       border-radius: 8px;
       border: none;
+      box-sizing: border-box;
     }
 
     button {
@@ -45,6 +46,10 @@
 
     button.red {
       background: #dc2626;
+    }
+
+    button.grey {
+      background: #4b5563;
     }
 
     .message {
@@ -75,6 +80,14 @@
       padding: 10px;
       border-radius: 8px;
     }
+
+    .error {
+      color: #fca5a5;
+    }
+
+    .success {
+      color: #86efac;
+    }
   </style>
 </head>
 <body>
@@ -83,14 +96,26 @@
 
 <section class="login" id="loginBox">
   <h2>Office Login</h2>
+  <p>Sign in with your office email and password.</p>
   <input id="email" type="email" placeholder="Office email" value="office@busbase.co.uk">
   <input id="password" type="password" placeholder="Password">
   <button onclick="login()">Login</button>
-  <p id="loginError" style="color:#fca5a5;"></p>
+  <p id="loginError" class="error"></p>
+</section>
+
+<section class="security hidden" id="securityBox">
+  <h2>Security Check</h2>
+  <p>Enter your unique office number and password code.</p>
+  <input id="staffId" placeholder="Unique number">
+  <input id="securityCode" type="password" placeholder="Password code">
+  <button onclick="verifySecurityCode()">Continue</button>
+  <button class="grey" onclick="logout()">Cancel / Logout</button>
+  <p id="securityError" class="error"></p>
 </section>
 
 <section class="app hidden" id="appBox">
   <h2>Live Driver Messages</h2>
+  <p class="success" id="loggedInAs"></p>
   <button class="red" onclick="logout()">Logout</button>
   <div id="messages"></div>
 </section>
@@ -114,6 +139,7 @@
     orderBy,
     updateDoc,
     doc,
+    getDoc,
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -131,36 +157,121 @@
   const db = getFirestore(app);
 
   let unsubscribeMessages = null;
+  let verifiedOfficeUser = null;
+
+  function showOnly(sectionId) {
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("securityBox").classList.add("hidden");
+    document.getElementById("appBox").classList.add("hidden");
+
+    if (sectionId) {
+      document.getElementById(sectionId).classList.remove("hidden");
+    }
+  }
 
   window.login = async function () {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
       document.getElementById("loginError").textContent = "";
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
       document.getElementById("loginError").textContent = err.message;
     }
   };
 
+  window.verifySecurityCode = async function () {
+    const user = auth.currentUser;
+    const staffId = document.getElementById("staffId").value.trim();
+    const securityCode = document.getElementById("securityCode").value.trim();
+
+    if (!user) {
+      showOnly("loginBox");
+      return;
+    }
+
+    if (!staffId || !securityCode) {
+      document.getElementById("securityError").textContent = "Enter your unique number and password code.";
+      return;
+    }
+
+    try {
+      document.getElementById("securityError").textContent = "";
+
+      const profileRef = doc(db, "officeUsers", user.uid);
+      const profileSnap = await getDoc(profileRef);
+
+      if (!profileSnap.exists()) {
+        document.getElementById("securityError").textContent = "No office profile found for this account.";
+        return;
+      }
+
+      const profile = profileSnap.data();
+
+      if (profile.active !== true) {
+        document.getElementById("securityError").textContent = "This office account is inactive.";
+        return;
+      }
+
+      if (profile.role !== "office") {
+        document.getElementById("securityError").textContent = "Access denied. This account is not an office user.";
+        return;
+      }
+
+      if (String(profile.staffId) !== staffId || String(profile.code) !== securityCode) {
+        document.getElementById("securityError").textContent = "Invalid unique number or password code.";
+        return;
+      }
+
+      verifiedOfficeUser = {
+        uid: user.uid,
+        email: user.email,
+        name: profile.name || "Office User",
+        staffId: profile.staffId
+      };
+
+      document.getElementById("loggedInAs").textContent =
+        "Logged in as " + verifiedOfficeUser.name + " (" + verifiedOfficeUser.staffId + ")";
+
+      showOnly("appBox");
+      startInbox();
+    } catch (err) {
+      document.getElementById("securityError").textContent = err.message;
+    }
+  };
+
   window.logout = async function () {
-    if (unsubscribeMessages) unsubscribeMessages();
+    if (unsubscribeMessages) {
+      unsubscribeMessages();
+      unsubscribeMessages = null;
+    }
+
+    verifiedOfficeUser = null;
+    document.getElementById("password").value = "";
+    document.getElementById("staffId").value = "";
+    document.getElementById("securityCode").value = "";
+    document.getElementById("messages").innerHTML = "";
     await signOut(auth);
   };
 
   onAuthStateChanged(auth, user => {
     if (user) {
-      document.getElementById("loginBox").classList.add("hidden");
-      document.getElementById("appBox").classList.remove("hidden");
-      startInbox();
+      if (!verifiedOfficeUser) {
+        showOnly("securityBox");
+      }
     } else {
-      document.getElementById("loginBox").classList.remove("hidden");
-      document.getElementById("appBox").classList.add("hidden");
+      verifiedOfficeUser = null;
+      showOnly("loginBox");
     }
   });
 
   function startInbox() {
+    if (unsubscribeMessages) {
+      unsubscribeMessages();
+      unsubscribeMessages = null;
+    }
+
     const q = query(
       collection(db, "messages"),
       orderBy("createdAt", "desc")
@@ -198,10 +309,18 @@
 
         box.appendChild(div);
       });
+    }, err => {
+      document.getElementById("messages").innerHTML =
+        '<p class="error">Could not load messages: ' + escapeHtml(err.message) + '</p>';
     });
   }
 
   window.replyToDriver = async function (messageId, driverId) {
+    if (!verifiedOfficeUser) {
+      alert("You must complete the security check first.");
+      return;
+    }
+
     const textarea = document.getElementById("reply-" + messageId);
     const body = textarea.value.trim();
 
@@ -213,13 +332,17 @@
     await addDoc(collection(db, "replies"), {
       messageId,
       driverId,
-      from: "Office",
+      from: verifiedOfficeUser.name,
+      officeUid: verifiedOfficeUser.uid,
+      officeStaffId: verifiedOfficeUser.staffId,
       body,
       createdAt: serverTimestamp()
     });
 
     await updateDoc(doc(db, "messages", messageId), {
-      status: "replied"
+      status: "replied",
+      repliedBy: verifiedOfficeUser.name,
+      repliedAt: serverTimestamp()
     });
 
     textarea.value = "";
@@ -227,8 +350,15 @@
   };
 
   window.markRead = async function (messageId) {
+    if (!verifiedOfficeUser) {
+      alert("You must complete the security check first.");
+      return;
+    }
+
     await updateDoc(doc(db, "messages", messageId), {
-      status: "read"
+      status: "read",
+      readBy: verifiedOfficeUser.name,
+      readAt: serverTimestamp()
     });
   };
 
