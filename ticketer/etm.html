@@ -560,7 +560,7 @@
       </div>
 
       <div class="status-bar" aria-label="ticket selling status display bar">
-        <div class="status-item" onclick="goMessages()">✉ <span id="msgCount">2</span></div>
+        <div class="status-item" onclick="goMessages()">✉ <span id="msgCount">0</span></div>
         <div class="status-item" onclick="showInfo('GPS last connected just now')">GPS <span class="ok">✓</span></div>
         <div class="status-item" onclick="showInfo('GPRS connected to back office')">GPRS <span class="ok">✓</span></div>
         <div class="status-item" onclick="showInfo('Smartcard reader operational')">CARD <span class="ok">✓</span></div>
@@ -641,6 +641,48 @@ const ticketData = {
     let currentMessageType = 'Driver';
     let selectedMessageIndex = 0;
     let selectedComposeSubject = '';
+
+    // Demo driver accounts. Add more drivers here if you want them built into the ETM.
+    // Firestore can also override/add drivers using collection: drivers, document ID: driver number.
+    const demoDrivers = {
+      '1234': { name: 'Demo Driver', pin: '1234', active: true },
+      '1001': { name: 'Alex Driver', pin: '1111', active: true },
+      '1002': { name: 'Sam Driver', pin: '2222', active: true }
+    };
+    window.demoDrivers = demoDrivers;
+
+    let currentDriver = { id: '1234', name: 'Demo Driver' };
+    window.currentDriver = currentDriver;
+
+    function setCurrentDriver(id, name) {
+      currentDriver = { id: String(id), name: name || ('Driver ' + id) };
+      window.currentDriver = currentDriver;
+    }
+
+    const messageStore = [];
+    let currentLoginStartedAt = 0;
+    window.etmLoggedIn = false;
+
+    function clearEtmMessages() {
+      messageStore.length = 0;
+      selectedMessageIndex = 0;
+      currentMessageType = 'Driver';
+      setText('msgCount', '0');
+      const list = byId('messagesList');
+      if (list) renderMessages();
+    }
+
+    window.clearEtmMessages = clearEtmMessages;
+
+    function startFreshDriverSession() {
+      currentLoginStartedAt = Date.now();
+      window.currentLoginStartedAt = currentLoginStartedAt;
+      window.etmLoggedIn = true;
+      if (typeof window.resetSeenReplies === 'function') window.resetSeenReplies();
+      clearEtmMessages();
+    }
+
+    window.currentLoginStartedAt = currentLoginStartedAt;
 
     function byId(id) {
       return document.getElementById(id);
@@ -806,13 +848,39 @@ const ticketData = {
       setText('msgCount', messageStore.filter(function (m) { return !m.read; }).length);
     }
 
-    function goVehicle() {
-      if (byId('driverNo').value !== '1234' || byId('pin').value !== '1234') {
-        showInfo('Invalid login. Use driver number 1234 and PIN 1234.');
+    async function goVehicle() {
+      const driverNo = byId('driverNo').value.trim();
+      const pin = byId('pin').value.trim();
+
+      if (!driverNo || !pin) {
+        showInfo('Enter driver number and PIN.');
         return;
       }
+
+      let driver = null;
+
+      try {
+        if (typeof window.lookupDriver === 'function') {
+          driver = await window.lookupDriver(driverNo, pin);
+        }
+      } catch (err) {
+        console.warn('Driver lookup failed, using local demo drivers:', err);
+      }
+
+      if (!driver && demoDrivers[driverNo] && demoDrivers[driverNo].pin === pin && demoDrivers[driverNo].active !== false) {
+        driver = { id: driverNo, name: demoDrivers[driverNo].name || ('Driver ' + driverNo) };
+      }
+
+      if (!driver) {
+        showInfo('Invalid driver number or PIN.');
+        return;
+      }
+
+      setCurrentDriver(driver.id || driverNo, driver.name);
+      startFreshDriverSession();
       renderVehicles();
       page('vehiclePage');
+      showInfo('Logged in as ' + escapeHtml(currentDriver.name) + ' (' + escapeHtml(currentDriver.id) + ').');
     }
 
     function goChecklist() { renderChecklist(); page('checklistPage'); }
@@ -953,7 +1021,7 @@ const ticketData = {
         'Destination: ' + dest,
         'Departure: ' + departure,
         'Vehicle: ' + selectedVehicle,
-        'Driver: Demo Driver',
+        'Driver: ' + currentDriver.name + ' (' + currentDriver.id + ')',
         'Duty: ' + selectedDuty,
         'Trip: ' + selectedTrip,
         'From: ' + byId('fareStage').textContent,
@@ -1010,6 +1078,10 @@ const ticketData = {
     function endTrip() { showInfo('Trip summary printed. Select another unstarted trip or New Trip for the return journey.'); }
     function abortTrip() { showInfo('Trip aborted. It can be restarted later using the same journey identifiers.'); }
     function logOff() {
+      window.etmLoggedIn = false;
+      currentLoginStartedAt = 0;
+      window.currentLoginStartedAt = 0;
+      clearEtmMessages();
       showInfo('Duty Summary / Driver Waybill printed. If using driver card, re-present card to write totals back.');
       page('loginPage');
     }
@@ -1051,6 +1123,8 @@ function passAllOthers() {
 }
 
 function receiveOfficeReply(body) {
+  if (!window.etmLoggedIn) return;
+
   messageStore.unshift({
     type: 'Driver',
     from: 'Office',
@@ -1061,11 +1135,13 @@ function receiveOfficeReply(body) {
   });
 
   currentMessageType = 'Driver';
+  selectedMessageIndex = 0;
 
-  const count = messageStore.filter(m => !m.read).length;
+  const count = messageStore.filter(function (m) { return !m.read; }).length;
   const msgCount = document.getElementById('msgCount');
   if (msgCount) msgCount.textContent = count;
 
+  renderMessages();
   showInfo('New message received from Office. Open Messages to read it.');
 }
 
@@ -1148,28 +1224,39 @@ window.receiveOfficeReply = receiveOfficeReply;
         showInfo('Select a subject / reason before sending the message.');
         return;
       }
-      if (!byId('composeBody').value.trim()) {
+
+      const body = byId('composeBody').value.trim();
+      if (!body) {
         showInfo('Type a message before sending.');
         return;
       }
-sendToOffice(
-  selectedComposeSubject,
-  byId('composeBody').value.trim(),
-  byId('manualRoute') ? byId('manualRoute').value : byId('fareStage').textContent
-);
 
-messageStore.unshift({
-  type: 'Driver',
-  from: 'You',
-  subject: selectedComposeSubject,
-  body: byId('composeBody').value.trim(),
-  important: false,
-  read: true
-});
+      const route = byId('manualRoute') ? byId('manualRoute').value : byId('fareStage').textContent;
 
-currentMessageType = 'Driver';
-showInfo('Message sent to office.');
-renderMessages();
+      if (typeof window.sendToOffice !== 'function') {
+        showInfo('Office messaging is still loading. Wait a moment and try again.');
+        return;
+      }
+
+      window.sendToOffice(selectedComposeSubject, body, route)
+        .then(function () {
+          messageStore.unshift({
+            type: 'Driver',
+            from: 'You',
+            subject: selectedComposeSubject,
+            body: body,
+            important: false,
+            read: true
+          });
+
+          currentMessageType = 'Driver';
+          clearCompose();
+          showInfo('Message sent to office.');
+          renderMessages();
+        })
+        .catch(function (err) {
+          showInfo('Could not send message to office: ' + escapeHtml(err.message || String(err)));
+        });
     }
     function loadFromHash() {
       const hash = location.hash.slice(1);
@@ -1313,6 +1400,8 @@ renderMessages();
     collection,
     addDoc,
     getDocs,
+    doc,
+    getDoc,
     query,
     where,
     serverTimestamp
@@ -1331,9 +1420,12 @@ renderMessages();
   const db = getFirestore(app);
 
   window.sendToOffice = async function(subject, body, route) {
+    const driver = window.currentDriver || { id: "1234", name: "Demo Driver" };
+
     const docRef = await addDoc(collection(db, "messages"), {
-      from: "Driver 1234",
-      driverId: "1234",
+      from: "Driver " + driver.id,
+      driverId: driver.id,
+      driverName: driver.name,
       route: route || "Unknown",
       subject: subject,
       body: body,
@@ -1342,31 +1434,75 @@ renderMessages();
     });
 
     console.log("Message sent with ID:", docRef.id);
-    alert("Message sent to office");
+    return docRef.id;
+  };
+
+  window.lookupDriver = async function(driverNo, pin) {
+    const id = String(driverNo).trim();
+    const enteredPin = String(pin).trim();
+
+    try {
+      const driverSnap = await getDoc(doc(db, "drivers", id));
+
+      if (driverSnap.exists()) {
+        const driver = driverSnap.data();
+        const savedPin = String(driver.pin || driver.code || "");
+
+        if (driver.active === false) return null;
+        if (savedPin !== enteredPin) return null;
+
+        return {
+          id: id,
+          name: driver.name || ("Driver " + id)
+        };
+      }
+    } catch (err) {
+      console.warn("Firestore driver lookup failed:", err);
+    }
+
+    const localDrivers = window.demoDrivers || {};
+    const local = localDrivers[id];
+
+    if (local && local.active !== false && String(local.pin || local.code || "") === enteredPin) {
+      return { id: id, name: local.name || ("Driver " + id) };
+    }
+
+    return null;
   };
 
   let seenReplies = new Set();
 
+  window.resetSeenReplies = function() {
+    seenReplies = new Set();
+  };
+
   window.checkOfficeReplies = async function() {
+    if (!window.etmLoggedIn) return;
+
     const q = query(
       collection(db, "replies"),
-      where("driverId", "==", "1234")
+      where("driverId", "==", (window.currentDriver && window.currentDriver.id) ? window.currentDriver.id : "1234")
     );
 
     const snapshot = await getDocs(q);
 
-  snapshot.forEach(docSnap => {
-    if (seenReplies.has(docSnap.id)) return;
+    snapshot.forEach(docSnap => {
+      if (seenReplies.has(docSnap.id)) return;
 
-    seenReplies.add(docSnap.id);
+      seenReplies.add(docSnap.id);
 
-    const reply = docSnap.data();
+      const reply = docSnap.data();
+      const replyTime = reply.createdAt && typeof reply.createdAt.toMillis === "function"
+        ? reply.createdAt.toMillis()
+        : Date.now();
 
-    if (typeof window.receiveOfficeReply === "function") {
+      if (window.currentLoginStartedAt && replyTime < window.currentLoginStartedAt) return;
+
+      if (typeof window.receiveOfficeReply === "function") {
         window.receiveOfficeReply(reply.body);
-    }
-});
-};
+      }
+    });
+  };
 
   setInterval(window.checkOfficeReplies, 5000);
   window.checkOfficeReplies();
