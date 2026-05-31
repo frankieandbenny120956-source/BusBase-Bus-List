@@ -1156,27 +1156,24 @@
         showInfo('Type a message before sending.');
         return;
       }
-      const payload = {
-        from: 'Driver',
-        route: byId('manualRoute') ? byId('manualRoute').value : byId('fareStage').textContent,
-        trip: selectedTrip,
-        subject: selectedComposeSubject,
-        body: byId('composeBody').value.trim(),
-        time: new Date().toLocaleString('en-GB')
-      };
-      const link = makeUrl('control', payload);
-      byId('sendLink').value = link;
-      byId('sendLinkBox').style.display = 'block';
-      messageStore.unshift({
-        type: 'Driver',
-        from: 'You',
-        subject: selectedComposeSubject,
-        body: byId('composeBody').value.trim() + '\n\nGenerated control link:\n' + link,
-        important: false,
-        read: true
-      });
-      currentMessageType = 'Driver';
-      showInfo('No-server message link created. Copy/open the generated Control-room link on the other site/device.');
+sendToOffice(
+  selectedComposeSubject,
+  byId('composeBody').value.trim(),
+  byId('manualRoute') ? byId('manualRoute').value : byId('fareStage').textContent
+);
+
+messageStore.unshift({
+  type: 'Driver',
+  from: 'You',
+  subject: selectedComposeSubject,
+  body: byId('composeBody').value.trim(),
+  important: false,
+  read: true
+});
+
+currentMessageType = 'Driver';
+showInfo('Message sent to office.');
+renderMessages();
     }
     function loadFromHash() {
       const hash = location.hash.slice(1);
@@ -1312,6 +1309,64 @@
     window.addEventListener('hashchange', loadFromHash);
     runStartupTests();
     loadFromHash();
-  </script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhqiUUdstrVNRI48d4YQtlr1FV4mrFDU3Y",
+    authDomain: "busbase-ticketer.firebaseapp.com",
+    projectId: "busbase-ticketer",
+    storageBucket: "busbase-ticketer.firebasestorage.app",
+    messagingSenderId: "454975655107",
+    appId: "1:454975655107:web:b4e3cc3f97b68d07ec6676"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.sendToOffice = async function(subject, body, route) {
+    await addDoc(collection(db, "messages"), {
+      from: "Driver 1234",
+      driverId: "1234",
+      route: route || "Unknown",
+      subject,
+      body,
+      status: "unread",
+      createdAt: serverTimestamp()
+    });
+
+    alert("Message sent to office");
+  };
+
+  window.listenForOfficeReplies = function() {
+    const q = query(collection(db, "replies"), orderBy("createdAt", "desc"));
+
+    onSnapshot(q, snapshot => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added") {
+          const reply = change.doc.data();
+
+          if (reply.driverId === "1234") {
+            alert("Office reply: " + reply.body);
+          }
+        }
+      });
+    });
+  };
+
+  window.listenForOfficeReplies();
+</script>
+
+
 </body>
 </html>
