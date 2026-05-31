@@ -1352,17 +1352,18 @@ renderMessages();
 
     const snapshot = await getDocs(q);
 
-    snapshot.forEach(docSnap => {
-      if (seenReplies.has(docSnap.id)) return;
+  snapshot.forEach(docSnap => {
+    if (seenReplies.has(docSnap.id)) return;
 
-      seenReplies.add(docSnap.id);
+    seenReplies.add(docSnap.id);
 
-      const reply = docSnap.data();
-      if (typeof window.receiveOfficeReply === "function") {
-  window.receiveOfficeReply(reply.body);
-}
-    });
-  };
+    const reply = docSnap.data();
+
+    if (typeof window.receiveOfficeReply === "function") {
+        window.receiveOfficeReply(reply.body);
+    }
+});
+};
 
   setInterval(window.checkOfficeReplies, 5000);
   window.checkOfficeReplies();
