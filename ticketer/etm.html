@@ -1122,14 +1122,24 @@ function passAllOthers() {
   });
 }
 
-function receiveOfficeReply(body) {
+function receiveOfficeReply(reply) {
   if (!window.etmLoggedIn) return;
+
+  const senderName = reply && typeof reply === 'object'
+    ? (reply.senderName || reply.from || 'Office')
+    : 'Office';
+  const subject = reply && typeof reply === 'object'
+    ? (reply.subject || 'Reply from Office')
+    : 'Reply from Office';
+  const body = reply && typeof reply === 'object'
+    ? (reply.body || '')
+    : String(reply || '');
 
   messageStore.unshift({
     type: 'Driver',
-    from: 'Office',
-    subject: 'Reply from Office',
-    body: body,
+    from: senderName,
+    subject: subject,
+    body: 'From: ' + senderName + '\n\n' + body,
     important: true,
     read: false
   });
@@ -1423,7 +1433,8 @@ window.receiveOfficeReply = receiveOfficeReply;
     const driver = window.currentDriver || { id: "1234", name: "Demo Driver" };
 
     const docRef = await addDoc(collection(db, "messages"), {
-      from: "Driver " + driver.id,
+      from: driver.name,
+      senderName: driver.name,
       driverId: driver.id,
       driverName: driver.name,
       route: route || "Unknown",
@@ -1499,7 +1510,7 @@ window.receiveOfficeReply = receiveOfficeReply;
       if (window.currentLoginStartedAt && replyTime < window.currentLoginStartedAt) return;
 
       if (typeof window.receiveOfficeReply === "function") {
-        window.receiveOfficeReply(reply.body);
+        window.receiveOfficeReply(reply);
       }
     });
   };
