@@ -3,97 +3,318 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ticketer Office Control</title>
+  <title>BusBase Office Control</title>
   <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0f1d33;
+      --panel-2: #13243e;
+      --blue: #0054c8;
+      --blue-dark: #002b77;
+      --cyan: #38bdf8;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --card: #f8fafc;
+      --card-text: #0f172a;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --border: rgba(148, 163, 184, .28);
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111827;
-      color: white;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(0, 84, 200, .32), transparent 34%),
+        linear-gradient(135deg, #050b14 0%, #07111f 45%, #101827 100%);
+      color: var(--text);
     }
 
     header {
-      background: #001e6e;
-      padding: 16px;
-      font-size: 22px;
-      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: linear-gradient(90deg, var(--blue-dark), var(--blue));
+      border-bottom: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .topbar {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: .3px;
+      font-size: 20px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+
+    .top-pill {
+      padding: 8px 12px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 999px;
+      color: #e0f2fe;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    main.shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 18px 42px;
     }
 
     .login, .security, .app {
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 20px;
-      background: #1f2937;
-      border-radius: 12px;
+      width: 100%;
+    }
+
+    .login, .security {
+      max-width: 460px;
+      margin: 42px auto;
+      padding: 24px;
+      background: rgba(15, 29, 51, .94);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .login h2, .security h2, .app h2, .direct-message-box h3 {
+      margin: 0 0 8px;
+      letter-spacing: .2px;
+    }
+
+    .login p, .security p, .direct-message-box p, .meta, .muted {
+      color: var(--muted);
     }
 
     input, textarea, button {
       width: 100%;
-      padding: 12px;
+      padding: 12px 13px;
       margin-top: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
+      font-size: 15px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
       box-sizing: border-box;
+      outline: none;
     }
+
+    input, textarea {
+      background: rgba(255,255,255,.96);
+      color: #0f172a;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(56,189,248,.20);
+    }
+
+    textarea { resize: vertical; min-height: 92px; }
 
     button {
-      background: #2563eb;
+      border: 0;
+      background: linear-gradient(180deg, #1d6ff2, #004eb8);
       color: white;
-      font-weight: bold;
+      font-weight: 900;
       cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0, 84, 200, .28);
+      transition: transform .12s ease, filter .12s ease;
     }
 
-    button.red {
-      background: #dc2626;
+    button:hover { transform: translateY(-1px); filter: brightness(1.06); }
+    button:active { transform: translateY(0); }
+
+    button.red { background: linear-gradient(180deg, #ef4444, #b91c1c); }
+    button.grey { background: linear-gradient(180deg, #64748b, #334155); }
+    button.small-btn { width: auto; min-width: 130px; padding: 10px 14px; margin-top: 0; }
+
+    .hidden { display: none !important; }
+
+    .app {
+      display: grid;
+      gap: 18px;
     }
 
-    button.grey {
-      background: #4b5563;
+    .dashboard-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 18px;
+      background: rgba(15, 29, 51, .88);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .dashboard-head h2 { font-size: 24px; }
+    #loggedInAs { margin: 6px 0 0; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      background: rgba(19, 36, 62, .90);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel-card, .direct-message-box, .inbox-panel {
+      background: rgba(15, 29, 51, .90);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .direct-message-box {
+      padding: 18px;
+      margin: 0;
+      position: sticky;
+      top: 88px;
+    }
+
+    .direct-message-box h3::before {
+      content: '✉ ';
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .inbox-panel {
+      min-height: 420px;
+      overflow: hidden;
+    }
+
+    .inbox-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      background: rgba(0, 43, 119, .72);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .inbox-title h3 { margin: 0; }
+
+    #messages {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
     }
 
     .message {
-      background: #f8fafc;
-      color: #111827;
-      padding: 14px;
-      border-radius: 10px;
-      margin-top: 12px;
-      border-left: 6px solid #2563eb;
+      background: var(--card);
+      color: var(--card-text);
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(15,23,42,.08);
+      border-left: 7px solid var(--blue);
+      box-shadow: 0 12px 30px rgba(0,0,0,.14);
     }
 
-    .message.unread {
-      border-left-color: #dc2626;
+    .message.unread { border-left-color: var(--danger); }
+
+    .message h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #0f172a;
     }
+
+    .message p { margin: 6px 0; }
 
     .meta {
       font-size: 13px;
-      color: #475569;
-    }
-
-    .hidden {
-      display: none;
+      color: #64748b;
+      font-weight: 700;
     }
 
     .reply-box {
-      margin-top: 10px;
-      background: #e5e7eb;
-      padding: 10px;
-      border-radius: 8px;
+      margin-top: 12px;
+      background: #e8eef7;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
     }
 
-    .error {
-      color: #fca5a5;
-    }
+    .reply-box button { margin-top: 8px; }
 
-    .success {
-      color: #86efac;
+    .error { color: #fecaca; font-weight: 700; }
+    .success { color: #86efac; font-weight: 700; }
+
+    @media (max-width: 860px) {
+      .topbar, .dashboard-head { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .direct-message-box { position: static; }
+      .stats { grid-template-columns: 1fr; }
+      button.small-btn { width: 100%; }
     }
   </style>
 </head>
 <body>
+<header>
+  <div class="topbar">
+    <div class="brand"><span class="brand-mark">BB</span><span>BusBase Office Control</span></div>
+    <div class="top-pill">Live Control Room</div>
+  </div>
+</header>
 
-<header>Ticketer Office Control Room</header>
-
+<main class="shell">
 <section class="login" id="loginBox">
   <h2>Office Login</h2>
   <p>Sign in with your office email and password.</p>
@@ -114,12 +335,43 @@
 </section>
 
 <section class="app hidden" id="appBox">
-  <h2>Live Driver Messages</h2>
-  <p class="success" id="loggedInAs"></p>
-  <button class="red" onclick="logout()">Logout</button>
-  <div id="messages"></div>
-</section>
+  <div class="dashboard-head">
+    <div>
+      <h2>Driver Communications</h2>
+      <p class="success" id="loggedInAs"></p>
+    </div>
+    <button class="red small-btn" onclick="logout()">Logout</button>
+  </div>
 
+  <div class="stats">
+    <div class="stat"><span>Status</span><strong>Online</strong></div>
+    <div class="stat"><span>Inbox</span><strong id="inboxCount">0</strong></div>
+    <div class="stat"><span>Unread</span><strong id="unreadCount">0</strong></div>
+  </div>
+
+  <div class="grid">
+    <div class="direct-message-box">
+      <h3>Send Message to Driver</h3>
+      <p>Send a message directly to any driver number without waiting for an incoming message.</p>
+      <div class="split">
+        <input id="directDriverId" placeholder="Driver number, e.g. 1234">
+        <input id="directSubject" placeholder="Subject, e.g. Road closure">
+      </div>
+      <textarea id="directBody" rows="4" placeholder="Type message to send to the driver"></textarea>
+      <button onclick="sendDirectToDriver()">Send to Driver</button>
+      <p id="directStatus" class="success"></p>
+    </div>
+
+    <div class="inbox-panel">
+      <div class="inbox-title">
+        <h3>Live Driver Inbox</h3>
+        <span class="top-pill">Auto refresh</span>
+      </div>
+      <div id="messages"></div>
+    </div>
+  </div>
+</section>
+</main>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
@@ -252,6 +504,10 @@
     document.getElementById("staffId").value = "";
     document.getElementById("securityCode").value = "";
     document.getElementById("messages").innerHTML = "";
+    document.getElementById("directDriverId").value = "";
+    document.getElementById("directSubject").value = "";
+    document.getElementById("directBody").value = "";
+    document.getElementById("directStatus").textContent = "";
     await signOut(auth);
   };
 
@@ -290,7 +546,7 @@
 
         div.innerHTML = `
           <h3>${escapeHtml(message.subject || "No subject")}</h3>
-          <p><strong>From:</strong> ${escapeHtml(message.from || "Driver")}</p>
+          <p><strong>From:</strong> ${escapeHtml(message.driverName || message.senderName || message.from || "Driver")}</p>
           <p><strong>Driver ID:</strong> ${escapeHtml(message.driverId || "Unknown")}</p>
           <p><strong>Route:</strong> ${escapeHtml(message.route || "Unknown")}</p>
           <p>${escapeHtml(message.body || "")}</p>
@@ -314,6 +570,54 @@
         '<p class="error">Could not load messages: ' + escapeHtml(err.message) + '</p>';
     });
   }
+
+  window.sendDirectToDriver = async function () {
+    if (!verifiedOfficeUser) {
+      alert("You must complete the security check first.");
+      return;
+    }
+
+    const driverId = document.getElementById("directDriverId").value.trim();
+    const subject = document.getElementById("directSubject").value.trim() || "Message from Office";
+    const body = document.getElementById("directBody").value.trim();
+    const status = document.getElementById("directStatus");
+
+    status.textContent = "";
+    status.className = "success";
+
+    if (!driverId) {
+      status.className = "error";
+      status.textContent = "Enter a driver number.";
+      return;
+    }
+
+    if (!body) {
+      status.className = "error";
+      status.textContent = "Type a message before sending.";
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "replies"), {
+        messageId: null,
+        driverId,
+        from: verifiedOfficeUser.name,
+        senderName: verifiedOfficeUser.name,
+        officeUid: verifiedOfficeUser.uid,
+        officeStaffId: verifiedOfficeUser.staffId,
+        subject,
+        body: subject + ": " + body,
+        direct: true,
+        createdAt: serverTimestamp()
+      });
+
+      document.getElementById("directBody").value = "";
+      status.textContent = "Message sent to driver " + driverId + ".";
+    } catch (err) {
+      status.className = "error";
+      status.textContent = err.message;
+    }
+  };
 
   window.replyToDriver = async function (messageId, driverId) {
     if (!verifiedOfficeUser) {
