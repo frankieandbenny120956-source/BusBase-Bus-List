@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticketer Office Control</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111827;
+      color: white;
+    }
+
+    header {
+      background: #001e6e;
+      padding: 16px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .login, .app {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #1f2937;
+      border-radius: 12px;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.red {
+      background: #dc2626;
+    }
+
+    .message {
+      background: #f8fafc;
+      color: #111827;
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 12px;
+      border-left: 6px solid #2563eb;
+    }
+
+    .message.unread {
+      border-left-color: #dc2626;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: #475569;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .reply-box {
+      margin-top: 10px;
+      background: #e5e7eb;
+      padding: 10px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<header>Ticketer Office Control Room</header>
+
+<section class="login" id="loginBox">
+  <h2>Office Login</h2>
+  <input id="email" type="email" placeholder="Office email" value="office@busbase.co.uk">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p id="loginError" style="color:#fca5a5;"></p>
+</section>
+
+<section class="app hidden" id="appBox">
+  <h2>Live Driver Messages</h2>
+  <button class="red" onclick="logout()">Logout</button>
+  <div id="messages"></div>
+</section>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    updateDoc,
+    doc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBBCqx9D1r5U9mWJYKEY_dtCdyk132xGog",
+    authDomain: "busbase-ticketer-v2.firebaseapp.com",
+    projectId: "busbase-ticketer-v2",
+    storageBucket: "busbase-ticketer-v2.firebasestorage.app",
+    messagingSenderId: "807388978236",
+    appId: "1:807388978236:web:5ccf7c8193d81498377739"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let unsubscribeMessages = null;
+
+  window.login = async function () {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      document.getElementById("loginError").textContent = "";
+    } catch (err) {
+      document.getElementById("loginError").textContent = err.message;
+    }
+  };
+
+  window.logout = async function () {
+    if (unsubscribeMessages) unsubscribeMessages();
+    await signOut(auth);
+  };
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("appBox").classList.remove("hidden");
+      startInbox();
+    } else {
+      document.getElementById("loginBox").classList.remove("hidden");
+      document.getElementById("appBox").classList.add("hidden");
+    }
+  });
+
+  function startInbox() {
+    const q = query(
+      collection(db, "messages"),
+      orderBy("createdAt", "desc")
+    );
+
+    unsubscribeMessages = onSnapshot(q, snapshot => {
+      const box = document.getElementById("messages");
+      box.innerHTML = "";
+
+      snapshot.forEach(documentSnap => {
+        const message = documentSnap.data();
+        const messageId = documentSnap.id;
+
+        const div = document.createElement("div");
+        div.className = "message " + (message.status === "unread" ? "unread" : "");
+
+        div.innerHTML = `
+          <h3>${escapeHtml(message.subject || "No subject")}</h3>
+          <p><strong>From:</strong> ${escapeHtml(message.from || "Driver")}</p>
+          <p><strong>Driver ID:</strong> ${escapeHtml(message.driverId || "Unknown")}</p>
+          <p><strong>Route:</strong> ${escapeHtml(message.route || "Unknown")}</p>
+          <p>${escapeHtml(message.body || "")}</p>
+          <p class="meta">Status: ${escapeHtml(message.status || "unknown")}</p>
+
+          <div class="reply-box">
+            <textarea id="reply-${messageId}" placeholder="Type reply to driver"></textarea>
+            <button onclick="replyToDriver('${messageId}', '${escapeHtml(message.driverId || "1234")}')">
+              Send Reply
+            </button>
+            <button onclick="markRead('${messageId}')">
+              Mark Read
+            </button>
+          </div>
+        `;
+
+        box.appendChild(div);
+      });
+    });
+  }
+
+  window.replyToDriver = async function (messageId, driverId) {
+    const textarea = document.getElementById("reply-" + messageId);
+    const body = textarea.value.trim();
+
+    if (!body) {
+      alert("Type a reply first.");
+      return;
+    }
+
+    await addDoc(collection(db, "replies"), {
+      messageId,
+      driverId,
+      from: "Office",
+      body,
+      createdAt: serverTimestamp()
+    });
+
+    await updateDoc(doc(db, "messages", messageId), {
+      status: "replied"
+    });
+
+    textarea.value = "";
+    alert("Reply sent.");
+  };
+
+  window.markRead = async function (messageId) {
+    await updateDoc(doc(db, "messages", messageId), {
+      status: "read"
+    });
+  };
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+</script>
+
+</body>
+</html>
