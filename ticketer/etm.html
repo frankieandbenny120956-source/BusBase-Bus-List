@@ -637,32 +637,7 @@
         ['Authority Special', 0.00, 'concession']
       ]
     };
-
-    const messageStore = [
-      {
-        type: 'Driver',
-        from: 'Control',
-        subject: 'Important: Road closure',
-        body: 'Road closure reported near Market Street. Use the signed diversion and allow extra running time. Reply if you are unable to follow the diversion.',
-        important: true,
-        read: false
-      },
-      {
-        type: 'Service',
-        from: 'Depot',
-        subject: 'Running five minutes late',
-        body: 'Service 16 is currently running approximately five minutes late. Continue safely and do not leave timing points early.',
-        important: false,
-        read: false
-      },
-      {
-        type: 'Vehicle',
-        from: 'Engineering',
-        subject: 'Printer paper check requested',
-        body: 'Please check printer paper level at the next safe stop. If low, replace the roll before continuing ticket issue.',
-        important: false,
-        read: true
-      }
+    
     ];
     let currentMessageType = 'Driver';
     let selectedMessageIndex = 0;
@@ -1073,7 +1048,26 @@
           s.textContent = '✓';
           s.style.color = 'green';
         }
-      });
+function receiveOfficeReply(body) {
+  messageStore.unshift({
+    type: 'Driver',
+    from: 'Office',
+    subject: 'Reply from Office',
+    body: body,
+    important: true,
+    read: false
+  });
+
+  currentMessageType = 'Driver';
+
+  const count = messageStore.filter(m => !m.read).length;
+  const msgCount = document.getElementById('msgCount');
+  if (msgCount) msgCount.textContent = count;
+
+  showInfo('New message received from Office. Open Messages to read it.');
+}
+
+window.receiveOfficeReply = receiveOfficeReply;
     }
     function openDefects() { showInfo('Select a failed component, choose Defects, add notes, and mark the position on the bus pictogram if the fault is positional.'); }
     function showKeyboard(id) {
