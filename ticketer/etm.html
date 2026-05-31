@@ -934,6 +934,618 @@
       .screen { height: 100vh; }
     }
 
+  
+
+    /* ===== Full-screen ETM terminal restyle: applies same compact blue/grey pattern to every screen ===== */
+    :root {
+      --etm-blue: #00006f;
+      --etm-blue-2: #0712a4;
+      --etm-blue-3: #000044;
+      --screen-bg: #d5dbea;
+      --screen-bg-2: #c6cedd;
+      --row: #eef1f8;
+      --row-line: #8c96ad;
+      --orange: #efa637;
+      --red: #bf0b1f;
+      --green: #168032;
+      --ink: #050505;
+      --bezel: #050505;
+    }
+
+    body {
+      background: #161616 !important;
+      padding: 10px !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+      color: #050505 !important;
+    }
+
+    .etm {
+      width: 480px !important;
+      max-width: 100% !important;
+      background: #050505 !important;
+      border: 16px solid #050505 !important;
+      border-radius: 6px !important;
+      box-shadow: 0 22px 65px rgba(0,0,0,.78), inset 0 0 0 2px #202020 !important;
+    }
+
+    .screen {
+      height: 760px !important;
+      background: var(--screen-bg) !important;
+      border: 3px solid #000 !important;
+      grid-template-rows: 84px minmax(0,1fr) 31px !important;
+    }
+
+    .screen.pre-sale {
+      grid-template-rows: minmax(0,1fr) !important;
+    }
+
+    .top-lines {
+      background: #070b21 !important;
+      border-bottom: 2px solid #000 !important;
+    }
+
+    .stage-line,
+    .stop-line,
+    .dest-line {
+      height: 28px !important;
+      font-size: 12px !important;
+      background: var(--etm-blue) !important;
+      border-bottom: 1px solid #3d4598 !important;
+      font-weight: 900 !important;
+    }
+
+    .stop-line { background: #101f8f !important; font-size: 11px !important; }
+    .dest-line { background: var(--etm-blue-3) !important; }
+
+    .arrow, .smallbtn {
+      background: #000080 !important;
+      border: 1px solid #5864d4 !important;
+      color: #fff !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .workarea {
+      padding: 3px !important;
+      background: var(--screen-bg) !important;
+      font-size: 10.5px !important;
+    }
+
+    .page {
+      background: var(--screen-bg) !important;
+      overflow: hidden !important;
+    }
+
+    .header,
+    .options-title,
+    .saved-routes-head {
+      height: 23px !important;
+      min-height: 23px !important;
+      padding: 3px 5px !important;
+      background: var(--etm-blue-3) !important;
+      color: #fff !important;
+      border: 1px solid #000 !important;
+      border-bottom-color: #4e5abe !important;
+      font-size: 10px !important;
+      line-height: 15px !important;
+      font-weight: 900 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0 !important;
+    }
+
+    .header button,
+    .saved-routes-head button {
+      min-height: 17px !important;
+      height: 17px !important;
+      padding: 0 5px !important;
+      font-size: 8px !important;
+      border: 1px solid #6872d6 !important;
+      background: var(--etm-blue) !important;
+      color: #fff !important;
+    }
+
+    .panel,
+    .saved-routes-panel,
+    #cardPanel,
+    #modalBody > div,
+    #readMsgBody,
+    #controlBody,
+    #sendLinkBox,
+    #replyLinkBox {
+      background: var(--row) !important;
+      border: 1px solid var(--row-line) !important;
+      margin-top: 3px !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      color: #000 !important;
+    }
+
+    .panel[style],
+    #cardPanel[style] {
+      padding: 5px !important;
+    }
+
+    p, h1, h2, h3, label, strong, small {
+      line-height: 1.2 !important;
+    }
+
+    h1, h2, h3 {
+      margin: 2px 0 5px !important;
+      font-size: 13px !important;
+    }
+
+    p { margin: 2px 0 5px !important; }
+
+    input, select, textarea {
+      background: #fff !important;
+      border: 1px solid #444f68 !important;
+      border-radius: 0 !important;
+      color: #000 !important;
+      font-size: 11px !important;
+      height: 25px !important;
+      padding: 3px 4px !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+      box-shadow: inset 0 1px 0 rgba(0,0,0,.12) !important;
+    }
+
+    textarea {
+      min-height: 82px !important;
+      height: auto !important;
+      resize: none !important;
+    }
+
+    button {
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      background: var(--etm-blue) !important;
+      color: #fff !important;
+      border: 1px solid #5e68d3 !important;
+      font-weight: 900 !important;
+      font-size: 9px !important;
+      text-transform: uppercase !important;
+      min-height: 24px !important;
+      padding: 2px 3px !important;
+    }
+
+    button.red { background: var(--red) !important; border-color: #70000c !important; color: #fff !important; }
+    button.green { background: var(--green) !important; border-color: #064c17 !important; color: #fff !important; }
+    button.orange { background: var(--orange) !important; border-color: #9b640a !important; color: #000 !important; }
+    button.grey { background: #a9a9a9 !important; color: #5b5b5b !important; border-color: #777 !important; }
+    button.white { background: #dfe6f8 !important; color: #00005f !important; border-color: #6c7597 !important; }
+
+    .function-bar,
+    .ticket-bar,
+    .bottom-buttons,
+    .options-bottom {
+      margin-top: 3px !important;
+      gap: 2px !important;
+    }
+
+    .function-bar {
+      grid-template-columns: repeat(5,1fr) !important;
+      background: var(--etm-blue) !important;
+      border: 1px solid #000 !important;
+      padding: 1px !important;
+    }
+
+    .function-bar button {
+      min-height: 24px !important;
+      font-size: 8.5px !important;
+      border-color: #6872d6 !important;
+    }
+
+    .ticket-bar {
+      background: #111a96 !important;
+      border: 1px solid #000 !important;
+      padding: 1px !important;
+    }
+
+    .ticket-bar button {
+      min-height: 22px !important;
+      font-size: 8.5px !important;
+      background: #10189a !important;
+      border-color: #6670db !important;
+      color: #fff !important;
+    }
+
+    .ticket-bar button.red,
+    #catStandard.red,
+    #catChild.red,
+    #catPeriod.red,
+    #catConcession.red {
+      background: var(--red) !important;
+      color: #fff !important;
+      border-color: #69000b !important;
+    }
+
+    .ticket-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 3px !important;
+      margin-top: 3px !important;
+    }
+
+    .ticket-btn {
+      min-height: 57px !important;
+      padding: 3px !important;
+      border: 1px solid #464f66 !important;
+      font-size: 10px !important;
+      line-height: 1.1 !important;
+      text-align: center !important;
+      color: #000 !important;
+      position: relative !important;
+    }
+
+    .ticket-btn.standard,
+    .ticket-btn.child,
+    .ticket-btn.period,
+    .ticket-btn.concession {
+      background: #76d462 !important;
+    }
+
+    .ticket-btn.invalid {
+      background: #adadad !important;
+      color: #666 !important;
+    }
+
+    .ticket-btn strong {
+      display: block !important;
+      margin: 13px 20px 0 20px !important;
+      font-size: 10px !important;
+      font-weight: 900 !important;
+    }
+
+    .ticket-btn .price {
+      display: block !important;
+      margin-top: 3px !important;
+      font-size: 12px !important;
+      font-weight: 900 !important;
+    }
+
+    .qty {
+      right: auto !important;
+      left: 2px !important;
+      top: 2px !important;
+      bottom: auto !important;
+      width: 23px !important;
+      height: 17px !important;
+      padding: 0 !important;
+      line-height: 15px !important;
+      border-radius: 0 !important;
+      background: #f9fbff !important;
+      border: 1px solid #4d536d !important;
+      color: #000 !important;
+      font-size: 10px !important;
+      text-align: center !important;
+    }
+
+    .total-strip {
+      margin-top: 3px !important;
+      border: 1px solid #333a54 !important;
+      background: #cdd4e5 !important;
+      font-size: 10px !important;
+    }
+
+    .total-strip div {
+      padding: 4px 2px !important;
+      border-right: 1px solid #7d879f !important;
+    }
+
+    .bottom-buttons {
+      grid-template-columns: repeat(4,1fr) !important;
+      background: var(--etm-blue) !important;
+      border: 1px solid #000 !important;
+      padding: 1px !important;
+      position: sticky !important;
+      bottom: 0 !important;
+    }
+
+    .bottom-buttons button,
+    .options-bottom button {
+      min-height: 26px !important;
+      font-size: 8.5px !important;
+    }
+
+    .list-row,
+    .saved-route-row {
+      min-height: 25px !important;
+      padding: 4px 5px !important;
+      background: #eef1f8 !important;
+      border-bottom: 1px solid #a0a8bb !important;
+      font-size: 10.5px !important;
+      font-weight: 800 !important;
+      line-height: 1.15 !important;
+      border-radius: 0 !important;
+    }
+
+    .list-row.selected,
+    .saved-route-row.selected {
+      background: var(--orange) !important;
+      color: #000 !important;
+    }
+
+    .list-row.disabled {
+      background: #b8b8b8 !important;
+      color: #666 !important;
+    }
+
+    .saved-routes-panel {
+      padding: 0 !important;
+      max-height: 126px !important;
+      overflow: hidden !important;
+    }
+
+    .saved-routes-list {
+      max-height: 100px !important;
+      overflow: auto !important;
+      background: #eef1f8 !important;
+    }
+
+    .saved-route-row {
+      display: grid !important;
+      grid-template-columns: 1fr 41px 41px !important;
+      gap: 2px !important;
+      align-items: stretch !important;
+    }
+
+    .saved-route-row button {
+      min-height: 20px !important;
+      font-size: 8px !important;
+      padding: 1px !important;
+    }
+
+    .saved-route-name {
+      font-size: 10px !important;
+      font-weight: 900 !important;
+    }
+
+    .saved-route-name small {
+      font-size: 8px !important;
+      font-weight: 700 !important;
+    }
+
+    #tripPage .panel:nth-of-type(2) {
+      display: grid !important;
+      grid-template-columns: repeat(2,1fr) !important;
+      gap: 3px 5px !important;
+    }
+
+    #tripPage .panel:nth-of-type(2) p,
+    #tripPage .panel:nth-of-type(2) label,
+    #tripPage .panel:nth-of-type(2) input,
+    #tripPage .panel:nth-of-type(2) select,
+    #tripPage .panel:nth-of-type(2) textarea {
+      grid-column: span 1 !important;
+    }
+
+    #tripPage .panel:nth-of-type(2) p,
+    #tripPage .panel:nth-of-type(2) textarea,
+    #tripPage .panel:nth-of-type(2) label[for],
+    #manualStops {
+      grid-column: 1 / -1 !important;
+    }
+
+    #manualStops {
+      min-height: 70px !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+    }
+
+    #tripPage .panel:nth-of-type(3) {
+      padding: 0 !important;
+      max-height: 88px !important;
+      overflow: hidden !important;
+    }
+
+    #tripPage .panel:nth-of-type(3) strong {
+      display: block !important;
+      background: var(--etm-blue-3) !important;
+      color: #fff !important;
+      padding: 3px 5px !important;
+      border-bottom: 1px solid #000 !important;
+      font-size: 9px !important;
+      text-transform: uppercase !important;
+    }
+
+    .keypad {
+      grid-template-columns: repeat(3,1fr) !important;
+      gap: 3px !important;
+      margin-top: 5px !important;
+    }
+
+    .keypad button {
+      min-height: 38px !important;
+      font-size: 15px !important;
+      background: var(--etm-blue) !important;
+      color: #fff !important;
+      border-color: #6872d6 !important;
+    }
+
+    #changePage .panel,
+    #cardPage .panel,
+    #readMessagePage .panel,
+    #composeMessagePage .panel,
+    #controlRoomPage .panel {
+      padding: 5px !important;
+      background: var(--row) !important;
+      border: 1px solid var(--row-line) !important;
+      min-height: 0 !important;
+    }
+
+    #changePage h2,
+    #cardPage h2,
+    #cardPage h1 {
+      background: #fff !important;
+      border: 1px solid #59647e !important;
+      padding: 6px !important;
+      margin: 4px 0 !important;
+      text-align: center !important;
+      color: #000 !important;
+      font-size: 13px !important;
+    }
+
+    #cardPage h1[style] {
+      color: #13802f !important;
+    }
+
+    #messagesPage .ticket-bar {
+      margin-top: 3px !important;
+      grid-template-columns: repeat(3,1fr) !important;
+    }
+
+    #messagesList,
+    #vehicleList,
+    #checkList,
+    #dutyList {
+      max-height: calc(100% - 42px) !important;
+      overflow: auto !important;
+    }
+
+    #readMsgBody,
+    #controlBody {
+      min-height: 92px !important;
+      background: #fff !important;
+      white-space: pre-line !important;
+      font-size: 11px !important;
+      padding: 5px !important;
+    }
+
+    .options-menu-page {
+      background: var(--screen-bg) !important;
+      padding: 0 !important;
+    }
+
+    .options-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2,1fr) !important;
+      gap: 3px !important;
+      padding: 3px !important;
+      max-height: calc(100% - 58px) !important;
+      overflow: auto !important;
+      background: var(--screen-bg) !important;
+    }
+
+    .options-grid button {
+      min-height: 39px !important;
+      background: #dfe6f8 !important;
+      color: #00005f !important;
+      border: 1px solid #46506c !important;
+      font-size: 10px !important;
+      text-align: left !important;
+      padding: 4px 5px !important;
+      text-transform: uppercase !important;
+      box-shadow: none !important;
+    }
+
+    .options-grid button small {
+      display: block !important;
+      margin-top: 1px !important;
+      color: #333 !important;
+      font-size: 8px !important;
+      font-weight: 700 !important;
+      text-transform: none !important;
+    }
+
+    .options-bottom {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 2px !important;
+      padding: 2px !important;
+      background: var(--etm-blue) !important;
+      border-top: 1px solid #000 !important;
+    }
+
+    .status-bar {
+      height: 31px !important;
+      display: grid !important;
+      grid-template-columns: 44px 48px 53px 52px 45px 1fr !important;
+      background: var(--etm-blue) !important;
+      border-top: 2px solid #000 !important;
+      gap: 1px !important;
+      padding: 1px !important;
+      color: #fff !important;
+      font-size: 8px !important;
+    }
+
+    .status-item {
+      background: #0a1688 !important;
+      border: 1px solid #5864d4 !important;
+      padding: 3px 1px !important;
+      font-size: 8px !important;
+      font-weight: 900 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 2px !important;
+    }
+
+    .ok { color: #44ff5d !important; font-weight: 900 !important; }
+    .bad { color: #ff3d4b !important; font-weight: 900 !important; }
+    .warn { color: #ffd22a !important; font-weight: 900 !important; }
+
+    .modal {
+      background: rgba(0,0,0,.55) !important;
+      padding: 10px !important;
+    }
+
+    .popup {
+      width: 390px !important;
+      max-width: 94vw !important;
+      background: #eef1f8 !important;
+      border: 3px solid #111a4e !important;
+      border-radius: 0 !important;
+      box-shadow: 0 14px 40px rgba(0,0,0,.6) !important;
+    }
+
+    .popup-body {
+      padding: 7px !important;
+      background: #eef1f8 !important;
+      font-size: 11px !important;
+      line-height: 1.25 !important;
+      color: #000 !important;
+    }
+
+    .popup .bottom-buttons {
+      padding: 2px !important;
+      margin: 0 !important;
+    }
+
+    .ticket-paper {
+      font-family: "Courier New", monospace !important;
+      background: #f5f2df !important;
+      color: #000 !important;
+      border: 1px solid #707070 !important;
+      padding: 6px !important;
+      margin-top: 3px !important;
+      max-height: 132px !important;
+      font-size: 9px !important;
+      white-space: pre-wrap !important;
+      overflow: auto !important;
+    }
+
+    .vimscreen {
+      background: #020202 !important;
+      color: #fff !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+      font-size: 13px !important;
+      font-weight: 900 !important;
+    }
+
+    .vimscreen h1 {
+      font-size: 18px !important;
+      font-weight: 500 !important;
+      color: #fff !important;
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    .test-output { display: none !important; }
+
+    @media (max-width: 520px) {
+      body { padding: 0 !important; }
+      .etm { width: 100vw !important; height: 100vh !important; border-width: 8px !important; border-radius: 0 !important; }
+      .screen { height: calc(100vh - 16px) !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -1202,14 +1814,14 @@ Three Swallows</textarea>
         <section id="optionsPage" class="page options-menu-page">
           <div class="options-title">Options Menu</div>
           <div class="options-grid">
-            <button onclick="lockMachine()">Lock<br><small>Suspend operation</small></button>
-            <button onclick="endTrip()">End Trip<br><small>Finish current journey</small></button>
-            <button onclick="abortTrip()">Abort Trip<br><small>Cancel started trip</small></button>
-            <button onclick="showDutyDetails()">Duty Summary<br><small>Print waybill</small></button>
-            <button onclick="tripSummary()">Trip Summary<br><small>Current trip totals</small></button>
-            <button onclick="goChecklist()">Checklist<br><small>Vehicle defects</small></button>
-            <button onclick="goMessages()">Messages<br><small>Read / reply</small></button>
-            <button onclick="testPrint()">Test Print<br><small>Printer check</small></button>
+            <button onclick="lockMachine()">LOCK<br><small>Resume with PIN</small></button>
+            <button onclick="endTrip()">END TRIP<br><small>Reset trip totals</small></button>
+            <button onclick="abortTrip()">ABORT TRIP<br><small>Keep duty active</small></button>
+            <button onclick="showDutyDetails()">DUTY SUMMARY<br><small>All duty totals</small></button>
+            <button onclick="tripSummary()">TRIP SUMMARY<br><small>Current trip only</small></button>
+            <button onclick="goChecklist()">CHECKLIST<br><small>Vehicle inspection</small></button>
+            <button onclick="goMessages()">MESSAGES<br><small>Driver comms</small></button>
+            <button onclick="testPrint()">TEST PRINT<br><small>Printer check</small></button>
             <button onclick="showInfo('Comms status: 0 pending, server connected')">Comms Status<br><small>Pending data</small></button>
             <button onclick="showInfo('Inspector slip printed after passcode')">Inspector<br><small>Inspection slip</small></button>
             <button onclick="showInfo('Incident slip printed and sent to portal')">Log Incident<br><small>Send report</small></button>
