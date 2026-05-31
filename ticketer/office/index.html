@@ -451,27 +451,36 @@
     try {
       document.getElementById("securityError").textContent = "";
 
-      const profileRef = doc(db, "officeUsers", user.uid);
-      const profileSnap = await getDoc(profileRef);
+      let profileSnap = await getDoc(doc(db, "officeUsers", user.uid));
+
+      // Backwards-compatible fallback in case the collection was created as officeusers.
+      if (!profileSnap.exists()) {
+        profileSnap = await getDoc(doc(db, "officeusers", user.uid));
+      }
 
       if (!profileSnap.exists()) {
-        document.getElementById("securityError").textContent = "No office profile found for this account.";
+        document.getElementById("securityError").textContent =
+          "No office profile found. Create a document in officeUsers using this UID: " + user.uid;
         return;
       }
 
       const profile = profileSnap.data();
+
+      const savedStaffId = profile.staffId || profile.staffid || profile["Unique Number"] || profile["uniqueNumber"];
+      const savedCode = profile.code || profile["Security Code"] || profile.securityCode || profile.passwordCode;
+      const role = String(profile.role || "office").toLowerCase();
 
       if (profile.active !== true) {
         document.getElementById("securityError").textContent = "This office account is inactive.";
         return;
       }
 
-      if (profile.role !== "office") {
+      if (role !== "office") {
         document.getElementById("securityError").textContent = "Access denied. This account is not an office user.";
         return;
       }
 
-      if (String(profile.staffId) !== staffId || String(profile.code) !== securityCode) {
+      if (String(savedStaffId) !== staffId || String(savedCode) !== securityCode) {
         document.getElementById("securityError").textContent = "Invalid unique number or password code.";
         return;
       }
@@ -480,7 +489,7 @@
         uid: user.uid,
         email: user.email,
         name: profile.name || "Office User",
-        staffId: profile.staffId
+        staffId: savedStaffId
       };
 
       document.getElementById("loggedInAs").textContent =
