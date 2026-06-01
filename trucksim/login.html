@@ -8,7 +8,7 @@
 
   <div class="login-card">
     <h1>TruckSim</h1>
-    <p>Fleet checklist & mileage system</p>
+    <p>Start your shift. Log mileage. Stay road ready.</p>
 
     <input id="email" type="email" placeholder="Email address">
     <input id="password" type="password" placeholder="Password">
@@ -17,6 +17,48 @@
 
     <p id="status"></p>
   </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBCqx9D1r5U9mWJYKEY_dtCdyk132xGog",
+      authDomain: "busbase-ticketer-v2.firebaseapp.com",
+      projectId: "busbase-ticketer-v2",
+      storageBucket: "busbase-ticketer-v2.firebasestorage.app",
+      messagingSenderId: "807388978236",
+      appId: "1:807388978236:web:5ccf7c8193d81498377739"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const status = document.getElementById("status");
+
+      if (!email || !password) {
+        status.textContent = "Please enter your email and password.";
+        return;
+      }
+
+      status.textContent = "Logging in...";
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        status.textContent = "Login successful.";
+        window.location.href = "driver.html";
+      } catch (error) {
+        status.textContent = "Login failed. Check your email or password.";
+        console.error(error);
+      }
+    });
+  </script>
 
 </body>
 </html>
