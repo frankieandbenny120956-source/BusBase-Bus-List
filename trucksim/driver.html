@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Driver Panel</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav>
+    <h2>TruckSim Driver</h2>
+    <button onclick="location.href='messages.html'">Messages</button>
+  </nav>
+
+  <main class="panel">
+    <h1>Daily Vehicle Check</h1>
+
+    <label>Truck</label>
+    <select id="truck">
+      <option>Truck 1</option>
+      <option>Truck 2</option>
+      <option>Truck 3</option>
+    </select>
+
+    <label>Mileage</label>
+    <input id="mileage" type="number" placeholder="Enter mileage">
+
+    <div class="checklist">
+      <label><input type="checkbox"> Tyres checked</label>
+      <label><input type="checkbox"> Lights checked</label>
+      <label><input type="checkbox"> Brakes checked</label>
+      <label><input type="checkbox"> Oil checked</label>
+      <label><input type="checkbox"> Fuel checked</label>
+      <label><input type="checkbox"> No damage</label>
+    </div>
+
+    <textarea placeholder="Notes for office staff"></textarea>
+
+    <button>Submit Check</button>
+  </main>
+
+</body>
+</html>
