@@ -489,6 +489,14 @@
       font-weight: 800;
       color: #334155;
     }
+    .preset-route-row {
+      background: #e8edf6 !important;
+    }
+    .preset-route-row .saved-route-name::before {
+      content: 'LYNX ';
+      color: #00006f;
+      font-weight: 900;
+    }
 
     .test-output { display: none; }
 
@@ -895,6 +903,14 @@
       font-size: .58rem;
       font-weight: 800;
       color: #334155;
+    }
+    .preset-route-row {
+      background: #e8edf6 !important;
+    }
+    .preset-route-row .saved-route-name::before {
+      content: 'LYNX ';
+      color: #00006f;
+      font-weight: 900;
     }
 
     .test-output { display: none !important; }
@@ -1554,17 +1570,17 @@
       <div class="top-lines" aria-label="ticket selling fare stage header">
         <div class="stage-line">
           <button class="arrow" onclick="moveStage(-1)">&lt;</button>
-          <div onclick="openStageList()" id="fareStage">Holt</div>
+          <div onclick="openStageList()" id="fareStage">King's Lynn</div>
           <button class="arrow" onclick="moveStage(1)">&gt;</button>
         </div>
         <div class="stop-line">
           <button class="arrow" onclick="moveStop(-1)">&lt;</button>
-          <div onclick="openStopList()" id="currentStop">Railway Tavern</div>
+          <div onclick="openStopList()" id="currentStop">King's Lynn Bus Station</div>
           <button class="arrow" onclick="moveStop(1)">&gt;</button>
         </div>
         <div class="dest-line">
           <button class="arrow" onclick="moveDestination(-1)">&lt;</button>
-          <div onclick="openDestinationList()" id="destination">Letheringsett</div>
+          <div onclick="openDestinationList()" id="destination">Hunstanton Bus Station</div>
           <button class="arrow" onclick="moveDestination(1)">&gt;</button>
         </div>
       </div>
@@ -1630,17 +1646,21 @@
           <div class="panel" style="padding:6px">
             <p style="margin:0 0 6px">Enter the route, where it starts, where it ends, and the stops in order.</p>
             <label>Route / Service number</label>
-            <input id="manualRoute" placeholder="Example: 16 or 24A" value="16" oninput="updateTripPreview()">
+            <input id="manualRoute" placeholder="Example: 16 or 24A" value="34/35/36" oninput="updateTripPreview()">
             <label style="margin-top:4px;display:block">Going from</label>
-            <input id="manualOrigin" placeholder="Example: Holt" value="Holt" oninput="updateTripPreview()">
+            <input id="manualOrigin" placeholder="Example: Holt" value="King's Lynn" oninput="updateTripPreview()">
             <label style="margin-top:4px;display:block">Going to</label>
-            <input id="manualDestination" placeholder="Example: City Centre" value="City Centre" oninput="updateTripPreview()">
+            <input id="manualDestination" placeholder="Example: City Centre" value="Hunstanton Bus Station" oninput="updateTripPreview()">
             <label style="margin-top:4px;display:block">Stops, one per line</label>
-            <textarea id="manualStops" rows="5" placeholder="Railway Tavern&#10;Holt Road&#10;Pine Box&#10;Bull Street" oninput="updateTripPreview()">Railway Tavern
-Holt Road
-Pine Box
-Bull Street
-Three Swallows</textarea>
+            <textarea id="manualStops" rows="5" placeholder="Railway Tavern&#10;Holt Road&#10;Pine Box&#10;Bull Street" oninput="updateTripPreview()">King's Lynn Bus Station
+Gaywood Tesco
+QE Hospital Travel Hub
+South Wootton
+Sandringham
+Dersingham
+Snettisham
+Heacham
+Hunstanton Bus Station</textarea>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
               <div><label>Departure time</label><input id="manualTime" type="time" value="15:15" oninput="updateTripPreview()"></div>
               <div><label>Direction</label><select id="manualDirection" onchange="updateTripPreview()"><option>Inbound</option><option>Outbound</option><option>Clockwise</option><option>Anti-Clockwise</option></select></div>
@@ -1857,7 +1877,7 @@ Three Swallows</textarea>
     <div>
       <h1>VEHICLE IN MOTION</h1>
       <p>TAP SCREEN TO CONTINUE</p>
-      <p>Next stop: <span id="vimStop">Railway Tavern</span></p>
+      <p>Next stop: <span id="vimStop">Gaywood Tesco</span></p>
       <p>Schedule: <span id="vimTime">16:05</span></p>
     </div>
   </div>
@@ -1865,16 +1885,120 @@ Three Swallows</textarea>
   <script>
     'use strict';
 
-    let stages = ['Holt','Letheringsett','Glandford','Wiveton','Cley','Blakeney','Morston','Langham'];
-    let stops = ['Railway Tavern','Holt Road','Pine Box','Bull Street','Three Swallows','Church, Blakeney','Bus Shelter'];
+    // Lynx data loaded 1 June 2026 from the public Lynx services, fleet list and 34/35/36 fares PDF.
+    // Exact stop-by-stop fares are only published publicly for sample popular flows, so unpublished pairs fall back to stage distance pricing.
+    const LYNX_ROUTE_PRESETS = [
+      { route: '33/33C', origin: "King's Lynn", dest: 'Hunstanton', direction: 'Outbound', time: '09:00', summary: 'via QE Hospital, Hillington, The Birchams & Sedgeford', stops: ["King's Lynn Bus Station", 'Gaywood', 'QE Hospital Travel Hub', 'Hillington', 'Flitcham', 'Great Bircham', 'Bircham Newton', 'Docking', 'Sedgeford', 'Heacham', 'Hunstanton Bus Station'] },
+      { route: '33A/33B', origin: 'Hunstanton', dest: 'Hunstanton', direction: 'Circular', time: '09:30', summary: 'Hunstanton circular via Tesco & Cliff Parade', stops: ['Hunstanton Bus Station', 'Hunstanton Tesco', 'Cliff Parade', 'Lighthouse Close', 'Old Hunstanton Road', 'Hunstanton Bus Station'] },
+      { route: '34/35/36', origin: "King's Lynn", dest: 'Fakenham', direction: 'Outbound', time: '09:15', summary: 'via QE Hospital, Sandringham, Dersingham, Snettisham, Heacham and the coast', stops: ["King's Lynn Bus Station", 'Gaywood Tesco', 'QE Hospital Travel Hub', 'South Wootton', 'Sandringham', 'Dersingham', 'Snettisham', 'Heacham', 'Hunstanton Bus Station', 'Old Hunstanton', 'Holme', 'Thornham', 'Titchwell', 'Brancaster', 'Brancaster Staithe', 'Burnham Deepdale', 'Burnham Market', 'Burnham Overy Staithe', 'Holkham', 'Wells-next-the-Sea', 'Wighton', 'Walsingham', 'Houghton St Giles', 'East Barsham', 'Fakenham'] },
+      { route: '37', origin: "King's Lynn", dest: 'Downham Market', direction: 'Outbound', time: '08:25', summary: 'via Hardwick Retail Park, Hilgay, Southery and Ten Mile Bank', stops: ["King's Lynn Bus Station", 'Hardwick Retail Park', 'West Winch', 'Setchey', 'Runcton Holme', 'Watlington', 'Hilgay', 'Southery', 'Ten Mile Bank', 'Downham Market'] },
+      { route: '38', origin: "King's Lynn", dest: 'Fair Green', direction: 'Outbound', time: '10:00', summary: 'via Hardwick Retail Park', stops: ["King's Lynn Bus Station", 'Southgates', 'Hardwick Retail Park', 'West Winch', 'Fair Green'] },
+      { route: '39', origin: "King's Lynn", dest: 'Marham', direction: 'Outbound', time: '07:45', summary: 'via Hardwick Retail Park & Shouldham', stops: ["King's Lynn Bus Station", 'Hardwick Retail Park', 'West Winch', 'Setchey', 'Tottenhill', 'Wormegay', 'Shouldham', 'Marham'] },
+      { route: '41', origin: "King's Lynn", dest: "King's Reach", direction: 'Outbound', time: '08:10', summary: 'via Gaywood & QE Hospital', stops: ["King's Lynn Bus Station", 'Gaywood', 'QE Hospital Travel Hub', 'Fairstead', "King's Reach"] },
+      { route: '42', origin: "King's Lynn", dest: 'Fairstead', direction: 'Outbound', time: '08:30', summary: 'via Gaywood', stops: ["King's Lynn Bus Station", 'Gaywood', 'Fairstead'] },
+      { route: '43', origin: "King's Lynn", dest: 'North Wootton', direction: 'Outbound', time: '07:30', summary: 'Schooldays only', stops: ["King's Lynn Bus Station", 'Gaywood', 'South Wootton', 'North Wootton'] },
+      { route: '44', origin: "King's Lynn", dest: 'Hardwick', direction: 'Loop', time: '09:20', summary: 'the loop via South Wootton, Knights Hill, QE Hospital and Castle Reach', stops: ["King's Lynn Bus Station", 'South Wootton', 'Knights Hill', 'QE Hospital Travel Hub', 'Gaywood', 'St James Medical Practice', 'Castle Reach', 'Hardwick Retail Park'] },
+      { route: '46/X46', origin: "King's Lynn", dest: 'Wisbech', direction: 'Outbound', time: '08:05', summary: 'via Saddlebow, Islington, Terrington St John, Tilney St Lawrence & West Walton', stops: ["King's Lynn Bus Station", 'Saddlebow', 'Islington', 'Terrington St John', 'Tilney St Lawrence', 'West Walton', 'Wisbech Bus Station'] },
+      { route: '48/49/49A', origin: "King's Lynn", dest: 'Fakenham', direction: 'Outbound', time: '09:05', summary: 'via QE Hospital, Gayton, Great Massingham and The Rudhams', stops: ["King's Lynn Bus Station", 'QE Hospital Travel Hub', 'Gaywood', 'Grimston', 'Gayton', 'Great Massingham', 'Harpley', 'The Rudhams', 'Fakenham'] },
+      { route: '54', origin: "King's Lynn", dest: 'The Walpoles', direction: 'Outbound', time: '09:40', summary: 'via South Lynn, Clenchwarton & Tilney All Saints', stops: ["King's Lynn Bus Station", 'South Lynn', 'West Lynn', 'Clenchwarton', 'Terrington St Clement', 'Tilney All Saints', 'The Walpoles'] },
+      { route: '54A', origin: "King's Lynn", dest: 'Terrington High School', direction: 'Outbound', time: '07:25', summary: 'Schooldays only', stops: ["King's Lynn Bus Station", 'South Lynn', 'West Lynn', 'Clenchwarton', 'Terrington St Clement', 'Terrington High School'] },
+      { route: '60', origin: 'Wisbech', dest: 'Downham Market', direction: 'Outbound', time: '08:55', summary: 'via Emneth, Outwell, Upwell and Three Holes', stops: ['Wisbech Bus Station', 'Emneth', 'Outwell', 'Upwell', 'Three Holes', 'Nordelph', 'Denver', 'Downham Market'] },
+      { route: '414/415', origin: 'Dersingham', dest: 'Alderman Peel High School', direction: 'School', time: '07:35', summary: 'via Docking; schooldays only', stops: ['Dersingham', 'Snettisham', 'Heacham', 'Sedgeford', 'Docking', 'Burnham Market', 'Wells-next-the-Sea', 'Alderman Peel High School'] },
+      { route: '48A', origin: 'Middleton', dest: 'Springwood High School', direction: 'School', time: '07:40', summary: 'via East Winch & Ashwicken', stops: ['Middleton', 'East Winch', 'Ashwicken', 'Gayton', 'Springwood High School'] }
+    ];
+
+    const LYNX_FLEET = [
+      { fleet: '4', reg: 'FX12 MUB', type: 'Mercedes-Benz Citaro O530' },
+      { fleet: '7', reg: 'YJ56 WVA', type: 'Optare Tempo' },
+      { fleet: '11', reg: 'YJ07 VSK', type: 'Optare Tempo' },
+      { fleet: '12', reg: 'YJ07 VSL', type: 'Optare Tempo' },
+      { fleet: '13', reg: 'YJ07 VSM', type: 'Optare Tempo' },
+      { fleet: '14', reg: 'YJ07 VSN', type: 'Optare Tempo' },
+      { fleet: '15', reg: 'FD54 JYA', type: 'Optare Tempo' },
+      { fleet: '19', reg: 'FD54 JYF', type: 'Optare Tempo' },
+      { fleet: '21', reg: 'YJ60 KAA', type: 'Optare Tempo' },
+      { fleet: '22', reg: 'YJ60 KAE', type: 'Optare Tempo' },
+      { fleet: '23', reg: 'YJ60 KAK', type: 'Optare Tempo' },
+      { fleet: '24', reg: 'YJ60 KAO', type: 'Optare Tempo' },
+      { fleet: '25', reg: 'YJ60 KAU', type: 'Optare Tempo' },
+      { fleet: '26', reg: 'YJ60 KAX', type: 'Optare Tempo' },
+      { fleet: '27', reg: 'YJ60 KBF', type: 'Optare Tempo' },
+      { fleet: '28', reg: 'T28 KLN', type: 'Optare Tempo' },
+      { fleet: '29', reg: 'T29 KLN', type: 'Optare Tempo' },
+      { fleet: '30', reg: 'MX05 ELH', type: 'Optare Tempo' },
+      { fleet: '31', reg: 'YY24 EKZ', type: 'Alexander Dennis Enviro 200MMC' },
+      { fleet: '32', reg: 'YY24 ELC', type: 'Alexander Dennis Enviro 200MMC' },
+      { fleet: '33', reg: 'YY24 ELH', type: 'Alexander Dennis Enviro 200MMC' },
+      { fleet: '34', reg: 'YY24 ELJ', type: 'Alexander Dennis Enviro 200MMC' },
+      { fleet: '35', reg: 'YX75 LCL', type: 'Alexander Dennis Enviro 200MMC' },
+      { fleet: '36', reg: 'YX75 KVF', type: 'Alexander Dennis Enviro 200MMC' },
+      { fleet: '37', reg: 'YX75 KVG', type: 'Alexander Dennis Enviro 200MMC' },
+      { fleet: '52', reg: 'LJ53 BFU', type: 'DAF DB250' },
+      { fleet: '53', reg: 'LJ53 BGU', type: 'DAF DB250' },
+      { fleet: '56', reg: 'LJ04 LDL', type: 'DAF DB250' },
+      { fleet: '61', reg: 'SK21 FNG', type: 'Alexander Dennis Enviro 400MMC' },
+      { fleet: '62', reg: 'SK21 FNH', type: 'Alexander Dennis Enviro 400MMC' },
+      { fleet: '63', reg: 'YX22 OLN', type: 'Alexander Dennis Enviro 400MMC' },
+      { fleet: '64', reg: 'YX72 OLO', type: 'Alexander Dennis Enviro 400MMC' },
+      { fleet: '65', reg: 'YX72 OLP', type: 'Alexander Dennis Enviro 400MMC' },
+      { fleet: '66', reg: 'YX23 OSE', type: 'Alexander Dennis Enviro 400MMC' },
+      { fleet: '67', reg: 'YX73 PHJ', type: 'Alexander Dennis Enviro 400MMC' },
+      { fleet: '81', reg: 'DU61 FVY', type: 'Alexander Dennis Enviro 400' },
+      { fleet: '82', reg: 'UW W2X', type: 'Alexander Dennis Enviro 400' }
+    ];
+
+    const LYNX_KINGS_LYNN_FARES = {
+      'Gaywood': { adultSingle: 1.50, adultReturn: 3.50, adultWeekly: 12, adultMonthly: 45, childSingle: 1.50, childReturn: 2.80, childWeekly: 10, childMonthly: 35 },
+      'QE Hospital': { adultSingle: 1.50, adultReturn: 3.50, adultWeekly: 12, adultMonthly: 45, childSingle: 1.50, childReturn: 2.80, childWeekly: 10, childMonthly: 35 },
+      'QE Hospital Travel Hub': { adultSingle: 1.50, adultReturn: 3.50, adultWeekly: 12, adultMonthly: 45, childSingle: 1.50, childReturn: 2.80, childWeekly: 10, childMonthly: 35 },
+      'South Wootton': { adultSingle: 1.50, adultReturn: 3.50, adultWeekly: 12, adultMonthly: 45, childSingle: 1.50, childReturn: 2.80, childWeekly: 10, childMonthly: 35 },
+      'Sandringham': { adultSingle: 3.20, adultReturn: 5.30, adultWeekly: 18, adultMonthly: 68, childSingle: 2.60, childReturn: 4.30, childWeekly: 16, childMonthly: 54 },
+      'Dersingham': { adultSingle: 3.80, adultReturn: 6.40, adultWeekly: 23, adultMonthly: 82, childSingle: 3.10, childReturn: 5.20, childWeekly: 18, childMonthly: 65 },
+      'Snettisham': { adultSingle: 3.80, adultReturn: 6.40, adultWeekly: 23, adultMonthly: 82, childSingle: 3.10, childReturn: 5.20, childWeekly: 18, childMonthly: 65 },
+      'Heacham': { adultSingle: 4.00, adultReturn: 6.80, adultWeekly: 24, adultMonthly: 86, childSingle: 3.20, childReturn: 5.50, childWeekly: 19, childMonthly: 68 },
+      'Hunstanton': { adultSingle: 4.10, adultReturn: 7.00, adultWeekly: 24, adultMonthly: 90, childSingle: 3.30, childReturn: 5.60, childWeekly: 19, childMonthly: 72 },
+      'Hunstanton Bus Station': { adultSingle: 4.10, adultReturn: 7.00, adultWeekly: 24, adultMonthly: 90, childSingle: 3.30, childReturn: 5.60, childWeekly: 19, childMonthly: 72 },
+      'Old Hunstanton': { adultSingle: 4.40, adultReturn: 7.30, adultWeekly: 25, adultMonthly: 92, childSingle: 3.60, childReturn: 5.90, childWeekly: 21, childMonthly: 74 },
+      'Holme': { adultSingle: 4.60, adultReturn: 7.60, adultWeekly: 26, adultMonthly: 97, childSingle: 3.70, childReturn: 6.10, childWeekly: 22, childMonthly: 77 },
+      'Thornham': { adultSingle: 4.80, adultReturn: 8.00, adultWeekly: 27, adultMonthly: 100, childSingle: 3.90, childReturn: 6.40, childWeekly: 23, childMonthly: 80 },
+      'Titchwell': { adultSingle: 5.10, adultReturn: 8.50, adultWeekly: 29, adultMonthly: 108, childSingle: 4.10, childReturn: 6.80, childWeekly: 23, childMonthly: 86 },
+      'Brancaster': { adultSingle: 5.50, adultReturn: 9.30, adultWeekly: 32, adultMonthly: 110, childSingle: 4.40, childReturn: 7.50, childWeekly: 26, childMonthly: 94 },
+      'Brancaster Staithe': { adultSingle: 5.90, adultReturn: 9.90, adultWeekly: 33, adultMonthly: 110, childSingle: 4.80, childReturn: 8.00, childWeekly: 26, childMonthly: 94 },
+      'Burnham Deepdale': { adultSingle: 5.90, adultReturn: 9.90, adultWeekly: 33, adultMonthly: 110, childSingle: 4.80, childReturn: 8.00, childWeekly: 26, childMonthly: 94 },
+      'Burnham Market': { adultSingle: 6.30, adultReturn: 10.60, adultWeekly: 33, adultMonthly: 110, childSingle: 5.10, childReturn: 8.50, childWeekly: 26, childMonthly: 94 },
+      'Burnham Overy Staithe': { adultSingle: 6.30, adultReturn: 10.60, adultWeekly: 33, adultMonthly: 110, childSingle: 5.10, childReturn: 8.50, childWeekly: 26, childMonthly: 94 },
+      'Holkham': { adultSingle: 6.30, adultReturn: 10.60, adultWeekly: 33, adultMonthly: 110, childSingle: 5.10, childReturn: 8.50, childWeekly: 26, childMonthly: 94 },
+      'Wells-next-the-Sea': { adultSingle: 6.30, adultReturn: 10.60, adultWeekly: 33, adultMonthly: 110, childSingle: 5.40, childReturn: 8.80, childWeekly: 26, childMonthly: 94 },
+      'Walsingham': { adultSingle: 7.10, adultReturn: 11.00, adultWeekly: 33, adultMonthly: 110, childSingle: 5.70, childReturn: 8.80, childWeekly: 26, childMonthly: 94 },
+      'Fakenham': { adultSingle: 7.50, adultReturn: 11.00, adultWeekly: 33, adultMonthly: 110, childSingle: 6.00, childReturn: 8.80, childWeekly: 26, childMonthly: 94 }
+    };
+
+    const LYNX_HUNSTANTON_FARES = {
+      'Old Hunstanton': { adultSingle: 2.40, adultReturn: 3.70, adultWeekly: 12, adultMonthly: 43, childSingle: 2.00, childReturn: 3.00, childWeekly: 10, childMonthly: 34 },
+      'Holme': { adultSingle: 2.60, adultReturn: 4.30, adultWeekly: 15, adultMonthly: 54, childSingle: 2.10, childReturn: 3.50, childWeekly: 12, childMonthly: 43 },
+      'Thornham': { adultSingle: 2.80, adultReturn: 4.70, adultWeekly: 16, adultMonthly: 57, childSingle: 2.30, childReturn: 3.80, childWeekly: 13, childMonthly: 46 },
+      'Titchwell': { adultSingle: 3.00, adultReturn: 5.00, adultWeekly: 17, adultMonthly: 64, childSingle: 2.40, childReturn: 4.00, childWeekly: 15, childMonthly: 51 },
+      'Brancaster': { adultSingle: 3.20, adultReturn: 5.30, adultWeekly: 18, adultMonthly: 68, childSingle: 2.60, childReturn: 4.30, childWeekly: 16, childMonthly: 54 },
+      'Brancaster Staithe': { adultSingle: 3.50, adultReturn: 5.90, adultWeekly: 21, adultMonthly: 74, childSingle: 2.80, childReturn: 4.80, childWeekly: 17, childMonthly: 60 },
+      'Burnham Deepdale': { adultSingle: 3.70, adultReturn: 6.20, adultWeekly: 22, adultMonthly: 79, childSingle: 3.00, childReturn: 5.00, childWeekly: 17, childMonthly: 63 },
+      'Burnham Market': { adultSingle: 3.90, adultReturn: 6.60, adultWeekly: 23, adultMonthly: 86, childSingle: 3.20, childReturn: 5.30, childWeekly: 19, childMonthly: 68 },
+      'Burnham Overy Staithe': { adultSingle: 4.10, adultReturn: 7.00, adultWeekly: 24, adultMonthly: 90, childSingle: 3.30, childReturn: 5.60, childWeekly: 19, childMonthly: 72 },
+      'Holkham': { adultSingle: 4.40, adultReturn: 7.30, adultWeekly: 25, adultMonthly: 92, childSingle: 3.60, childReturn: 5.90, childWeekly: 21, childMonthly: 74 },
+      'Wells-next-the-Sea': { adultSingle: 4.60, adultReturn: 7.60, adultWeekly: 26, adultMonthly: 97, childSingle: 3.70, childReturn: 6.10, childWeekly: 22, childMonthly: 77 },
+      'Walsingham': { adultSingle: 5.10, adultReturn: 8.50, adultWeekly: 29, adultMonthly: 108, childSingle: 4.10, childReturn: 6.80, childWeekly: 23, childMonthly: 86 },
+      'Fakenham': { adultSingle: 5.50, adultReturn: 9.30, adultWeekly: 32, adultMonthly: 110, childSingle: 4.40, childReturn: 7.50, childWeekly: 26, childMonthly: 94 }
+    };
+
+    let stages = LYNX_ROUTE_PRESETS[2].stops.slice();
+    let stops = LYNX_ROUTE_PRESETS[2].stops.slice();
     const defaultStages = stages.slice();
     const defaultStops = stops.slice();
     let stageIndex = 0;
     let stopIndex = 0;
-    let destIndex = 1;
-    let selectedVehicle = '567 EGR';
-    let selectedDuty = '1037 Park and Ride weekdays';
-    let selectedTrip = '16 Inbound 15:15';
+    let destIndex = stops.indexOf('Hunstanton Bus Station');
+    let selectedVehicle = '61 SK21 FNG';
+    let selectedDuty = '34/35/36 Coastliner board';
+    let selectedTrip = '34/35/36 Outbound 09:15';
     let category = 'standard';
     let selectedTicket = null;
     let basket = [];
@@ -1885,41 +2009,96 @@ Three Swallows</textarea>
     let tripStartedAt = new Date();
     let tripSequence = 1;
 
-const ticketData = {
-  standard: [
-    ['Adult Single', 2.40, 'standard'],
-    ['Adult Return', 4.20, 'standard'],
-    ['Adult Weekly', 18.00, 'standard'],
-    ['Short Hop', 1.50, 'standard'],
-    ['Group Day', 7.50, 'standard'],
-    ['Night Single', 3.00, 'invalid']
-  ],
-  child: [
-    ['Child Single', 1.20, 'child'],
-    ['Child Return', 2.10, 'child'],
-    ['School Single', 0.90, 'child'],
-    ['Child Weekly', 9.00, 'child'],
-    ['Under 5', 0.00, 'child'],
-    ['Child Day', 3.00, 'child']
-  ],
-  period: [
-    ['Day', 5.50, 'period'],
-    ['7-Day', 20.00, 'period'],
-    ['28-Day', 65.00, 'period'],
-    ['Multi Journey', 12.00, 'period'],
-    ['Paper Weekly', 18.00, 'period'],
-    ['Off Peak Day', 4.40, 'invalid']
-  ],
-  concession: [
-    ['Conc. Pass', 0.00, 'concession'],
-    ['Companion', 0.00, 'concession'],
-    ['Out of Hours Add Fare', 0.50, 'concession'],
-    ['Manual Conc.', 0.00, 'concession'],
-    ['Punch Ticket', 0.00, 'concession'],
-    ['Authority Special', 0.00, 'concession']
-  ]
-};
-    
+    function normaliseStopName(name) {
+      return String(name || '')
+        .replace(/ Bus Station$/i, '')
+        .replace(/ Tesco$/i, '')
+        .replace(/ Travel Hub$/i, '')
+        .trim();
+    }
+
+    function lookupPublishedFare(origin, dest) {
+      const o = normaliseStopName(origin);
+      const d = normaliseStopName(dest);
+      if (/^king'?s lynn$/i.test(o)) return LYNX_KINGS_LYNN_FARES[dest] || LYNX_KINGS_LYNN_FARES[d];
+      if (/^hunstanton$/i.test(o)) return LYNX_HUNSTANTON_FARES[dest] || LYNX_HUNSTANTON_FARES[d];
+      // Reverse journeys use the same fare where the public sample table gives the matching point-to-point amount.
+      if (/^king'?s lynn$/i.test(d)) return LYNX_KINGS_LYNN_FARES[origin] || LYNX_KINGS_LYNN_FARES[o];
+      if (/^hunstanton$/i.test(d)) return LYNX_HUNSTANTON_FARES[origin] || LYNX_HUNSTANTON_FARES[o];
+      return null;
+    }
+
+    function fallbackFare(origin, dest) {
+      const a = stages.indexOf(origin);
+      const b = stages.indexOf(dest);
+      const hops = (a >= 0 && b >= 0) ? Math.abs(b - a) : 1;
+      const adultSingle = Math.min(7.50, Math.max(1.50, 1.50 + (hops * 0.42)));
+      const adultReturn = Math.min(11.00, adultSingle * 1.7);
+      return {
+        adultSingle: Number(adultSingle.toFixed(2)),
+        adultReturn: Number(adultReturn.toFixed(2)),
+        adultWeekly: Math.min(33, Math.ceil(adultSingle * 5.8)),
+        adultMonthly: Math.min(110, Math.ceil(adultSingle * 20)),
+        childSingle: Number(Math.max(1.50, adultSingle * 0.8).toFixed(2)),
+        childReturn: Number(Math.max(2.80, adultReturn * 0.8).toFixed(2)),
+        childWeekly: Math.min(26, Math.ceil(adultSingle * 4.6)),
+        childMonthly: Math.min(94, Math.ceil(adultSingle * 16))
+      };
+    }
+
+    function currentFare() {
+      const origin = byId('fareStage') ? byId('fareStage').textContent : stages[stageIndex];
+      const dest = byId('destination') ? byId('destination').textContent : stages[destIndex];
+      return lookupPublishedFare(origin, dest) || fallbackFare(origin, dest);
+    }
+
+    function currentFareLabel() {
+      const origin = byId('fareStage') ? byId('fareStage').textContent : stages[stageIndex];
+      const dest = byId('destination') ? byId('destination').textContent : stages[destIndex];
+      return origin + ' → ' + dest;
+    }
+
+    function getTicketsForCategory(cat) {
+      const f = currentFare();
+      const label = currentFareLabel();
+      const data = {
+        standard: [
+          ['Adult Single ' + label, f.adultSingle, 'standard'],
+          ['Adult Two-trip ' + label, f.adultReturn, 'standard'],
+          ['Adult Weekly ' + label, f.adultWeekly, 'standard'],
+          ['Adult Monthly ' + label, f.adultMonthly, 'standard'],
+          ['Town Single', 1.50, 'standard'],
+          ['Manual Fare', f.adultSingle, 'standard']
+        ],
+        child: [
+          ['5-19 Single ' + label, f.childSingle, 'child'],
+          ['5-19 Two-trip ' + label, f.childReturn, 'child'],
+          ['5-19 Weekly ' + label, f.childWeekly, 'child'],
+          ['5-19 Monthly ' + label, f.childMonthly, 'child'],
+          ['Under 5', 0.00, 'child'],
+          ['School Fare', f.childSingle, 'child']
+        ],
+        period: [
+          ['Lynx Day', 5.50, 'period'],
+          ['Townrider Weekly', 12.00, 'period'],
+          ['Townrider Monthly', 45.00, 'period'],
+          ['Coastliner Weekly', f.adultWeekly, 'period'],
+          ['Coastliner Monthly', f.adultMonthly, 'period'],
+          ['Network Add-on', 1.50, 'period']
+        ],
+        concession: [
+          ['Conc. Pass', 0.00, 'concession'],
+          ['Companion', 0.00, 'concession'],
+          ['Out of Hours Add Fare', 0.50, 'concession'],
+          ['Manual Conc.', 0.00, 'concession'],
+          ['Punch Ticket', 0.00, 'concession'],
+          ['Authority Special', 0.00, 'concession']
+        ]
+      };
+      return data[cat] || data.standard;
+    }
+
+    const ticketData = { standard: [], child: [], period: [], concession: [] };
     let currentMessageType = 'Driver';
     let selectedMessageIndex = 0;
     let selectedComposeSubject = '';
@@ -2087,14 +2266,14 @@ const ticketData = {
     function backTo(id) { page(id); }
 
     function renderVehicles() {
-      const vehicles = ['123 ADV','545 BNV','56 DOU','567 EGR','570 FON','779 GKD','975 HLW'];
       const list = byId('vehicleList');
       list.innerHTML = '';
-      vehicles.forEach(function (v) {
+      LYNX_FLEET.forEach(function (bus) {
+        const v = bus.fleet + ' ' + bus.reg;
         const row = document.createElement('div');
         row.className = 'list-row' + (v === selectedVehicle ? ' selected' : '');
         row.innerHTML = '<span></span><span></span>';
-        row.children[0].textContent = v;
+        row.children[0].textContent = v + ' · ' + bus.type;
         row.children[1].textContent = v === selectedVehicle ? 'selected' : '';
         row.addEventListener('click', function () { selectVehicle(v); });
         list.appendChild(row);
@@ -2128,7 +2307,7 @@ const ticketData = {
     }
 
     function renderDuties() {
-      const duties = ['1037 Park and Ride weekdays','1135 Shopper Service Mon-Fri','6706 City Green Run','Duty 46 Running Board'];
+      const duties = ['33/33C Docking-Hunstanton board','34/35/36 Coastliner board','37 Downham Market board','39 Marham board','41/42 Town services board','46/X46 Wisbech board','48/49/49A Fakenham board','54/54A Walpoles schools board','60 Wisbech-Downham board','414/415 School board'];
       const list = byId('dutyList');
       list.innerHTML = '';
       duties.forEach(function (d) {
@@ -2160,7 +2339,7 @@ const ticketData = {
 
       const box = byId('tickets');
       box.innerHTML = '';
-      ticketData[category].forEach(function (ticket) {
+      getTicketsForCategory(category).forEach(function (ticket) {
         const name = ticket[0];
         const price = ticket[1];
         const cls = ticket[2];
@@ -2376,16 +2555,48 @@ const ticketData = {
       showInfo('Removed saved route: ' + escapeHtml(removed.name || removed.route || 'Route'));
     }
 
+    function presetRows() {
+      return LYNX_ROUTE_PRESETS.map(function (preset, index) {
+        return Object.assign({ presetIndex: index, name: preset.route + ' · ' + preset.origin + ' → ' + preset.dest, parsedStops: preset.stops }, preset);
+      });
+    }
+
+    function loadPresetRoute(index) {
+      const route = presetRows()[index];
+      if (!route) return;
+      fillRouteForm(route);
+      applyRouteSetup(true);
+    }
+
     function renderSavedRoutes() {
       const list = byId('savedRoutesList');
       if (!list) return;
-      const routes = readSavedRoutes();
-      if (!routes.length) {
-        list.innerHTML = '<div class="saved-route-empty">No saved routes for this driver yet</div>';
-        return;
-      }
+      const saved = readSavedRoutes();
+      const presets = presetRows();
       list.innerHTML = '';
-      routes.forEach(function (route, index) {
+      presets.forEach(function (route, index) {
+        const row = document.createElement('div');
+        row.className = 'saved-route-row preset-route-row';
+        const name = document.createElement('div');
+        name.className = 'saved-route-name';
+        name.textContent = route.name;
+        const loadBtn = document.createElement('button');
+        loadBtn.textContent = 'LOAD';
+        loadBtn.onclick = function () { loadPresetRoute(index); };
+        const infoBtn = document.createElement('button');
+        infoBtn.textContent = 'INFO';
+        infoBtn.onclick = function () { showInfo('<strong>' + escapeHtml(route.name) + '</strong><br>' + escapeHtml(route.summary || '') + '<br><br><strong>Stops:</strong><br>' + escapeHtml(route.stops.join(' → '))); };
+        row.appendChild(name);
+        row.appendChild(loadBtn);
+        row.appendChild(infoBtn);
+        list.appendChild(row);
+      });
+      if (!saved.length) return;
+      const sep = document.createElement('div');
+      sep.className = 'saved-route-empty';
+      sep.textContent = 'Driver saved routes';
+      list.appendChild(sep);
+      saved.forEach(function (route, index) {
         const row = document.createElement('div');
         row.className = 'saved-route-row';
         const name = document.createElement('div');
@@ -2437,6 +2648,7 @@ const ticketData = {
       setText('vimStop', stops[1] || setup.dest);
       setText('vimTime', setup.time);
       updateTripPreview();
+      if (byId('tickets')) renderTickets();
 
       if (showMessage) {
         showInfo('Route loaded: ' + escapeHtml(setup.origin) + ' to ' + escapeHtml(setup.dest) + ' with ' + setup.parsedStops.length + ' stops.');
@@ -2460,6 +2672,7 @@ const ticketData = {
     function moveStage(n) {
       stageIndex = (stageIndex + n + stages.length) % stages.length;
       setText('fareStage', stages[stageIndex]);
+      if (byId('tickets')) renderTickets();
     }
 
     function moveStop(n) {
@@ -2471,12 +2684,14 @@ const ticketData = {
     function moveDestination(n) {
       destIndex = (destIndex + n + stages.length) % stages.length;
       setText('destination', stages[destIndex]);
+      if (byId('tickets')) renderTickets();
     }
 
     function openStageList() {
       openList('Select Fare Stage', stages, function (v) {
         setText('fareStage', v);
         stageIndex = stages.indexOf(v);
+        if (byId('tickets')) renderTickets();
       });
     }
 
@@ -2491,6 +2706,7 @@ const ticketData = {
       openList('Select Destination', stages, function (v) {
         setText('destination', v);
         destIndex = stages.indexOf(v);
+        if (byId('tickets')) renderTickets();
       });
     }
 
