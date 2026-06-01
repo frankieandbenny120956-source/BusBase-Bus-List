@@ -124,23 +124,9 @@ import {
     };
 
     const ADMIN_EMAILS = [
-      "streamer@example.com",
-      "your-email@example.com"
+      "streamer@busbase.co.uk",
+      "office@busbase.co.uk"
     ];
-
-    // Each admin has their own PIN.
-    // Change these PINs before going public.
-    // Example: streamer uses 2468, you use 1357.
-    const ADMIN_PINS = {
-      "streamer@example.com": {
-        pin: "2468",
-        name: "The Streamer"
-      },
-      "your-email@example.com": {
-        pin: "1357",
-        name: "Backup Admin"
-      }
-    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
