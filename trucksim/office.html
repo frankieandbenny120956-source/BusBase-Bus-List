@@ -13,7 +13,7 @@
 
   <main class="panel wide">
     <h1>Office Dashboard</h1>
-    <p>See what each truck has done today.</p>
+    <p>Live vehicle checks from drivers.</p>
 
     <table>
       <thead>
@@ -26,18 +26,101 @@
           <th>Time</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="checksTable">
         <tr>
-          <td>Truck 1</td>
-          <td>Driver name</td>
-          <td>120,450</td>
-          <td>Complete</td>
-          <td>No issues</td>
-          <td>09:20</td>
+          <td colspan="6">Loading checks...</td>
         </tr>
       </tbody>
     </table>
+
+    <p id="status"></p>
   </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      orderBy,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBCqx9D1r5U9mWJYKEY_dtCdyk132xGog",
+      authDomain: "busbase-ticketer-v2.firebaseapp.com",
+      projectId: "busbase-ticketer-v2",
+      storageBucket: "busbase-ticketer-v2.firebasestorage.app",
+      messagingSenderId: "807388978236",
+      appId: "1:807388978236:web:5ccf7c8193d81498377739"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const table = document.getElementById("checksTable");
+    const status = document.getElementById("status");
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      loadChecks();
+    });
+
+    function loadChecks() {
+      const q = query(
+        collection(db, "truckChecks"),
+        orderBy("createdAt", "desc")
+      );
+
+      onSnapshot(q, (snapshot) => {
+        table.innerHTML = "";
+
+        if (snapshot.empty) {
+          table.innerHTML = `
+            <tr>
+              <td colspan="6">No vehicle checks yet.</td>
+            </tr>
+          `;
+          return;
+        }
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+
+          const checklist = data.checklist || {};
+          const totalChecks = Object.keys(checklist).length;
+          const completedChecks = Object.values(checklist).filter(Boolean).length;
+
+          let time = "Unknown";
+          if (data.createdAt && data.createdAt.toDate) {
+            time = data.createdAt.toDate().toLocaleString();
+          }
+
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${data.truck || ""}</td>
+            <td>${data.driverEmail || ""}</td>
+            <td>${data.mileage || ""}</td>
+            <td>${completedChecks}/${totalChecks} complete</td>
+            <td>${data.notes || ""}</td>
+            <td>${time}</td>
+          `;
+
+          table.appendChild(row);
+        });
+      }, (error) => {
+        status.textContent = "Could not load vehicle checks.";
+        console.error(error);
+      });
+    }
+  </script>
 
 </body>
 </html>
