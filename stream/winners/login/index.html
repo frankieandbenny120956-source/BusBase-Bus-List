@@ -114,13 +114,13 @@ import {
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "PASTE_YOUR_API_KEY",
-      authDomain: "PASTE_YOUR_AUTH_DOMAIN",
-      projectId: "PASTE_YOUR_PROJECT_ID",
-      storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
-      messagingSenderId: "PASTE_YOUR_SENDER_ID",
-      appId: "PASTE_YOUR_APP_ID"
+const firebaseConfig = {
+  apiKey: "AIzaSyBBCqx9D1r5U9mWJYKEY_dtCdyk132xGog",
+  authDomain: "busbase-ticketer-v2.firebaseapp.com",
+  projectId: "busbase-ticketer-v2",
+  storageBucket: "busbase-ticketer-v2.firebasestorage.app",
+  messagingSenderId: "807388978236",
+  appId: "1:807388978236:web:5ccf7c8193d81498377739"
     };
 
     const ADMIN_EMAILS = [
@@ -135,7 +135,7 @@ import {
 
     let currentUser = null;
     let currentAdminName = "";
-    async function getHelperName(email) {
+async function getHelperByEmailAndPin(email, pin) {
   try {
     const snapshot = await getDocs(collection(db, "helpers"));
 
@@ -144,16 +144,21 @@ import {
 
       if (
         data.email &&
-        data.email.toLowerCase() === email.toLowerCase()
+        data.pin &&
+        data.email.toLowerCase() === email.toLowerCase() &&
+        String(data.pin) === String(pin)
       ) {
-        return data.name || email;
+        return {
+          name: data.name || email,
+          email: data.email
+        };
       }
     }
 
-    return email;
+    return null;
   } catch (error) {
     console.error(error);
-    return email;
+    return null;
   }
 }
     let winners = [];
@@ -287,12 +292,16 @@ import {
         errorBox.classList.add("hidden");
 
         try {
-          const result = await signInWithEmailAndPassword(auth, email, password);
-          if (!ADMIN_EMAILS.includes(result.user.email) || !pinIsCorrect(result.user.email, pin)) {
-            await signOut(auth);
-            throw new Error("Not admin");
-          }
-          currentAdminName = ADMIN_PINS[result.user.email].name;
+const result = await signInWithEmailAndPassword(auth, email, password);
+
+const helper = await getHelperByEmailAndPin(result.user.email, pin);
+
+if (!ADMIN_EMAILS.includes(result.user.email) || !helper) {
+  await signOut(auth);
+  throw new Error("Not admin");
+}
+
+currentAdminName = helper.name;
           await writeAuditLog("login", {
             message: "Admin logged in"
           });
