@@ -101,9 +101,10 @@
       onAuthStateChanged,
       signOut
     } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
+import {
+  getFirestore,
+  getDocs,
+  collection,
       addDoc,
       deleteDoc,
       doc,
@@ -148,6 +149,27 @@
 
     let currentUser = null;
     let currentAdminName = "";
+    async function getHelperName(email) {
+  try {
+    const snapshot = await getDocs(collection(db, "helpers"));
+
+    for (const docItem of snapshot.docs) {
+      const data = docItem.data();
+
+      if (
+        data.email &&
+        data.email.toLowerCase() === email.toLowerCase()
+      ) {
+        return data.name || email;
+      }
+    }
+
+    return email;
+  } catch (error) {
+    console.error(error);
+    return email;
+  }
+}
     let winners = [];
     let auditLogs = [];
 
