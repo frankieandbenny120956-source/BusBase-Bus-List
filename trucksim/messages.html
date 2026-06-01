@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TruckSim Messages</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav>
+    <h2>TruckSim Messages</h2>
+    <button onclick="history.back()">Back</button>
+  </nav>
+
+  <main class="panel">
+    <h1>Messages</h1>
+    <p>Send updates between drivers and the office.</p>
+
+    <textarea id="messageText" placeholder="Type your message..."></textarea>
+
+    <button id="sendBtn">Send Message</button>
+
+    <p id="status"></p>
+
+    <hr>
+
+    <div id="messagesList">
+      <p>Loading messages...</p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      orderBy,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBCqx9D1r5U9mWJYKEY_dtCdyk132xGog",
+      authDomain: "busbase-ticketer-v2.firebaseapp.com",
+      projectId: "busbase-ticketer-v2",
+      storageBucket: "busbase-ticketer-v2.firebasestorage.app",
+      messagingSenderId: "807388978236",
+      appId: "1:807388978236:web:5ccf7c8193d81498377739"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+
+    const messageText = document.getElementById("messageText");
+    const sendBtn = document.getElementById("sendBtn");
+    const status = document.getElementById("status");
+    const messagesList = document.getElementById("messagesList");
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      currentUser = user;
+      loadMessages();
+    });
+
+    sendBtn.addEventListener("click", async () => {
+      const text = messageText.value.trim();
+
+      if (!text) {
+        status.textContent = "Please type a message.";
+        return;
+      }
+
+      status.textContent = "Sending...";
+
+      try {
+        await addDoc(collection(db, "messages"), {
+          fromUserId: currentUser.uid,
+          fromEmail: currentUser.email,
+          message: text,
+          read: false,
+          createdAt: serverTimestamp()
+        });
+
+        messageText.value = "";
+        status.textContent = "Message sent.";
+      } catch (error) {
+        status.textContent = "Could not send message.";
+        console.error(error);
+      }
+    });
+
+    function loadMessages() {
+      const q = query(
+        collection(db, "messages"),
+        orderBy("createdAt", "desc")
+      );
+
+      onSnapshot(q, (snapshot) => {
+        messagesList.innerHTML = "";
+
+        if (snapshot.empty) {
+          messagesList.innerHTML = "<p>No messages yet.</p>";
+          return;
+        }
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+
+          let time = "Just now";
+          if (data.createdAt && data.createdAt.toDate) {
+            time = data.createdAt.toDate().toLocaleString();
+          }
+
+          const div = document.createElement("div");
+          div className = "message-card";
+
+          div.innerHTML = `
+            <strong>${data.fromEmail}</strong>
+            <p>${data.message}</p>
+            <small>${time}</small>
+          `;
+
+          messagesList.appendChild(div);
+        });
+      });
+    }
+  </script>
+
+</body>
+</html>
