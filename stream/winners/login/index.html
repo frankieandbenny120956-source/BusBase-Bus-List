@@ -8,85 +8,141 @@
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #f4f4f5;
+      background: #151515;
     }
 
     .site-bg {
-      background: #f4f4f5;
+      background: #151515;
     }
 
     .page-shell {
-      max-width: 1100px;
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 24px 16px;
+      padding: 20px 14px 40px;
     }
 
     .topbar {
-      background: #111827;
-      color: white;
-      border-radius: 14px;
-      padding: 16px 18px;
+      background: #222222;
+      color: #f5f5f5;
+      border: 1px solid #333333;
+      border-radius: 8px;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
-    .panel {
-      background: white;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 18px;
+    .panel,
+    .dark-panel,
+    .winner-card {
+      background: #202020;
+      color: #f4f4f4;
+      border: 1px solid #333333;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: none;
+    }
+
+    .winner-card {
+      border-left: 4px solid #d6a84f;
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border-radius: 10px;
-      padding: 10px 14px;
+      border-radius: 6px;
+      padding: 9px 13px;
       font-weight: 700;
-      background: #111827;
-      color: white;
-      border: 0;
+      background: #d6a84f;
+      color: #151515;
+      border: 1px solid #d6a84f;
       cursor: pointer;
+      box-shadow: none;
+    }
+
+    .btn:hover {
+      background: #e2b85f;
     }
 
     .btn-light {
-      background: white;
-      color: #111827;
-      border: 1px solid #d1d5db;
+      background: #2b2b2b;
+      color: #f4f4f4;
+      border: 1px solid #444444;
+    }
+
+    .btn-light:hover {
+      background: #363636;
+    }
+
+    .btn-danger {
+      background: #3a2424;
+      color: #ffb4b4;
+      border: 1px solid #623535;
     }
 
     .field {
       width: 100%;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      padding: 11px 12px;
-      color: #111827;
-      background: white;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 10px 11px;
+      color: #f4f4f4;
+      background: #151515;
+      outline: none;
+    }
+
+    .field:focus {
+      border-color: #d6a84f;
+      box-shadow: 0 0 0 2px rgba(214, 168, 79, 0.25);
     }
 
     .label {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       font-size: 13px;
       font-weight: 700;
-      color: #374151;
-    }
-
-    .winner-card {
-      background: white;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 16px;
+      color: #cfcfcf;
     }
 
     .muted {
-      color: #6b7280;
+      color: #a3a3a3;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #332917;
+      color: #f2c46b;
+      border: 1px solid #5a4722;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-box {
+      background: #181818;
+      border: 1px solid #303030;
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    .admin-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 360px 1fr;
+    }
+
+    @media (max-width: 900px) {
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -101,10 +157,9 @@
       onAuthStateChanged,
       signOut
     } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-import {
-  getFirestore,
-  getDocs,
-  collection,
+    import {
+      getFirestore,
+      collection,
       addDoc,
       deleteDoc,
       updateDoc,
@@ -129,6 +184,7 @@ const firebaseConfig = {
       "office@busbase.co.uk"
     ];
 
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -136,32 +192,6 @@ const firebaseConfig = {
 
     let currentUser = null;
     let currentAdminName = "";
-async function getHelperByEmailAndPin(email, pin) {
-  try {
-    const snapshot = await getDocs(collection(db, "helpers"));
-
-    for (const docItem of snapshot.docs) {
-      const data = docItem.data();
-
-      if (
-        data.email &&
-        data.pin &&
-        data.email.toLowerCase() === email.toLowerCase() &&
-        String(data.pin) === String(pin)
-      ) {
-        return {
-          name: data.name || email,
-          email: data.email
-        };
-      }
-    }
-
-    return null;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
     let winners = [];
     let auditLogs = [];
 
@@ -178,8 +208,12 @@ async function getHelperByEmailAndPin(email, pin) {
       return user && ADMIN_EMAILS.includes(user.email);
     }
 
+    function getPinUser(email, pin) {
+      return ADMIN_PIN_USERS.find(person => person.email === email && person.pin === pin) || null;
+    }
+
     function pinIsCorrect(email, pin) {
-      return ADMIN_PINS[email] && ADMIN_PINS[email].pin === pin;
+      return Boolean(getPinUser(email, pin));
     }
 
     async function writeAuditLog(action, details) {
@@ -207,85 +241,104 @@ async function getHelperByEmailAndPin(email, pin) {
         <main class="page-shell">
           <header class="topbar">
             <div>
+              <p class="mb-1 text-xs font-bold uppercase tracking-wide muted">Giveaway board</p>
               <h1 class="text-2xl font-bold">Stream Winners</h1>
-              <p class="text-sm text-slate-300">Recent prizes and giveaway winners</p>
+              <p class="text-sm muted">Recent prizes, games, and winners</p>
             </div>
-            <a href="#/admin" class="btn btn-light">Admin</a>
+            <a href="#/admin" class="btn btn-light">Admin login</a>
           </header>
 
           <section class="mb-4 grid gap-3 sm:grid-cols-3">
-            <div class="panel">
+            <div class="dark-panel">
               <p class="text-sm muted">Total winners</p>
-              <p class="mt-1 text-3xl font-bold">${winners.length}</p>
+              <p class="mt-1 text-4xl font-bold">${winners.length}</p>
             </div>
-            <div class="panel sm:col-span-2">
-              <p class="text-sm muted">Viewer page</p>
-              <p class="mt-1 font-semibold">This page updates automatically when a winner is added.</p>
+            <div class="dark-panel sm:col-span-2">
+              <p class="pill">Auto updating</p>
+              <h2 class="mt-3 text-xl font-bold">Prize history</h2>
+              <p class="mt-1 muted">This page updates as soon as a winner is added.</p>
             </div>
           </section>
 
-          <section id="winnerList" class="grid gap-3 md:grid-cols-2"></section>
+          <section id="winnerList" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3"></section>
         </main>
       `;
 
       const list = document.getElementById("winnerList");
       if (!winners.length) {
-        list.innerHTML = `<div class="panel md:col-span-2 text-center"><p class="text-xl font-bold">No winners yet</p><p class="mt-1 muted">The first prize will appear here once it is added.</p></div>`;
+        list.innerHTML = `<div class="dark-panel md:col-span-2 xl:col-span-3 text-center"><p class="text-2xl font-black">No winners yet</p><p class="mt-2 text-slate-300">The first prize will appear here once it is added.</p></div>`;
         return;
       }
 
       list.innerHTML = winners.map(winner => `
         <article class="winner-card">
-          <div class="mb-3 flex items-start justify-between gap-3">
+          <div class="mb-4 flex items-start justify-between gap-3">
             <div>
-              <p class="text-sm font-bold muted">${escapeHTML(winner.date)}</p>
+              <p class="text-sm font-black text-slate-500">${escapeHTML(winner.date)}</p>
               <p class="text-sm muted">${escapeHTML(winner.streamTitle)}</p>
             </div>
-            <span class="rounded-lg bg-slate-100 px-2 py-1 text-sm font-bold">Winner</span>
+            <span class="pill">Winner</span>
           </div>
           <h2 class="text-2xl font-bold">${escapeHTML(winner.winnerName)}</h2>
-          <div class="mt-4 grid gap-2">
-            <p><span class="font-bold">Game:</span> ${escapeHTML(winner.gameName)}</p>
-            <p><span class="font-bold">Prize:</span> ${escapeHTML(winner.prize)}</p>
+          <div class="mt-5 grid gap-3">
+            <p class="status-box"><span class="block text-xs font-bold uppercase muted">Game</span>${escapeHTML(winner.gameName)}</p>
+            <p class="status-box"><span class="block text-xs font-bold uppercase muted">Prize</span>${escapeHTML(winner.prize)}</p>
+            <p class="status-box"><span class="block text-xs font-bold uppercase muted">Status</span>${escapeHTML(getStatusText(winner))}</p>
           </div>
         </article>
       `).join("");
     }
+
+    function getStatusText(winner) {
+      if (winner.status === "received") return "Received";
+      if (winner.status === "retracted") return `Retracted${winner.statusReason ? ": " + winner.statusReason : ""}`;
+      return "Pending";
+    }
+
     async function updateWinnerStatus(winnerId, status) {
+      try {
+        const winner = winners.find(item => item.id === winnerId);
+        if (!winner) {
+          alert("Could not find this winner entry.");
+          return;
+        }
 
-  const winner = winners.find(item => item.id === winnerId);
+        let reason = "";
+        if (status === "retracted") {
+          reason = prompt("Why was this prize retracted?");
+          if (!reason || !reason.trim()) {
+            alert("You need to add a reason before retracting a prize.");
+            return;
+          }
+          reason = reason.trim();
+        }
 
-  if (!winner) return;
+        const statusData = {
+          status,
+          statusReason: reason,
+          statusUpdatedBy: currentUser.email,
+          statusUpdatedByName: currentAdminName || "Unknown admin",
+          statusUpdatedAt: serverTimestamp()
+        };
 
-  let reason = "";
+        await updateDoc(doc(db, "winners", winnerId), statusData);
 
-  if (status === "retracted") {
+        await writeAuditLog("update_prize_status", {
+          message: "Prize status updated",
+          winnerId,
+          winnerName: winner.winnerName || "Unknown winner",
+          prize: winner.prize || "Unknown prize",
+          oldStatus: winner.status || "pending",
+          newStatus: status,
+          reason
+        });
 
-    reason = prompt("Why was this prize retracted?");
-
-    if (!reason || !reason.trim()) {
-      alert("You must enter a reason.");
-      return;
+        alert("Status updated.");
+      } catch (error) {
+        console.error(error);
+        alert("Status did not update. Check Firestore rules allow update on winners.");
+      }
     }
-  }
-
-  await updateDoc(
-    doc(db, "winners", winnerId),
-    {
-      status: status,
-      statusReason: reason,
-      statusUpdatedAt: serverTimestamp(),
-      statusUpdatedBy: currentAdminName || currentUser.email
-    }
-  );
-
-  await writeAuditLog("status_change", {
-    winnerId,
-    winnerName: winner.winnerName,
-    newStatus: status,
-    reason
-  });
-}
 
     function renderLogin() {
       root.innerHTML = `
@@ -313,7 +366,7 @@ async function getHelperByEmailAndPin(email, pin) {
                 <input id="pin" type="password" inputmode="numeric" required placeholder="Enter your PIN" class="field" />
               </label>
               <p id="loginError" class="mb-4 hidden rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"></p>
-              <button type="submit" class="btn w-full">Login</button>
+              <button class="btn w-full">Login</button>
             </form>
           </div>
         </main>
@@ -328,16 +381,12 @@ async function getHelperByEmailAndPin(email, pin) {
         errorBox.classList.add("hidden");
 
         try {
-const result = await signInWithEmailAndPassword(auth, email, password);
-
-const helper = await getHelperByEmailAndPin(result.user.email, pin);
-
-if (!ADMIN_EMAILS.includes(result.user.email) || !helper) {
-  await signOut(auth);
-  throw new Error("Not admin");
-}
-
-currentAdminName = helper.name;
+          const result = await signInWithEmailAndPassword(auth, email, password);
+          if (!ADMIN_EMAILS.includes(result.user.email) || !pinIsCorrect(result.user.email, pin)) {
+            await signOut(auth);
+            throw new Error("Not admin");
+          }
+          currentAdminName = getPinUser(result.user.email, pin).name;
           await writeAuditLog("login", {
             message: "Admin logged in"
           });
@@ -402,6 +451,11 @@ currentAdminName = helper.name;
           prize: document.getElementById("prize").value.trim(),
           createdBy: currentUser.email,
           createdByName: currentAdminName || "Unknown admin",
+          status: "pending",
+          statusReason: "",
+          statusUpdatedBy: "",
+          statusUpdatedByName: "",
+          statusUpdatedAt: null,
           createdAt: serverTimestamp()
         };
 
@@ -462,37 +516,24 @@ currentAdminName = helper.name;
               <p class="text-sm font-semibold text-slate-500">${escapeHTML(winner.date)} · ${escapeHTML(winner.streamTitle)}</p>
               <h3 class="mt-1 text-lg font-bold">${escapeHTML(winner.winnerName)}</h3>
               <p class="text-slate-700">Won <strong>${escapeHTML(winner.prize)}</strong> playing ${escapeHTML(winner.gameName)}</p>
+              <p class="mt-2 text-sm font-bold text-slate-600">Status: ${escapeHTML(getStatusText(winner))}</p>
             </div>
             <div class="flex flex-wrap gap-2">
-  <button
-    data-status="received"
-    data-id="${winner.id}"
-    class="rounded-lg border border-green-300 px-3 py-2 text-sm font-bold text-green-700"
-  >
-    Received
-  </button>
-
-  <button
-    data-status="pending"
-    data-id="${winner.id}"
-    class="rounded-lg border border-yellow-300 px-3 py-2 text-sm font-bold text-yellow-700"
-  >
-    Pending
-  </button>
-
-  <button
-    data-status="retracted"
-    data-id="${winner.id}"
-    class="rounded-lg border border-orange-300 px-3 py-2 text-sm font-bold text-orange-700"
-  >
-    Retracted
-  </button>
-</div>
-            <button data-delete="${winner.id}" class="rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-bold text-red-600">Delete</button>
+              <button type="button" data-status="received" data-id="${winner.id}" class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">Received</button>
+              <button type="button" data-status="pending" data-id="${winner.id}" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700">Pending</button>
+              <button type="button" data-status="retracted" data-id="${winner.id}" class="rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm font-bold text-orange-700">Retracted</button>
+              <button type="button" data-delete="${winner.id}" class="rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-bold text-red-600">Delete</button>
+            </div>
           </div>
         </article>
       `).join("");
- 
+
+      document.querySelectorAll("[data-status]").forEach(button => {
+        button.addEventListener("click", async () => {
+          await updateWinnerStatus(button.dataset.id, button.dataset.status);
+        });
+      });
+
       document.querySelectorAll("[data-delete]").forEach(button => {
         button.addEventListener("click", async () => {
           const winnerId = button.dataset.delete;
@@ -516,7 +557,7 @@ currentAdminName = helper.name;
       render();
     });
 
-const q = query(collection(db, "winners"), orderBy("createdAt", "desc"));
+    const q = query(collection(db, "winners"), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
       winners = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       render();
@@ -530,4 +571,3 @@ const q = query(collection(db, "winners"), orderBy("createdAt", "desc"));
   </script>
 </body>
 </html>
-
